@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+/* Checking phone number */
+Route::get('/check-mobile/{phone_number}', [LoginController::class, 'checkMobile']);
+
+/* Checking OTP code */
+Route::post('/check-otp', [LoginController::class,'checkOTP']);
+
+Route::prefix('/user')->as('.user.')->group(function (){
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
+
+    Route::group([
+        'middleware' => 'auth:api',
+        'namespace' => 'App\Http\Controllers\Api\v1',
+    ], function () {
+
+        require 'user-api.php';
+
+    });
+
+
 });
