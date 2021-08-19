@@ -19,20 +19,33 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
 
-    public function checkMobile($phoneNumber)
+    public function checkMobile(Request $request)
     {
-
         $rules = [
-            'phoneNumber' => 'required|numeric'
+            'phone' => 'sometimes|numeric|nullable',
+            'login' => 'sometimes|alpha_num|nullable|exists:users,login|max:255',
         ];
 
-        $validator = $this->validator->make(['phoneNumber' => $phoneNumber], $rules);
+        $validator = $this->validator->make(['phone' => $request->input('phone'), 'login' => $request->input('login')], $rules);
 
-        if ($validator->fails()) {
+        if (($validator->fails())||(!$request->input('login')&&!($request->input('phone')))) {
             return response()->json(['errorCode' => 'VALIDATION_ERROR'], 203);
         }
 
         $otp = new OTP();
+
+        $phoneNumber = $request->input('phone');
+
+        if($request->input('login')){
+            $user = User::where('login', $request->input('login'))->first();
+
+            if(!$user){
+                return response()->json(['errorCode' => 'USER_NOT_FOUND'], 208);
+            }
+
+            $phoneNumber = $user->phone;
+
+        }
 
         if(env('APP_DEBUG')!='true') {
             $result = (new RegisterSms())->send($phoneNumber, $otp->otp);
@@ -57,16 +70,25 @@ class LoginController extends Controller
             return  response()->json([],201);
         }
         return response()->json([
-            'codeOTP'   => $otp->otp
+            'codeOTP'   => $otp->otp,
         ], 201);
 
     }
 
     public function checkOTP(CheckOtpRequest $request)
     {
-        $user = User::wherePhone($request->input('phone_number'))->first();
+        if($request->input('login')){
+            $user = User::whereLogin($request->input('login'))->first();
+            if(!$user){
+                return response()->json(['errorCode' => 'USER_NOT_FOUND'], 208);
+            }
+            $phoneNumber = $user->phone;
+        }elseif ($request->input('phone_number')){
+            $phoneNumber = $request->input('phone_number');
+        }
 
-        $phoneNumber = $request->input('phone_number');
+
+
 
         $codeOTP = $request->input('code_otp');
 

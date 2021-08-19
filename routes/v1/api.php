@@ -16,7 +16,7 @@ use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 */
 
 /* Checking phone number */
-Route::get('/check-mobile/{phone_number}', [LoginController::class, 'checkMobile']);
+Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
 
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
