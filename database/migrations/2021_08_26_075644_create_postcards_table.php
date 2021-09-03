@@ -18,7 +18,7 @@ class CreatePostcardsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->enum('status', PostcardStatus::values());
+            $table->enum('status', PostcardStatus::keys());
             $table->softDeletes();
             $table->timestamps();
         });
