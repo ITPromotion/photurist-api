@@ -26,7 +26,7 @@ Route::prefix('/user')->as('.user.')->group(function (){
 
     Route::group([
         'middleware' => 'auth:api',
-        'namespace' => 'App\Http\Controllers\Api\v1',
+        'namespace' => 'App\Http\Controllers\ClientApp\Api\v1',
     ], function () {
 
         require 'user-api.php';

@@ -16,4 +16,6 @@ use Rexlabs\Enum\Enum;
 class PostcardStatus extends Enum
 {
     const ACTIVE = 'active';
+
+    const CREATED = 'created';
 }

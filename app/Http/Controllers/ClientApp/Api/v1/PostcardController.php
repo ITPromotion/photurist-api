@@ -2,11 +2,24 @@
 
 namespace App\Http\Controllers\ClientApp\Api\v1;
 
+use App\Enums\PostcardStatus;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\MediaContentResource;
+use App\Http\Resources\PostcardResource;
+use App\Models\AudioData;
+use App\Models\MediaContent;
 use App\Models\Postcard;
+use App\Models\TextData;
+use App\Services\PostcardService;
+use App\Traits\FileTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class PostcardController extends Controller
 {
+
+    use FileTrait;
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +48,14 @@ class PostcardController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $postcard = Postcard::create(
+            [
+                'user_id' => Auth::id(),
+                'status'  => PostcardStatus::CREATED,
+            ],
+        );
+
+        return new PostcardResource($postcard);
     }
 
     /**
@@ -69,7 +89,10 @@ class PostcardController extends Controller
      */
     public function update(Request $request, Postcard $postcard)
     {
-        //
+        $postcardService = new PostcardService($postcard);
+
+        $postcardService->updatePostcard($request);
+
     }
 
     /**
@@ -82,4 +105,48 @@ class PostcardController extends Controller
     {
         //
     }
+
+    /**
+     * Save media to storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function saveMedia(Request $request)
+    {
+        $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/image');
+
+        $mediaContent = MediaContent::create([
+                'link' => $link,
+                'postcard_id' => $request->input('postcard_id'),
+            ]);
+        return new MediaContentResource($mediaContent);
+
+    }
+
+    /**
+     * Save audio to storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function saveAudio(Request $request)
+    {
+        $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/audio');
+
+
+        $data = [
+                'link' => $link,
+                'postcard_id' => $request->input('media_content_id')?null:$request->input('postcard_id'),
+                'media_content_id' => $request->input('media_content_id')?0:null,
+            ];
+
+        $audio = AudioData::create($data);
+
+        return new MediaContentResource($audio);
+
+    }
+
+
 }
