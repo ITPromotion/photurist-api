@@ -17,5 +17,7 @@ class PostcardStatus extends Enum
 {
     const ACTIVE = 'active';
 
-    const CREATED = 'created';
+    const CREATED = 'draft';
+
+    const ARCHIVE = 'archive';
 }
