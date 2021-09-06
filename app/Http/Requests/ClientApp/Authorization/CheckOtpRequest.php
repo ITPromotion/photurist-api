@@ -16,7 +16,7 @@ class CheckOtpRequest extends ApiRequest
     {
         return [
             'phone_number' => 'sometimes|numeric|exists:temp_numbers,phone',
-            'code_otp'     => 'required|digits:4',
+            'code_otp'     => 'required|digits:6',
             'login'        => 'sometimes|string|nullable|exists:users,login',
         ];
     }
