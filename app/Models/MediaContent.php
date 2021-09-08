@@ -32,5 +32,10 @@ class MediaContent extends Model
         return $this->hasOne(GeoData::class);
     }
 
+    public function audioData():HasOne
+    {
+        return $this->hasOne(AudioData::class);
+    }
+
 
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ClientApp\Api\v1;
 use App\Enums\PostcardStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MediaContentResource;
+use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
 use App\Models\AudioData;
 use App\Models\MediaContent;
@@ -27,7 +28,19 @@ class PostcardController extends Controller
      */
     public function index()
     {
-        //
+        $postCards = Postcard::where('id', '!=',Auth::id())
+                        ->with(
+                            'textData',
+                            'geoData',
+                            'tagData',
+                            'mediaContents',
+                            'mediaContents.textData',
+                            'mediaContents.geoData',
+                            'mediaContents.audioData',
+                        )
+                        ->get();
+
+        return new PostcardCollection($postCards);
     }
 
     /**
