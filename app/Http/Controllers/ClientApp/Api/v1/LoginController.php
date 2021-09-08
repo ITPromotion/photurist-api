@@ -99,8 +99,11 @@ class LoginController extends Controller
         if ($otp !== null) {
             $result = $otp->validate($codeOTP);
 
+            $user = User::where('phone', $phoneNumber)->where('status','=',UserStatus::ACTIVE)->first();
+
             if ($result === true) {
 
+                if(!$user)
                     $user = User::updateOrCreate(
                         [
                             'phone' => $phoneNumber
