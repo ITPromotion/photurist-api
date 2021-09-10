@@ -18,5 +18,11 @@ Route::apiResources([
 /* Save media */
 Route::post('/save-media', [PostcardControllerAlias::class,'saveMedia']);
 
+/* Get gallery */
+Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);
+
+/* Add postcard to gallery */
+Route::post('/add-postcard-to-gallery', [PostcardControllerAlias::class,'addPostcardToGallery']);
+
 /* Save audio */
 Route::post('/save-audio', [PostcardControllerAlias::class,'saveAudio']);

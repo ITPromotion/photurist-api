@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ClientApp\Api\v1;
 
 use App\Enums\PostcardStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientApp\Postcard\AddPostcardToGalleryRequest;
 use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
@@ -28,17 +29,49 @@ class PostcardController extends Controller
      */
     public function index()
     {
-        $postCards = Postcard::where('id', '!=',Auth::id())
-                        ->with(
+        $postCards = Postcard::with(
                             'textData',
                             'geoData',
                             'tagData',
-                            'mediaContents',
                             'mediaContents.textData',
                             'mediaContents.geoData',
                             'mediaContents.audioData',
                         )
                         ->get();
+
+        return new PostcardCollection($postCards);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getGallery()
+    {
+        $user = Auth::user();
+
+        $postCards = $user->postcards()
+            ->with(
+                'textData',
+                'geoData',
+                'tagData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+            )
+            ->get();
+
+        $postcardFavorites = $user->postcardFavorites()
+            ->with(
+                'textData',
+                'geoData',
+                'tagData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+            )->get();
+        $postCards->concat($postcardFavorites);
 
         return new PostcardCollection($postCards);
     }
@@ -159,6 +192,35 @@ class PostcardController extends Controller
 
         return new MediaContentResource($audio);
 
+    }
+
+    /**
+     * Save audio to storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function removeMedia(Request $request)
+    {
+        $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/audio');
+
+
+        $data = [
+            'link' => $link,
+            'postcard_id' => $request->input('media_content_id')?null:$request->input('postcard_id'),
+            'media_content_id' => $request->input('media_content_id')?0:null,
+        ];
+
+        $audio = AudioData::create($data);
+
+        return new MediaContentResource($audio);
+
+    }
+
+    public function addPostcardToGallery(AddPostcardToGalleryRequest $request)
+    {
+        Auth::user()->postCardFavorites()->sync($request->input('postcard_id'));
     }
 
 
