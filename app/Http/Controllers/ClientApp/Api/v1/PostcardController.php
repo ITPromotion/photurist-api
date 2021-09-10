@@ -220,7 +220,7 @@ class PostcardController extends Controller
 
     public function addPostcardToGallery(AddPostcardToGalleryRequest $request)
     {
-        Auth::user()->postCardFavorites()->sync($request->input('postcard_id'));
+        Auth::user()->postCardFavorites()->sync($request->input('postcard_id'),false);
     }
 
 
