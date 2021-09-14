@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 use App\Http\Controllers\ClientApp\Api\v1\PostcardController as PostcardControllerAlias;
 use App\Http\Controllers\ClientApp\Api\v1\ProfileController;
+use App\Http\Controllers\ClientApp\Api\v1\UserController;
 
 /* Checking OTP code */
 Route::post('/active-user', [LoginController::class,'activeUser']);
@@ -26,3 +27,6 @@ Route::post('/add-postcard-to-gallery', [PostcardControllerAlias::class,'addPost
 
 /* Save audio */
 Route::post('/save-audio', [PostcardControllerAlias::class,'saveAudio']);
+
+/* Set geo data */
+Route::post('/set-geo-data', [UserController::class,'setGeoData']);

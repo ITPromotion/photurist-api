@@ -27,6 +27,10 @@ class User extends Authenticatable
         'phone',
         'login',
         'status',
+        'lat',
+        'lng',
+        'country_id',
+        'country_name',
     ];
 
     /**
