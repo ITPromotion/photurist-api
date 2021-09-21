@@ -74,5 +74,14 @@ class PostcardService
                 'postcard_id' => $this->postcard->id,
             ]);
         }
+        $this->postcard->restore();
+        $this->postcard->interval_send = $request->input('interval_send');
+        $this->postcard->interval_step = $request->input('interval_step');
+        $this->postcard->save();
+    }
+
+    public function deletePostcard()
+    {
+        $this->postcard->delete();
     }
 }

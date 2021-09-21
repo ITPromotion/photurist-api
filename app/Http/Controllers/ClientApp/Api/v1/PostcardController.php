@@ -100,7 +100,7 @@ class PostcardController extends Controller
                 'status'  => PostcardStatus::CREATED,
             ],
         );
-
+        $postcard->delete();
         return new PostcardResource($postcard);
     }
 
@@ -139,6 +139,8 @@ class PostcardController extends Controller
 
         $postcardService->updatePostcard($request);
 
+        return new PostcardResource($postcard);
+
     }
 
     /**
@@ -149,7 +151,8 @@ class PostcardController extends Controller
      */
     public function destroy(Postcard $postcard)
     {
-        //
+        $postcardService = new PostcardService($postcard);
+        $postcard->delete();
     }
 
     /**

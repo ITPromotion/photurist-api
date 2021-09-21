@@ -14,6 +14,9 @@ class Postcard extends Model
 
     protected  $fillable = [
             'user_id',
+            'status',
+            'interval_send',
+            'interval_step',
         ];
 
     public function textData():HasOne
@@ -34,5 +37,15 @@ class Postcard extends Model
     public function mediaContents():HasMany
     {
         return $this->hasMany(MediaContent::class);
+    }
+
+    public function delete()
+    {
+        $this->textData()->delete();
+        $this->geoData()->delete();
+        $this->tagData()->delete();
+        $this->mediaContents()->delete();
+
+        return parent::delete();
     }
 }
