@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ClientApp\Api\v1;
 use App\Enums\PostcardStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientApp\Postcard\AddPostcardToGalleryRequest;
+use App\Http\Requests\ClientApp\Postcard\GetGalleryRequest;
 use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
@@ -27,17 +28,24 @@ class PostcardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $postCards = Postcard::with(
+        $postCardsQuery = Postcard::with(
                             'textData',
                             'geoData',
                             'tagData',
                             'mediaContents.textData',
                             'mediaContents.geoData',
                             'mediaContents.audioData',
-                        )
-                        ->get();
+                        );
+
+        if(is_numeric($request->input('offset')))
+            $postCardsQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $postCardsQuery->limit($request->input('limit'));
+
+          $postCards = $postCardsQuery->get();
 
         return new PostcardCollection($postCards);
     }
@@ -47,11 +55,11 @@ class PostcardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getGallery()
+    public function getGallery(Request $request)
     {
         $user = Auth::user();
 
-        $postCards = $user->postcards()
+        $postCardsQuery = $user->postcards()
             ->with(
                 'textData',
                 'geoData',
@@ -59,8 +67,15 @@ class PostcardController extends Controller
                 'mediaContents.textData',
                 'mediaContents.geoData',
                 'mediaContents.audioData',
-            )
-            ->get();
+            );
+
+        if(is_numeric($request->input('offset')))
+            $postCardsQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $postCardsQuery->limit($request->input('limit'));
+
+        $postCards = $postCardsQuery->get();
 
         $postcardFavorites = $user->postcardFavorites()
             ->with(
