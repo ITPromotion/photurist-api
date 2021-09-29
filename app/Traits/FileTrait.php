@@ -13,7 +13,7 @@ trait FileTrait
     {
         if ($image->isValid() && $image->getSize() !== 0) {
 
-            $imageName = Storage::putFile($folder, $image,'public');
+            $imageName = Storage::putFile('public/'.$folder, $image);
 
             return $imageName;
         }
