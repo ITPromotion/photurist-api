@@ -148,8 +148,9 @@ class PostcardController extends Controller
      * @param  \App\Models\Postcard  $postcard
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Postcard $postcard)
+    public function update($id, Request $request)
     {
+        $postcard = Postcard::withTrashed()->findOrFail($id);
         $postcardService = new PostcardService($postcard);
 
         $postcardService->updatePostcard($request);

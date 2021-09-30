@@ -17,6 +17,9 @@ Route::apiResources([
 ]);
 
 /* Save media */
+Route::put('/postcard-update/{id}', [PostcardControllerAlias::class,'update']);
+
+/* Save media */
 Route::post('/save-media', [PostcardControllerAlias::class,'saveMedia']);
 
 /* Get gallery */
