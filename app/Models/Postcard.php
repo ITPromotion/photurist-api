@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\MailingType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Postcard extends Model
 {
@@ -47,5 +49,14 @@ class Postcard extends Model
         $this->mediaContents()->delete();
 
         return parent::delete();
+    }
+
+    public function lastMailing()
+    {
+        return DB::table('postcards_mailings')
+            ->where('postcard_id',$this->id)
+            ->where('status',MailingType::ACTIVE)
+            ->orderBy('start','desc')
+            ->first();
     }
 }
