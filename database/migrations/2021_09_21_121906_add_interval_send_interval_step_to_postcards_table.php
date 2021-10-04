@@ -14,8 +14,8 @@ class AddIntervalSendIntervalStepToPostcardsTable extends Migration
     public function up()
     {
         Schema::table('postcards', function (Blueprint $table) {
-            $table->time('interval_send')->after('status')->nullable();
-            $table->time('interval_step')->after('interval_send')->nullable();
+            $table->bigInteger('interval_send')->after('status')->nullable();
+            $table->bigInteger('interval_step')->after('interval_send')->nullable();
         });
     }
 
