@@ -31,6 +31,10 @@ class User extends Authenticatable
         'lng',
         'country_id',
         'country_name',
+        'region_id',
+        'region_name',
+        'city_id',
+        'city_name',
     ];
 
     /**
