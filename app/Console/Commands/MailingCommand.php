@@ -72,7 +72,7 @@ class MailingCommand extends Command
                         'postcard_id' => $postcard->id,
                         'status' => MailingType::ACTIVE,
                         'start' => Carbon::now(),
-                        'stop' => Carbon::now()->addMinutes(Carbon::parse($postcard->interval_send)->diffInMinutes(Carbon::now()))
+                        'stop' => Carbon::now()->addMinutes($postcard->interval_send),
                     ]);
                 }
             }
