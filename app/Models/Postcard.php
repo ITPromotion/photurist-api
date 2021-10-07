@@ -19,6 +19,12 @@ class Postcard extends Model
             'status',
             'interval_send',
             'interval_step',
+            'radius',
+            'lat',
+            'lng',
+            'countries',
+            'regions',
+            'cities',
         ];
 
     public function textData():HasOne
