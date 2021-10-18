@@ -16,11 +16,17 @@ Route::apiResources([
     'postcard' => PostcardController::class,
 ]);
 
-/* Save media */
+/* Postcard update */
 Route::put('/postcard-update/{id}', [PostcardControllerAlias::class,'update']);
 
 /* Save media */
 Route::post('/save-media', [PostcardControllerAlias::class,'saveMedia']);
+
+/* Remove media */
+Route::put('/remove-media/{id}', [PostcardControllerAlias::class,'removeMedia']);
+
+/* Remove audio */
+Route::put('/remove-audio/{id}', [PostcardControllerAlias::class,'removeAudio']);
 
 /* Get gallery */
 Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);

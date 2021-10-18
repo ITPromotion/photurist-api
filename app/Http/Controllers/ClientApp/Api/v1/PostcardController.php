@@ -17,6 +17,7 @@ use App\Services\PostcardService;
 use App\Traits\FileTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 class PostcardController extends Controller
@@ -34,10 +35,13 @@ class PostcardController extends Controller
                             'textData',
                             'geoData',
                             'tagData',
+                            'audioData',
                             'mediaContents.textData',
                             'mediaContents.geoData',
                             'mediaContents.audioData',
                         );
+
+
 
         if(is_numeric($request->input('offset')))
             $postCardsQuery->offset($request->input('offset'));
@@ -64,6 +68,7 @@ class PostcardController extends Controller
                 'textData',
                 'geoData',
                 'tagData',
+                'audioData',
                 'mediaContents.textData',
                 'mediaContents.geoData',
                 'mediaContents.audioData',
@@ -75,13 +80,14 @@ class PostcardController extends Controller
         if(is_numeric($request->input('limit')))
             $postCardsQuery->limit($request->input('limit'));
 
-        $postCards = $postCardsQuery->get();
+        $postCards = $postCardsQuery->orderBy('created_at','desc')->get();
 
         $postcardFavorites = $user->postcardFavorites()
             ->with(
                 'textData',
                 'geoData',
                 'tagData',
+                'audioData',
                 'mediaContents.textData',
                 'mediaContents.geoData',
                 'mediaContents.audioData',
@@ -220,20 +226,33 @@ class PostcardController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function removeMedia(Request $request)
+    public function removeMedia($id)
     {
-        $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/audio');
+        $mediaContent = MediaContent::withoutTrashed()->where('id',$id)->first();
 
+        if(!$mediaContent)
+            return;
 
-        $data = [
-            'link' => $link,
-            'postcard_id' => $request->input('media_content_id')?null:$request->input('postcard_id'),
-            'media_content_id' => $request->input('media_content_id')?0:null,
-        ];
+        Storage::disk('public')->delete($mediaContent->link);
 
-        $audio = AudioData::create($data);
+        $mediaContent->forceDelete();
 
-        return new MediaContentResource($audio);
+        return ;
+
+    }
+
+    public function removeAudio($id)
+    {
+        $audioData = AudioData::where('id',$id)->first();
+
+        if(!$audioData)
+            return;
+
+        Storage::disk('public')->delete($audioData->link);
+
+        $audioData->forceDelete();
+
+        return ;
 
     }
 

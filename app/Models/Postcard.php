@@ -32,14 +32,19 @@ class Postcard extends Model
         return $this->hasOne(TextData::class);
     }
 
+    public function audioData():HasOne
+    {
+        return $this->hasOne(AudioData::class);
+    }
+
     public function geoData():HasOne
     {
         return $this->hasOne(GeoData::class);
     }
 
-    public function tagData():HasOne
+    public function tagData():HasMany
     {
-        return $this->hasOne(TagData::class);
+        return $this->hasMany(TagData::class);
     }
 
     public function mediaContents():HasMany
