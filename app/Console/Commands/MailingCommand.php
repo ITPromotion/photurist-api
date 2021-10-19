@@ -43,7 +43,6 @@ class MailingCommand extends Command
      */
     public function handle()
     {
-        $interval = 10;
 
         $postcards = Postcard::where('status',PostcardStatus::ACTIVE)->get();
 

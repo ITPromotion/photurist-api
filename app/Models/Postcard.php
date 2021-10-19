@@ -19,7 +19,7 @@ class Postcard extends Model
             'user_id',
             'status',
             'interval_send',
-            'interval_step',
+            'interval_wait',
             'radius',
             'lat',
             'lng',

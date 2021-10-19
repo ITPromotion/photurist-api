@@ -77,7 +77,7 @@ class PostcardService
         $this->postcard->restore();
         $this->postcard->status = $request->input('status');
         $this->postcard->interval_send = $request->input('interval_send');
-        $this->postcard->interval_step = $request->input('interval_step');
+        $this->postcard->interval_wait = $request->input('interval_wait');
         $this->postcard->radius = $request->input('radius');
         $this->postcard->lat = $request->input('lat');
         $this->postcard->lng = $request->input('lng');
