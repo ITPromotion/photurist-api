@@ -50,7 +50,7 @@ class PostcardController extends Controller
         if(is_numeric($request->input('limit')))
             $postCardsQuery->limit($request->input('limit'));
 
-          $postCards = $postCardsQuery->get();
+          $postCards = $postCardsQuery->orderBy('created_at','desc')->get();
 
         return new PostcardCollection($postCards);
     }
