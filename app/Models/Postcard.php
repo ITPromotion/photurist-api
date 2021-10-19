@@ -26,6 +26,10 @@ class Postcard extends Model
             'regions',
             'cities',
         ];
+    public function user():HasOne
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function textData():HasOne
     {
