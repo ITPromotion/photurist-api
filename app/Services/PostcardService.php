@@ -23,7 +23,7 @@ class PostcardService
     public function updatePostcard(Request $request)
     {
 
-        $textData = $request->post('text_data');
+        $textData = $request->input('text_data');
 
         dd($textData);
 
