@@ -65,6 +65,7 @@ class PostcardController extends Controller
         $user = Auth::user();
 
         $postCardsQuery = $user->postcards()
+            ->whereIn('status',[PostcardStatus::CREATED, PostcardStatus::ARCHIVE])
             ->with(
                 'user:id,login',
                 'textData',
@@ -86,6 +87,7 @@ class PostcardController extends Controller
 
         $postcardFavorites = $user->postcardFavorites()
             ->with(
+                'user:id,login',
                 'textData',
                 'geoData',
                 'tagData',

@@ -14,6 +14,6 @@ class GeoData extends Model
       'lng',
       'address',
       'media_content_id',
-      'post_card_id',
+      'postcard_id',
     ];
 }

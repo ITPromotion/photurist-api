@@ -73,6 +73,13 @@ class MailingCommand extends Command
                     ]);
                 }
             }
+
+            $firstMailing = $postcard->firstMailing();
+
+            if(($firstMailing)&&(Carbon::parse($firstMailing->start)<Carbon::now()->subMinutes($postcard->interval_send))){
+              $postcard->status = PostcardStatus::ARCHIVE;
+              $postcard->save();
+            };
         }
 
 

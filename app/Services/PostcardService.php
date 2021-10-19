@@ -59,7 +59,6 @@ class PostcardService
                 $geo['postcard_id'] = $this->postcard->id;
                 $flag = true;
             }
-
             GeoData::create($geo);
             if($flag) break;
         }

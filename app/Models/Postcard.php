@@ -75,4 +75,13 @@ class Postcard extends Model
             ->orderBy('start','desc')
             ->first();
     }
+
+    public function firstMailing()
+    {
+        return DB::table('postcards_mailings')
+            ->where('postcard_id',$this->id)
+            ->where('status',MailingType::ACTIVE)
+            ->orderBy('start','asc')
+            ->first();
+    }
 }
