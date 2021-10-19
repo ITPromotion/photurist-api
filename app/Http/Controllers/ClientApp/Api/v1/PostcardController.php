@@ -32,6 +32,7 @@ class PostcardController extends Controller
     public function index(Request $request)
     {
         $postCardsQuery = Postcard::with(
+                    'user:id,login',
                             'textData',
                             'geoData',
                             'tagData',
