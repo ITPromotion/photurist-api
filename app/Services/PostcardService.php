@@ -25,7 +25,7 @@ class PostcardService
 
         $textData = $request->input('text_data');
 
-        dd($textData);
+        dd($request->all());
 
         $flag = false;
 
