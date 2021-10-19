@@ -66,6 +66,7 @@ class PostcardController extends Controller
 
         $postCardsQuery = $user->postcards()
             ->with(
+                'user:id,login',
                 'textData',
                 'geoData',
                 'tagData',
