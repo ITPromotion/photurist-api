@@ -25,8 +25,6 @@ class PostcardService
 
         $textData = $request->input('text_data');
 
-        dd($request->all());
-
         $flag = false;
 
         $this->postcard->textData()->delete();
