@@ -50,7 +50,7 @@ class MailingCommand extends Command
 
             $lastMailing = $postcard->lastMailing();
 
-            if((!$lastMailing)||(Carbon::parse($lastMailing->start)>Carbon::now()->subMinutes(env('INTERVAL_STEP',5)))){
+            if((!$lastMailing)||(Carbon::parse($lastMailing->start)->addMinutes(env('INTERVAL_STEP',60))<Carbon::now())){
 
                 $userIds = DB::table('postcards_mailings')
                             ->where('postcard_id', $postcard->id)
