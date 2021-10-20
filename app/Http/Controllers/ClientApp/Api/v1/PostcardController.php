@@ -15,6 +15,7 @@ use App\Models\Postcard;
 use App\Models\TextData;
 use App\Services\PostcardService;
 use App\Traits\FileTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -64,7 +65,40 @@ class PostcardController extends Controller
     {
         $user = Auth::user();
 
-        $postCardsQuery = $user->postcards()
+        $postcardsQuery = Postcard::query()
+            ->leftjoin('postcards_mailings','postcards.id','=', 'postcards_mailings.postcard_id')
+            ->leftjoin('postcards_users','postcards.id','=', 'postcards_users.postcard_id')
+            ->where('postcards_mailings.user_id',$user->id)
+            ->where(function ($query){
+                $query->where('postcards_mailings.start','>',Carbon::now())
+                        ->where('postcards_mailings.stop','<',Carbon::now())
+                        ->orWhereNull('postcards_mailings.user_id');
+            })
+            ->orWhere('postcards_users.user_id', $user->id)
+            ->orWhereNull('postcards_mailings.user_id')
+            ->selectRaw('postcards.*, postcards_mailings.start, postcards_mailings.stop')
+            ->with(
+                'user:id,login',
+                'textData',
+                'geoData',
+                'tagData',
+                'audioData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+            );
+
+        if(is_numeric($request->input('offset')))
+            $postcardsQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $postcardsQuery->limit($request->input('limit'));
+
+        $postcards = $postcardsQuery->get();
+
+        return new PostcardCollection($postcards);
+
+        $postcardsQuery = $user->postcards()
             ->whereIn('status',[PostcardStatus::CREATED, PostcardStatus::ARCHIVE])
             ->with(
                 'user:id,login',
@@ -98,7 +132,7 @@ class PostcardController extends Controller
             )->get();
         $postCards->concat($postcardFavorites);
 
-        return new PostcardCollection($postCards);
+        return new PostcardCollection($postcards);
     }
 
     /**
