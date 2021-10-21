@@ -98,43 +98,7 @@ class PostcardController extends Controller
         if(is_numeric($request->input('limit')))
             $postcardsQuery->limit($request->input('limit'));
 
-        $postcards = $postcardsQuery->get();
-
-        return new PostcardCollection($postcards);
-
-        $postcardsQuery = $user->postcards()
-            ->whereIn('status',[PostcardStatus::CREATED, PostcardStatus::ARCHIVE])
-            ->with(
-                'user:id,login',
-                'textData',
-                'geoData',
-                'tagData',
-                'audioData',
-                'mediaContents.textData',
-                'mediaContents.geoData',
-                'mediaContents.audioData',
-            );
-
-        if(is_numeric($request->input('offset')))
-            $postCardsQuery->offset($request->input('offset'));
-
-        if(is_numeric($request->input('limit')))
-            $postCardsQuery->limit($request->input('limit'));
-
-        $postCards = $postCardsQuery->orderBy('created_at','desc')->get();
-
-        $postcardFavorites = $user->postcardFavorites()
-            ->with(
-                'user:id,login',
-                'textData',
-                'geoData',
-                'tagData',
-                'audioData',
-                'mediaContents.textData',
-                'mediaContents.geoData',
-                'mediaContents.audioData',
-            )->get();
-        $postCards->concat($postcardFavorites);
+        $postcards = $postcardsQuery->orderBy('sort', 'desc')->get();
 
         return new PostcardCollection($postcards);
     }
