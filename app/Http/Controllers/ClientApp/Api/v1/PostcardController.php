@@ -68,16 +68,20 @@ class PostcardController extends Controller
         $postcardsQuery = Postcard::query()
             ->leftjoin('postcards_mailings','postcards.id','=', 'postcards_mailings.postcard_id')
             ->leftjoin('postcards_users','postcards.id','=', 'postcards_users.postcard_id')
-            ->where('postcards_mailings.user_id',$user->id)
-            ->where(function ($query){
-                $query->where('postcards_mailings.start','>',Carbon::now())
-                        ->where('postcards_mailings.stop','<',Carbon::now())
-                        ->orWhereNull('postcards_mailings.user_id');
+
+            ->where(function ($query) use ($user){
+                $query->where('postcards_mailings.start','<',Carbon::now())
+                        ->where('postcards_mailings.stop','>',Carbon::now())
+                        ->where('postcards_mailings.user_id',$user->id);
             })
+            ->orWhere('postcards.user_id', $user->id)
             ->orWhere('postcards_users.user_id', $user->id)
-            ->orWhereNull('postcards_mailings.user_id')
-            ->selectRaw('postcards.*, postcards_mailings.start, postcards_mailings.stop')
-            ->with(
+            ->selectRaw(
+                'postcards.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, postcards.created_at) as sort,
+                IF(postcards.user_id="'.$user->id.'", 1, 0) as author
+            ');
+        $postcardsQuery->with(
                 'user:id,login',
                 'textData',
                 'geoData',
