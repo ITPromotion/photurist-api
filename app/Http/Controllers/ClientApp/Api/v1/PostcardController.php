@@ -81,6 +81,7 @@ class PostcardController extends Controller
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
                 IF(postcards.user_id="'.$user->id.'", 1, 0) as author
             ');
+
         $postcardsQuery->with(
                 'user:id,login',
                 'textData',
@@ -216,7 +217,7 @@ class PostcardController extends Controller
         $data = [
                 'link' => $link,
                 'postcard_id' => $request->input('media_content_id')?null:$request->input('postcard_id'),
-                'media_content_id' => $request->input('media_content_id')?0:null,
+                'media_content_id' => $request->input('media_content_id')?$request->input('media_content_id'):null,
             ];
 
         $audio = AudioData::create($data);
