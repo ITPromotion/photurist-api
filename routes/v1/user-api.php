@@ -39,3 +39,7 @@ Route::post('/save-audio', [PostcardControllerAlias::class,'saveAudio']);
 
 /* Set geo data */
 Route::post('/set-geo-data', [UserController::class,'setGeoData']);
+
+/* Save device */
+
+Route::post('/add-device', [UserController::class, 'saveDevice'])->name('saveDevice');
