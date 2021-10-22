@@ -65,4 +65,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Postcard::class, 'postcards_users');
     }
+
+    public function device ():HasMany
+    {
+        return $this->hasMany(Device::class);
+    }
 }
