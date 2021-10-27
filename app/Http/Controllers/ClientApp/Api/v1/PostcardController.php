@@ -18,6 +18,7 @@ use App\Traits\FileTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -65,24 +66,61 @@ class PostcardController extends Controller
     {
         $user = Auth::user();
 
-        $postcardsQuery = Postcard::query()
-            ->leftjoin('postcards_mailings','postcards.id','=', 'postcards_mailings.postcard_id')
-            ->leftjoin('postcards_users','postcards.id','=', 'postcards_users.postcard_id')
-
-            ->where(function ($query) use ($user){
-                $query->where('postcards_mailings.start','<',Carbon::now())
-                        ->where('postcards_mailings.stop','>',Carbon::now())
-                        ->where('postcards_mailings.user_id',$user->id);
-            })
-            ->orWhere('postcards.user_id', $user->id)
-            ->orWhere('postcards_users.user_id', $user->id)
-            ->selectRaw(
-                'postcards.*, postcards_mailings.start, postcards_mailings.stop,
+        $postcardsQuery = DB::query()
+            ->selectRaw('
+            *  from (select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
-                IF(postcards.user_id="'.$user->id.'", 1, 0) as author
-            ');
+                IF(postcards.user_id=?, 1, 0) as author
+             from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
+             where ((`postcards_mailings`.`start` < ? and `postcards_mailings`.`stop` > ? and `postcards_mailings`.`user_id` = ?) )
+             and `postcards`.`deleted_at` is null
+					UNION
+select pc1.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, pc1.created_at) as sort,
+                IF(pc1.user_id=?, 1, 0) as author
+             from `postcards` as pc1
+						 LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
+						 left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
+						 where (`postcards_users`.`user_id` = ? ) and postcards_mailings.user_id = ? 	and
+						`pc1`.`deleted_at` is null
+		UNION
+select pc1.*, null, null,
+                pc1.created_at as sort,
+                IF(pc1.user_id=?, 1, 0) as author
+             from `postcards` as pc1 where (`pc1`.`user_id` = ?) 	and
+						`pc1`.`deleted_at` is null
 
-        $postcardsQuery->with(
+			ORDER BY `sort` desc) as res
+
+WHERE res.user_id <> ? or (user_id = ? and start is NULL)
+    LIMIT ?, ?'
+                ,[
+                1, Carbon::now(), Carbon::now(), 1, 1, 1, 1, 1, 1, 1,1, $request->input('offset'), $request->input('limit')
+            ]);
+
+        $postcards = array();
+
+        $postcardCollections = $postcardsQuery->get();
+
+        foreach ($postcardCollections as $postcardCollection){
+            $postcard = Postcard::find($postcardCollection->id);
+            $postcard->start = $postcardCollection->start;
+            $postcard->stop = $postcardCollection->stop;
+            $postcard->author = $postcardCollection->author;
+            $postcard->load('user:id,login',
+                'textData',
+                'geoData',
+                'tagData',
+                'audioData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+            );
+
+            $postcards[] = $postcard;
+        }
+
+        /*$postcardsQuery->with(
                 'user:id,login',
                 'textData',
                 'geoData',
@@ -99,7 +137,7 @@ class PostcardController extends Controller
         if(is_numeric($request->input('limit')))
             $postcardsQuery->limit($request->input('limit'));
 
-        $postcards = $postcardsQuery->orderBy('sort', 'desc')->get();
+        $postcards = $postcardsQuery->orderBy('sort', 'desc')->get();*/
 
         return new PostcardCollection($postcards);
     }
