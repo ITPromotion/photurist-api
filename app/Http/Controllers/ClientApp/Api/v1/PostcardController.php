@@ -95,7 +95,7 @@ select pc1.*, null, null,
 WHERE res.user_id <> ? or (user_id = ? and start is NULL)
     LIMIT ?, ?'
                 ,[
-                1, Carbon::now(), Carbon::now(), 1, 1, 1, 1, 1, 1, 1,1, $request->input('offset'), $request->input('limit')
+                    $user->id, Carbon::now(), Carbon::now(), $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $request->input('offset'), $request->input('limit')
             ]);
 
         $postcards = array();
