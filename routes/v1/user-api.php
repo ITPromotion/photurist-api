@@ -43,3 +43,7 @@ Route::post('/set-geo-data', [UserController::class,'setGeoData']);
 /* Save device */
 
 Route::post('/add-device', [UserController::class, 'saveDevice'])->name('saveDevice');
+
+/* Delete device */
+
+Route::delete('/delete-device', [UserController::class, 'deleteDevice'])->name('deleteDevice');
