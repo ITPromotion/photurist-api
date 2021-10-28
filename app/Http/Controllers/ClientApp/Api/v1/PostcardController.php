@@ -104,8 +104,13 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
         foreach ($postcardCollections as $postcardCollection){
             $postcard = Postcard::find($postcardCollection->id);
-            $postcard->start = $postcardCollection->start;
-            $postcard->stop = $postcardCollection->stop;
+            if(($postcard->user_id==$user->id)&&($postcard->status==PostcardStatus::ACTIVE)){
+                $postcard->start = Carbon::parse($postcard->updated_at)->format('Y-m-d h:i:s');
+                $postcard->stop = Carbon::parse($postcard->updated_at)->addMinutes($postcard->interval_send)->format('Y-m-d h:i:s');
+            }else {
+                $postcard->start = $postcardCollection->start;
+                $postcard->stop = $postcardCollection->stop;
+            }
             $postcard->author = $postcardCollection->author;
             $postcard->load('user:id,login',
                 'textData',
