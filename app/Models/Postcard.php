@@ -84,4 +84,8 @@ class Postcard extends Model
             ->orderBy('start','asc')
             ->first();
     }
+
+    public function getDevice() {
+        return Device::where('user_id', '!=', $this->user_id)->pluck('token')->toArray();
+    }
 }

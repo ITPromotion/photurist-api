@@ -8,6 +8,7 @@ use App\Models\GeoData;
 use App\Models\Postcard;
 use App\Models\TagData;
 use App\Models\TextData;
+use App\Models\Device;
 use Illuminate\Http\Request;
 
 
@@ -84,6 +85,19 @@ class PostcardService
         $this->postcard->regions = $request->input('regions');
         $this->postcard->cities = $request->input('cities');
         $this->postcard->save();
+        try {
+            if ($request->input('status') == \App\Enums\PostcardStatus::ACTIVE) {
+                return (new NotificationService)->send([
+                    'users' => $this->postcard->getDevice(),
+                    'title' => $this->postcard->user->login,
+                    'body' => 'новая открытка',
+                    'img' => $this->postcard->mediaContents[0]->link,
+                ]);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
     }
 
     public function deletePostcard()
