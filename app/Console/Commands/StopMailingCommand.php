@@ -40,11 +40,27 @@ class StopMailingCommand extends Command
      */
     public function handle()
     {
-        DB::table('postcards_mailings')
+        $postcards = DB::table('postcards_mailings')
             ->where('status', MailingType::ACTIVE)
-            ->where('stop','<', Carbon::now())
-            ->update(['status' => MailingType::CLOSED]);
+            ->where('stop','<', Carbon::now());
 
+        $postcards->update(['status' => MailingType::CLOSED]);
+
+
+        try {
+            $postcard_id = $postcards->pluck('postcard_id')->toArray();
+
+            $user_id = DB::table('postcards')->whereIn('id', $postcard_id)->pluck('user_id')->toArray();
+            $users = DB::table('devices')->whereIn('user_id', $user_id)->pluck('token')->toArray();
+            (new \App\Services\NotificationService)->send([
+                'users' => $users,
+                'title' => null,
+                'body' => 'Время рассылки истекло, открытка больше не рассылается новым получателям',
+                'img' => null,
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
         return 0;
     }
 }
