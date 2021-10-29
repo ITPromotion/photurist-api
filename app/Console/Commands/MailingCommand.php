@@ -91,6 +91,17 @@ class MailingCommand extends Command
             if(($firstMailing)&&(Carbon::parse($firstMailing->start)<Carbon::now()->subMinutes($postcard->interval_send))){
               $postcard->status = PostcardStatus::ARCHIVE;
               $postcard->save();
+
+              try {
+                (new NotificationService)->send([
+                    'users' => $user->devices()->pluck('token')->toArray(),
+                    'title' => $postcard->user->login,
+                    'body' => 'Время ожидание истекло',
+                    'img' => $postcard->mediaContents[0]->link,
+                ]);
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
             };
         }
 
