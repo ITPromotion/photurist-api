@@ -4,9 +4,6 @@ namespace App\Services;
 
 class NotificationService {
 
-    public function data1 () {
-        return $this->send(['title' => 'fsa', 'body' => 'test']);
-    }
 
     public function send ($req = null) {
         $url = 'https://fcm.googleapis.com/fcm/send';

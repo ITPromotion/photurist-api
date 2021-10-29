@@ -85,18 +85,6 @@ class PostcardService
         $this->postcard->regions = $request->input('regions');
         $this->postcard->cities = $request->input('cities');
         $this->postcard->save();
-        try {
-            if ($request->input('status') == \App\Enums\PostcardStatus::ACTIVE) {
-                return (new NotificationService)->send([
-                    'users' => $this->postcard->getDevice(),
-                    'title' => $this->postcard->user->login,
-                    'body' => 'новая открытка',
-                    'img' => $this->postcard->mediaContents[0]->link,
-                ]);
-            }
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
 
     }
 
