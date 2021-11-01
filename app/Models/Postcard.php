@@ -18,6 +18,7 @@ class Postcard extends Model
     protected  $fillable = [
             'user_id',
             'status',
+            'start_mailing',
             'interval_send',
             'interval_wait',
             'radius',

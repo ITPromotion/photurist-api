@@ -4,11 +4,13 @@
 namespace App\Services;
 
 
+use App\Enums\MailingType;
 use App\Models\GeoData;
 use App\Models\Postcard;
 use App\Models\TagData;
 use App\Models\TextData;
 use App\Models\Device;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 
@@ -76,6 +78,8 @@ class PostcardService
         }
         $this->postcard->restore();
         $this->postcard->status = $request->input('status');
+        if($this->postcard->status == MailingType::ACTIVE)
+                 $this->postcard->start_mailing = Carbon::now();
         $this->postcard->interval_send = $request->input('interval_send');
         $this->postcard->interval_wait = $request->input('interval_wait');
         $this->postcard->radius = $request->input('radius');
