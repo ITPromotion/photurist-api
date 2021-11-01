@@ -13,4 +13,8 @@ class Device extends Model
         'token',
         'type',
     ];
+
+    public function getTokenUsers ($userIds) {
+        return self::whereIn('user_id', $userIds)->pluck('token')->toArray();
+    }
 }

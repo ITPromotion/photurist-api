@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Services\NotificationService;
 
 class MailingCommand extends Command
 {
@@ -71,6 +72,17 @@ class MailingCommand extends Command
                         'start' => Carbon::now(),
                         'stop' => Carbon::now()->addMinutes($postcard->interval_wait),
                     ]);
+
+                    try {
+                        (new NotificationService)->send([
+                            'users' => $user->devices()->pluck('token')->toArray(),
+                            'title' => $postcard->user->login,
+                            'body' => 'новая открытка',
+                            'img' => $postcard->mediaContents[0]->link,
+                        ]);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
                 }
             }
 
@@ -79,6 +91,17 @@ class MailingCommand extends Command
             if(($firstMailing)&&(Carbon::parse($firstMailing->start)<Carbon::now()->subMinutes($postcard->interval_send))){
               $postcard->status = PostcardStatus::ARCHIVE;
               $postcard->save();
+
+              try {
+                (new NotificationService)->send([
+                    'users' => $user->devices()->pluck('token')->toArray(),
+                    'title' => $postcard->user->login,
+                    'body' => 'Время ожидание истекло',
+                    'img' => $postcard->mediaContents[0]->link,
+                ]);
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
             };
         }
 

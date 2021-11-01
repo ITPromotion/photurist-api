@@ -77,6 +77,13 @@ class Postcard extends Model
             ->first();
     }
 
+    public function allMailingsUserIds () {
+        return DB::table('postcards_mailings')
+        ->where('postcard_id',$this->id)
+        ->where('status',MailingType::ACTIVE)
+        ->pluck('user_id')->toArray();
+    }
+
     public function firstMailing()
     {
         return DB::table('postcards_mailings')

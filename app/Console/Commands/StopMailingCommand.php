@@ -48,10 +48,10 @@ class StopMailingCommand extends Command
 
 
         try {
-            $postcard_id = $postcards->pluck('postcard_id')->toArray();
+            $postcardIds = $postcards->pluck('postcard_id')->toArray();
 
-            $user_id = DB::table('postcards')->whereIn('id', $postcard_id)->pluck('user_id')->toArray();
-            $users = DB::table('devices')->whereIn('user_id', $user_id)->pluck('token')->toArray();
+            $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
+            $users = DB::table('devices')->whereIn('user_id', $userIds)->pluck('token')->toArray();
             (new \App\Services\NotificationService)->send([
                 'users' => $users,
                 'title' => null,

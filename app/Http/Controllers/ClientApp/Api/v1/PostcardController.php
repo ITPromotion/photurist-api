@@ -20,7 +20,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\Device;
+use App\Services\NotificationService;
 
 class PostcardController extends Controller
 {
@@ -224,7 +225,22 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
     public function destroy(Postcard $postcard)
     {
         $postcardService = new PostcardService($postcard);
+
+        try {
+            $userIds = $postcard->allMailingsUserIds();
+            (new NotificationService)->send([
+                'users' => Device::getTokenUsers($userIds),
+                'title' => $postcard->user->login,
+                'body' => 'Открытка удалена',
+                'img' => $postcard->mediaContents[0]->link,
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
         $postcard->delete();
+
+
     }
 
     /**
