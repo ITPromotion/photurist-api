@@ -16,7 +16,7 @@ class CreateMediaContentsTable extends Migration
     {
         Schema::create('media_contents', function (Blueprint $table) {
             $table->id();
-            $table->enum('media_content_type', MediaContentType::values())->nullable();
+            $table->enum('media_content_type', MediaContentType::keys())->nullable();
             $table->unsignedBigInteger('postcard_id')->nullable();
             $table->foreign('postcard_id')->references('id')->on('postcards')->onDelete('cascade');
             $table->softDeletes();
