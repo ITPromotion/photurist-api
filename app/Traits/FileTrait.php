@@ -20,9 +20,10 @@ trait FileTrait
     public function saveMediaContent($image, $folder = 'postcard', $type = null): string
     {
         if ($image->isValid() && $image->getSize() !== 0) {
+            $imageName = Storage::disk('public')->putFile($folder, $image);
 
             if (isset($type) && MediaContentType::PHOTO == $type) {
-                $imgName =  $image->getClientOriginalName();
+                $imgName = explode('image/', $imageName)[1];
                 $img = Image::make($image);
 
                 foreach (SizeImage::keys() as $value) {
@@ -31,10 +32,7 @@ trait FileTrait
                     $img->resize($size, $size);
                     $img->save('storage/'.$folder."/$value/".$imgName);
                 }
-                $imageName = Storage::disk('public')->putFile($folder, $image);
             }
-
-            $imageName = Storage::disk('public')->putFile($folder, $image);
 
             return $imageName;
         }

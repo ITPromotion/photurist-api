@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Enums\SizeImage;
 
 class MediaContent extends Model
 {
@@ -21,6 +22,28 @@ class MediaContent extends Model
         'media_content_type',
         'postcard_id',
     ];
+
+    protected $appends = ['small', 'midle', 'large'];
+
+    public function getSmallAttribute () {
+        $url = explode('image/', $this->link);
+        $small = SizeImage::SMALL;
+        return $url[0]."image/$small/".$url[1];
+    }
+
+    public function getMidleAttribute () {
+        $url = explode('image/', $this->link);
+        $midle = SizeImage::MIDLE;
+        return $url[0]."image/$midle/".$url[1];
+    }
+
+    public function getLargeAttribute () {
+        $url = explode('image/', $this->link);
+        $large = SizeImage::LARGE;
+        return $url[0]."image/$large/".$url[1];
+    }
+
+
 
     public function textData():HasOne
     {
