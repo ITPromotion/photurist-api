@@ -40,7 +40,7 @@ trait FileTrait
             } else if (isset($type) && MediaContentType::VIDEO == $type) {
                 $videoName = explode('image/', $imageName)[1];
                 $ffmpeg = FFMpeg::create();
-                $video = $ffmpeg->open($imageName);
+                $video = $ffmpeg->open('storage/'.$imageName);
 
                 foreach (SizeImage::keys() as $value) {
                     try {
