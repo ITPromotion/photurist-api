@@ -47,3 +47,5 @@ Route::post('/add-device', [UserController::class, 'saveDevice'])->name('saveDev
 /* Delete device */
 
 Route::delete('/delete-device', [UserController::class, 'deleteDevice'])->name('deleteDevice');
+
+Route::post('/add-favorites', [PostcardControllerAlias::class, 'addFavorites']);

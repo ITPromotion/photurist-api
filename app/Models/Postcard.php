@@ -28,6 +28,15 @@ class Postcard extends Model
             'regions',
             'cities',
         ];
+    protected $appends = ['favorite'];
+
+    public function getFavoriteAttribute() {
+        $favorite = $this->favorites()->wherePivot('user_id', \Auth::user()->id)->first();
+        if ($favorite) {
+            return true;
+        }
+        return false;
+    }
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -95,5 +104,9 @@ class Postcard extends Model
 
     public function getDevice() {
         return Device::where('user_id', '!=', $this->user_id)->pluck('token')->toArray();
+    }
+
+    public function favorites() {
+        return $this->BelongsToMany(User::class, 'favorites')->withPivot('user_id', 'postcard_id');
     }
 }
