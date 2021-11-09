@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\SizeImage;
+use App\Enums\MediaContentType;
 
 class MediaContent extends Model
 {
@@ -23,7 +24,16 @@ class MediaContent extends Model
         'postcard_id',
     ];
 
-    protected $appends = ['small', 'midle', 'large'];
+    protected $appends = ['small', 'midle', 'large', 'clip'];
+
+    public function getClipAttribute() {
+        if ($this->media_content_type == MediaContentType::VIDEO) {
+            $url = explode('image/', $this->link);
+            return $url[0]."image/clip/".$url[1];
+        }
+        return '';
+
+    }
 
     public function getSmallAttribute () {
         try {

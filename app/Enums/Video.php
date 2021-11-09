@@ -12,6 +12,6 @@ use Rexlabs\Enum\Enum;
  */
 class Video extends Enum
 {
-    const START = '30';
-    const DURATION = '5';
+    const START = 1;
+    const DURATION = 3;
 }

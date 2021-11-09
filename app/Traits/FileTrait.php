@@ -41,21 +41,24 @@ trait FileTrait
                 $videoName = explode('image/', $imageName)[1];
                 $ffmpeg = FFMpeg::create();
                 $video = $ffmpeg->open('storage/'.$imageName);
-
+                $this->_createDir($folder."/clip/");
                 foreach (SizeImage::keys() as $value) {
+
                     try {
                         $this->_createDir($folder."/$value/");
                         $size = explode('x' , $value)[0];
+                        $size = $size % 2 ? $size + 1 : $size;
                         $video->filters()
                         ->resize(new \FFMpeg\Coordinate\Dimension($size, $size))
                         ->synchronize();
 
-                        $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
-                        $clip->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
+                        $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
                     } catch (\Throwable $th) {
                         //throw $th;
                     }
                 }
+                $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
+                $clip->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/clip/".$videoName);
             }
 
             return $imageName;
