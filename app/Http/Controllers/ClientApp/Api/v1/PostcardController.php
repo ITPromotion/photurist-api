@@ -327,14 +327,19 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         Auth::user()->postCardFavorites()->sync($request->input('postcard_id'),false);
     }
 
-    public function addFavorites (AddPostcardToGalleryRequest $request) {
+    public function addFavorite (AddPostcardToGalleryRequest $request) {
         $favorites = Auth::user()->favorites();
+        $favorites->attach($request->input('postcard_id'));
+        return true;
+    }
 
+    public function deleteFavorite (AddPostcardToGalleryRequest $request) {
+        $favorites = Auth::user()->favorites();
         if ($favorites->wherePivot('postcard_id',$request->input('postcard_id'))->first()) {
             $favorites->detach($request->input('postcard_id'));
-        } else {
-            $favorites->attach($request->input('postcard_id'));
+            return true;
         }
+        return false
     }
 
 
