@@ -339,7 +339,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             $favorites->detach($request->input('postcard_id'));
             return true;
         }
-        return false
+        return false;
     }
 
 
