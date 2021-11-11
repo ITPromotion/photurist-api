@@ -251,12 +251,12 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
      */
     public function saveMedia(Request $request)
     {
-        $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/image');
-
+        $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/image', $request->input('media_content_type'));
         $mediaContent = MediaContent::create([
                 'link' => $link,
                 'postcard_id' => $request->input('postcard_id'),
-            ]);
+                'media_content_type' => $request->input('media_content_type')
+        ]);
         return new MediaContentResource($mediaContent);
 
     }
@@ -330,6 +330,21 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
     public function removePostcardFromList($id)
     {
         Auth::user()->postcardFavorites()->detach($id);
+    }
+
+    public function addFavorite (AddPostcardToGalleryRequest $request) {
+        $favorites = Auth::user()->favorites();
+        $favorites->attach($request->input('postcard_id'));
+        return true;
+    }
+
+    public function deleteFavorite (AddPostcardToGalleryRequest $request) {
+        $favorites = Auth::user()->favorites();
+        if ($favorites->wherePivot('postcard_id',$request->input('postcard_id'))->first()) {
+            $favorites->detach($request->input('postcard_id'));
+            return true;
+        }
+        return false;
     }
 
 

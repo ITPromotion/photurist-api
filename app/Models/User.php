@@ -70,4 +70,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Device::class);
     }
+
+    public function favorites():BelongsToMany {
+        return $this->BelongsToMany(Postcard::class, 'favorites')->withPivot('user_id', 'postcard_id');
+    }
 }
