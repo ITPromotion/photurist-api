@@ -324,7 +324,12 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
     public function addPostcardToGallery(AddPostcardToGalleryRequest $request)
     {
-        Auth::user()->postCardFavorites()->sync($request->input('postcard_id'),false);
+        Auth::user()->postcardFavorites()->sync($request->input('postcard_id'),false);
+    }
+
+    public function removePostcardFromList($id)
+    {
+        Auth::user()->postcardFavorites()->detach($id);
     }
 
 

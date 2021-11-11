@@ -47,3 +47,8 @@ Route::post('/add-device', [UserController::class, 'saveDevice'])->name('saveDev
 /* Delete device */
 
 Route::delete('/delete-device', [UserController::class, 'deleteDevice'])->name('deleteDevice');
+
+
+/* Remove postcard from list */
+
+Route::delete('/remove-postcard-from-list/{id}', [PostcardControllerAlias::class, 'removePostcardFromList']);
