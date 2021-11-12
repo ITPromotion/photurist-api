@@ -347,5 +347,15 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         return false;
     }
 
+    public function hidePostcard($id)
+    {
+        DB::table('postcards_mailings')
+            ->where('postcard_id', $id)
+            ->where('user_id',Auth::id())
+            ->update([
+               'stop'=> Carbon::now(),
+            ]);
+    }
+
 
 }

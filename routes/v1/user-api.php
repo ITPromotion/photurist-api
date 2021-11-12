@@ -56,3 +56,8 @@ Route::delete('/delete-favorites', [PostcardControllerAlias::class, 'deleteFavor
 /* Remove postcard from list */
 
 Route::delete('/remove-postcard-from-list/{id}', [PostcardControllerAlias::class, 'removePostcardFromList']);
+
+
+/* Hide postcard for user */
+
+Route::put('/hide-postcard/{id}', [PostcardControllerAlias::class, 'hidePostcard']);
