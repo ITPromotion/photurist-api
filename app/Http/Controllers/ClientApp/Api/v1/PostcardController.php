@@ -327,7 +327,12 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
     public function addPostcardToGallery(AddPostcardToGalleryRequest $request)
     {
-        Auth::user()->postCardFavorites()->sync($request->input('postcard_id'),false);
+        Auth::user()->postcardFavorites()->sync($request->input('postcard_id'),false);
+    }
+
+    public function removePostcardFromList($id)
+    {
+        Auth::user()->postcardFavorites()->detach($id);
     }
 
     public function addFavorite (AddPostcardToGalleryRequest $request) {
@@ -343,6 +348,16 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             return true;
         }
         return false;
+    }
+
+    public function hidePostcard($id)
+    {
+        DB::table('postcards_mailings')
+            ->where('postcard_id', $id)
+            ->where('user_id',Auth::id())
+            ->update([
+               'stop'=> Carbon::now(),
+            ]);
     }
 
 

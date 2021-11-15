@@ -51,3 +51,13 @@ Route::delete('/delete-device', [UserController::class, 'deleteDevice'])->name('
 Route::post('/add-favorites', [PostcardControllerAlias::class, 'addFavorite']);
 
 Route::delete('/delete-favorites', [PostcardControllerAlias::class, 'deleteFavorite']);
+
+
+/* Remove postcard from list */
+
+Route::delete('/remove-postcard-from-list/{id}', [PostcardControllerAlias::class, 'removePostcardFromList']);
+
+
+/* Hide postcard for user */
+
+Route::put('/hide-postcard/{id}', [PostcardControllerAlias::class, 'hidePostcard']);
