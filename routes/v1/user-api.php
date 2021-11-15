@@ -61,3 +61,8 @@ Route::delete('/remove-postcard-from-list/{id}', [PostcardControllerAlias::class
 /* Hide postcard for user */
 
 Route::put('/hide-postcard/{id}', [PostcardControllerAlias::class, 'hidePostcard']);
+
+
+/* set status */
+
+Route::put('/set-status-postcard/{id}', [PostcardControllerAlias::class, 'setStatusPostcard']);
