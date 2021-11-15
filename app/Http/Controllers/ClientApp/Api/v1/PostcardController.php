@@ -373,7 +373,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
         $postcard->save();
 
-        return $postcard->load('user:id,login',
+         $postcard->load('user:id,login',
             'textData',
             'geoData',
             'tagData',
@@ -381,7 +381,8 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             'mediaContents.textData',
             'mediaContents.geoData',
             'mediaContents.audioData',
-        );;
+        );
+         return new PostcardResource($postcard);
     }
 
 
