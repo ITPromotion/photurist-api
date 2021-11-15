@@ -35,7 +35,10 @@ trait FileTrait
                     $size = explode('x' , $value)[0];
                     $height = $img->height() > $img->width();
                     $width = $img->height() < $img->width();
-                    $img->resize($height ? $size : null, $width ? $size : null, function ($constraint) {});
+                    $img->resize($height ? $size : null, $width ? $size : null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
                     $img->crop($size, $size);
                     $img->save('storage/'.$folder."/$value/".$imgName);
                     $img->reset();
