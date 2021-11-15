@@ -101,7 +101,7 @@ class MailingCommand extends Command
                     'body' => 'Время ожидание истекло',
                     'img' => $postcard->mediaContents[0]->link,
                     'postcard_id' => $postcard->id,
-                    'action_loc_key' => ActionLocKey::GALLERY,
+                    'action_loc_key' => ActionLocKey::WAITING_TIME,
                 ]);
             } catch (\Throwable $th) {
                 //throw $th;

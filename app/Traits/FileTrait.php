@@ -33,6 +33,9 @@ trait FileTrait
                 foreach (SizeImage::keys() as $value) {
                     $this->_createDir($folder."/$value/");
                     $size = explode('x' , $value)[0];
+                    $height = $img->height() > $img->width();
+                    $width = $img->height() < $img->width();
+                    $img->resize($height ? $size : null, $width ? $size : null, function ($constraint) {});
                     $img->crop($size, $size);
                     $img->save('storage/'.$folder."/$value/".$imgName);
                     $img->reset();
