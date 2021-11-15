@@ -6,6 +6,7 @@ use App\Enums\MailingType;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Enums\ActionLocKey;
 
 class StopMailingCommand extends Command
 {
@@ -57,6 +58,8 @@ class StopMailingCommand extends Command
                 'title' => null,
                 'body' => 'Время рассылки истекло, открытка больше не рассылается новым получателям',
                 'img' => null,
+                'postcard_id' => '',
+                'action_loc_key' => ActionLocKey::TIME_IS_UP,
             ]);
         } catch (\Throwable $th) {
             //throw $th;

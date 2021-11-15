@@ -17,6 +17,9 @@ class NotificationService {
                 "title" => $req['title'],
                 "body" => $req['body'],
                 'image' => 'https://dev.photurist.com/storage/'.$req['img'],
+                'postcard_id' => $req['postcard_id'] ?? null,
+                'action_loc_key' => $req['action_loc_key'] ?? null,
+
             ],
         ];
         $encodedData = json_encode($data);

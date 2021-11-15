@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificationService;
-
+use App\Enums\ActionLocKey;
 class MailingCommand extends Command
 {
     /**
@@ -79,6 +79,8 @@ class MailingCommand extends Command
                             'title' => $postcard->user->login,
                             'body' => 'новая открытка',
                             'img' => $postcard->mediaContents[0]->link,
+                            'postcard_id' => $postcard->id,
+                            'action_loc_key' => ActionLocKey::GALLERY,
                         ]);
                     } catch (\Throwable $th) {
                         //throw $th;
@@ -98,6 +100,8 @@ class MailingCommand extends Command
                     'title' => $postcard->user->login,
                     'body' => 'Время ожидание истекло',
                     'img' => $postcard->mediaContents[0]->link,
+                    'postcard_id' => $postcard->id,
+                    'action_loc_key' => ActionLocKey::GALLERY,
                 ]);
             } catch (\Throwable $th) {
                 //throw $th;

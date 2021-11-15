@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Device;
 use App\Services\NotificationService;
+use App\Enums\ActionLocKey;
 
 class PostcardController extends Controller
 {
@@ -233,6 +234,8 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 'title' => $postcard->user->login,
                 'body' => 'Открытка удалена',
                 'img' => $postcard->mediaContents[0]->link,
+                'postcard_id' => $postcard->id,
+                'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
             ]);
         } catch (\Throwable $th) {
             //throw $th;
