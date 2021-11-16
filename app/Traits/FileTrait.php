@@ -55,7 +55,7 @@ trait FileTrait
                         $size = explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
                         $video->filters()
-                        ->resize(new \FFMpeg\Coordinate\Dimension($size, $size))
+                        -->crop(new \FFMpeg\Coordinate\Point("100", 100), new \FFMpeg\Coordinate\Dimension($size, $size))
                         ->synchronize();
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
