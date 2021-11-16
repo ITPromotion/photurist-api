@@ -6,6 +6,7 @@ use App\Enums\PostcardStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientApp\Postcard\AddPostcardToGalleryRequest;
 use App\Http\Requests\ClientApp\Postcard\GetGalleryRequest;
+use App\Http\Requests\ClientApp\Postcard\SetStatusPostcardRequest;
 use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
@@ -72,14 +73,16 @@ class PostcardController extends Controller
             ->selectRaw('
             *  from (select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
-                IF(postcards.user_id=?, 1, 0) as author
+                IF(postcards.user_id=?, 1, 0) as author,
+                0 as save
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
              where ((`postcards_mailings`.`start` < ? and `postcards_mailings`.`stop` > ? and `postcards_mailings`.`user_id` = ?) )
              and `postcards`.`deleted_at` is null
 					UNION
 select pc1.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, pc1.created_at) as sort,
-                IF(pc1.user_id=?, 1, 0) as author
+                IF(pc1.user_id=?, 1, 0) as author,
+                1 as save
              from `postcards` as pc1
 						 LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
 						 left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
@@ -88,7 +91,8 @@ select pc1.*, postcards_mailings.start, postcards_mailings.stop,
 		UNION
 select pc1.*, null, null,
                 IFNULL(pc1.start_mailing, pc1.created_at) as sort,
-                IF(pc1.user_id=?, 1, 0) as author
+                IF(pc1.user_id=?, 1, 0) as author,
+                0 as save
              from `postcards` as pc1 where (`pc1`.`user_id` = ?) 	and
 						`pc1`.`deleted_at` is null
 
@@ -114,6 +118,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 $postcard->stop = $postcardCollection->stop;
             }
             $postcard->author = $postcardCollection->author;
+            $postcard->save = $postcardCollection->save;
             $postcard->load('user:id,login',
                 'textData',
                 'geoData',
@@ -358,6 +363,26 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             ->update([
                'stop'=> Carbon::now(),
             ]);
+    }
+
+    public function setStatusPostcard($id, SetStatusPostcardRequest $request)
+    {
+        $postcard = Postcard::FindOrFail($id);
+
+        $postcard->status = $request->input('status');
+
+        $postcard->save();
+
+         $postcard->load('user:id,login',
+            'textData',
+            'geoData',
+            'tagData',
+            'audioData',
+            'mediaContents.textData',
+            'mediaContents.geoData',
+            'mediaContents.audioData',
+        );
+         return new PostcardResource($postcard);
     }
 
 
