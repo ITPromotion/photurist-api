@@ -63,7 +63,7 @@ trait FileTrait
                         $size = $size % 2 ? $size + 1 : $size;
 
                         $video->filters()
-                        ->custom("crop=$size:$size:x:y,scale=w=$height < $width ?$width : $size :h=$width < $height ?$height : $size");
+                        ->custom("crop=$size:$size:$height?($height - $width)/2:($width - $height)/2:$height?($height - $width)/2:($width - $height),scale=w=$height < $width ?$width : $size :h=$width < $height ?$height : $size");
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
                     } catch (\Throwable $th) {
