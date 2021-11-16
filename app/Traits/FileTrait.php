@@ -63,10 +63,9 @@ trait FileTrait
                         $this->_createDir($folder."/$value/");
                         $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
-                        $scaleW = (integer)$height < $width  ? $width : $size;
-                        $scaleH = (integer)$height > $width  ? $height : $size;
 
-                        $video->filters()->custom("crop=420:420:(1280-420)/2:(1280-420)/2");
+
+                        $video->filters()->custom("crop=$size:$size:$xy:$xy");
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
                     } catch (\Throwable $th) {
