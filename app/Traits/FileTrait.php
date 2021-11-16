@@ -57,25 +57,23 @@ trait FileTrait
                 $width = $video_dimensions->getWidth();
                 $height =  $video_dimensions->getHeight();
                 $xy =  (int)$width < $height ? ($height - $width) / 2 : ($width - $height) / 2;
-                $video->filters()->custom("crop=184:184:(1280-720)/2:(1280-720)/2,scale=w=183:h=1280");
-                $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/184x184/".$videoName);
-                // foreach (SizeImage::keys() as $value) {
-                //     try {
+                foreach (SizeImage::keys() as $value) {
+                    try {
 
-                //         $this->_createDir($folder."/$value/");
-                //         $size = (integer)explode('x' , $value)[0];
-                //         $size = $size % 2 ? $size + 1 : $size;
-                //         $scaleW = (integer)$height < $width  ? $width : $size;
-                //         $scaleH = (integer)$height > $width  ? $height : $size;
+                        $this->_createDir($folder."/$value/");
+                        $size = (integer)explode('x' , $value)[0];
+                        $size = $size % 2 ? $size + 1 : $size;
+                        $scaleW = (integer)$height < $width  ? $width : $size;
+                        $scaleH = (integer)$height > $width  ? $height : $size;
 
 
-                //         $video->filters()->custom("crop=184:184:$xy:$xy,scale=w=420:h=420");
+                        $video->filters()->custom("crop=184:184:$xy:$xy,scale=w=184:h=184");
 
-                //         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
-                //     } catch (\Throwable $th) {
-                //         //throw $th;
-                //     }
-                // }
+                        $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
+                }
                 $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
                 $clip->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/clip/".$videoName);
             }
