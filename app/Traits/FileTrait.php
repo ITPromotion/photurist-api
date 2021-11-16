@@ -59,11 +59,11 @@ trait FileTrait
                 foreach (SizeImage::keys() as $value) {
                     try {
                         $this->_createDir($folder."/$value/");
-                        $size = explode('x' , $value)[0];
+                        $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
 
 
-                        $video->filters()->custom("crop=100:100:100:100,scale=w=100:h=100");
+                        $video->filters()->custom("crop=$size:$size:100:100,scale=w=100:h=100");
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
                     } catch (\Throwable $th) {
