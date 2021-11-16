@@ -109,4 +109,9 @@ class Postcard extends Model
     public function favorites() {
         return $this->BelongsToMany(User::class, 'favorites')->withPivot('user_id', 'postcard_id');
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'postcards_users');
+    }
 }

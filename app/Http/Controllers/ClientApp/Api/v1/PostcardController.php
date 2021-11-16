@@ -71,6 +71,104 @@ class PostcardController extends Controller
 
         $postcardsQuery = DB::query()
             ->selectRaw('
+           DISTINCT  *  from ((select postcards.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, postcards.created_at) as sort,
+                IF(postcards.user_id=?, 1, 0) as author
+             from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
+             where ((`postcards_mailings`.`start` < ? and `postcards_mailings`.`stop` > ? and `postcards_mailings`.`user_id` = ?) )
+             and `postcards`.`deleted_at` is null)
+					UNION DISTINCT
+         select pc1.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, pc1.created_at) as sort,
+                IF(pc1.user_id=?, 1, 0) as author
+             from `postcards` as pc1
+						 LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
+						 left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
+						 where (`postcards_users`.`user_id` = ? ) and postcards_mailings.user_id = ? 	and
+						`pc1`.`deleted_at` is null
+		UNION DISTINCT
+select pc1.*, null, null,
+                IFNULL(pc1.start_mailing, pc1.created_at) as sort,
+                IF(pc1.user_id=?, 1, 0) as author
+             from `postcards` as pc1 where (`pc1`.`user_id` = ?) 	and
+						`pc1`.`deleted_at` is null
+
+			ORDER BY `sort` desc) as res
+
+WHERE res.user_id <> ? or (user_id = ? and start is NULL)
+    LIMIT ?, ?'
+                ,[
+                    $user->id, Carbon::now(), Carbon::now(), $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $request->input('offset'), $request->input('limit')
+            ]);
+
+        $postcards = array();
+
+        $postcardCollections = $postcardsQuery->get();
+
+        foreach ($postcardCollections as $postcardCollection){
+            $postcard = Postcard::find($postcardCollection->id);
+            if(($postcard->user_id==$user->id)&&($postcard->status==PostcardStatus::ACTIVE)){
+                $postcard->start = Carbon::parse($postcard->updated_at)->format('Y-m-d h:i:s');
+                $postcard->stop = Carbon::parse($postcard->updated_at)->addMinutes($postcard->interval_send)->format('Y-m-d h:i:s');
+            }else {
+                $postcard->start = $postcardCollection->start;
+                $postcard->stop = $postcardCollection->stop;
+            }
+            $postcard->author = $postcardCollection->author;
+            $postcard->save = 1;
+            $usersIds = $postcard->users()->pluck('user_id');
+
+            if($usersIds->search($user->id)!==false){
+                $postcard->save = 1;
+            } else {
+                $postcard->save = 0;
+            };
+
+            $postcard->load('user:id,login',
+                'textData',
+                'geoData',
+                'tagData',
+                'audioData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+            );
+
+            $postcards[] = $postcard;
+        }
+
+        /*$postcardsQuery->with(
+                'user:id,login',
+                'textData',
+                'geoData',
+                'tagData',
+                'audioData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+            );
+
+        if(is_numeric($request->input('offset')))
+            $postcardsQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $postcardsQuery->limit($request->input('limit'));
+
+        $postcards = $postcardsQuery->orderBy('sort', 'desc')->get();*/
+
+        return new PostcardCollection($postcards);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPostcardFromIds(Request $request)
+    {
+        $user = Auth::user();
+
+        $postcardsQuery = DB::query()
+            ->selectRaw('
             *  from (select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
                 IF(postcards.user_id=?, 1, 0) as author,
@@ -102,7 +200,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
     LIMIT ?, ?'
                 ,[
                     $user->id, Carbon::now(), Carbon::now(), $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $request->input('offset'), $request->input('limit')
-            ]);
+                ]);
 
         $postcards = array();
 
@@ -153,7 +251,6 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
         return new PostcardCollection($postcards);
     }
-
     /**
      * Show the form for creating a new resource.
      *
