@@ -48,15 +48,22 @@ trait FileTrait
                 $ffmpeg = FFMpeg::create();
                 $video = $ffmpeg->open('storage/'.$imageName);
                 $this->_createDir($folder."/clip/");
+                $ffprobe = FFProbe::create();
+                $video_dimensions = $ffprobe->
+                streams('storage/'.$imageName)   // extracts streams informations
+                ->videos()                      // filters video streams
+                ->first()                       // returns the first video stream
+                ->getDimensions();
+                $width = $video_dimensions->getWidth();
+                $height =  $video_dimensions->getHeight();
                 foreach (SizeImage::keys() as $value) {
-
                     try {
                         $this->_createDir($folder."/$value/");
                         $size = explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
+
                         $video->filters()
-                        ->crop(new \FFMpeg\Coordinate\Point("100", 100), new \FFMpeg\Coordinate\Dimension($size, $size))
-                        ->synchronize();
+                        ->custom("crop=$size:$size:x:y,scale=w=$height < $width ?$width : $size :h=$width < $height ?$height : $size");
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
                     } catch (\Throwable $th) {

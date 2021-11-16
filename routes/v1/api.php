@@ -18,19 +18,21 @@ use FFMpeg\FFProbe;
 Route::get('/test', function (Request $request) {
     $ffmpeg = FFMpeg::create();
     $ffprobe = FFProbe::create();
-    $video = $ffmpeg->open('storage/postcard/1/image/pexels-anna-nekrashevich-7814905.mp4');
+    $video = $ffmpeg->open('storage/m.mp4');
     $video_dimensions = $ffprobe->
-    streams( 'storage/postcard/1/image/pexels-anna-nekrashevich-7814905.mp4' )   // extracts streams informations
+    streams( 'storage/m.mp4' )   // extracts streams informations
     ->videos()                      // filters video streams
     ->first()                       // returns the first video stream
     ->getDimensions();
-    $width = $video_dimensions->getHeight() < $video_dimensions->getWidth();
-    $height = $video_dimensions->getHeight() > $video_dimensions->getWidth();
+    $width = $video_dimensions->getWidth();
+    $height =  $video_dimensions->getHeight();
+    $width_b = $height < $width;
+    $height_b = $height > $width;
+    $video->filters()->custom('crop=420:420:x:y,scale=w=1920:h=420');
 
-    $video->filters()
-                    // ->resize(new \FFMpeg\Coordinate\Dimension(184, $video_dimensions->getWidth()), 'height', false)
-                    ->crop(new \FFMpeg\Coordinate\Point("100", 100), new \FFMpeg\Coordinate\Dimension(320, 320))
-                    ->synchronize();
+    // $video->filters()
+
+    //                 ->synchronize();
     // $video->filters()
 
     $video->save(new \FFMpeg\Format\Video\X264(), 'storage/test231.mp4');
