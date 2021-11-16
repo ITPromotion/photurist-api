@@ -56,14 +56,17 @@ trait FileTrait
                 ->getDimensions();
                 $width = $video_dimensions->getWidth();
                 $height =  $video_dimensions->getHeight();
+                $xy =  $width < $height ? ($height - $width) / 2 : ($height - $width) / 2;
                 foreach (SizeImage::keys() as $value) {
                     try {
+
                         $this->_createDir($folder."/$value/");
                         $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
+                        $scaleW = (integer)$height < $width  ? $width : $size;
+                        $scaleH = (integer)$height > $width  ? $height : $size;
 
-
-                        $video->filters()->custom("crop=$size:$size:100:100,scale=w=100:h=100");
+                        $video->filters()->custom("crop=$size:$size:$xy:$xy,scale=w=$scaleW:h=$scaleH");
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
                     } catch (\Throwable $th) {
