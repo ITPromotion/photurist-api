@@ -46,7 +46,7 @@ trait FileTrait
             } else if (isset($type) && MediaContentType::VIDEO == $type) {
                 $videoName = explode('image/', $imageName)[1];
                 $ffmpeg = FFMpeg::create();
-                $video = $ffmpeg->open('storage/'.$imageName);
+
                 $this->_createDir($folder."/clip/");
                 $ffprobe = FFProbe::create();
                 $video_dimensions = $ffprobe->
@@ -59,7 +59,7 @@ trait FileTrait
                 $xy =  (int)$width < $height ? ($height - $width) / 2 : ($width - $height) / 2;
                 foreach (SizeImage::keys() as $value) {
                     try {
-
+                        $video = $ffmpeg->open('storage/'.$imageName);
                         $this->_createDir($folder."/$value/");
                         $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
