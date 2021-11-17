@@ -62,7 +62,7 @@ trait FileTrait
 
                 $video = $ffmpeg->open('storage/'.$imageName);
                 $video->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
-                $newVideoName = explode('.', $videoName)[0].'mp4';
+                return $newVideoName = explode('.', $videoName)[0].'mp4';
                 $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$newVideoName);
                 foreach (SizeImage::keys() as $value) {
                     try {
