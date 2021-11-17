@@ -83,7 +83,7 @@ trait FileTrait
                 }
                 $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
                 $clip->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/clip/".$newVideoName);
-                return $videoName.'image/'.$newVideoName;
+                return explode('image/', $imageName)[0].'image/'.$newVideoName;
             }
 
             return $imageName;
