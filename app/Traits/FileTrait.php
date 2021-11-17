@@ -67,7 +67,7 @@ trait FileTrait
                         $scaleH = $height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
 
-                        $video->filters()->framerate(15,4)->synchronize();
+                        $video->filters()->framerate(new \FFMpeg\Coordinate\FrameRate(15),4)->synchronize();
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
 
                     } catch (\Throwable $th) {
