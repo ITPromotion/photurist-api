@@ -58,11 +58,10 @@ Route::delete('/delete-favorites', [PostcardControllerAlias::class, 'deleteFavor
 Route::delete('/remove-postcard-from-list/{id}', [PostcardControllerAlias::class, 'removePostcardFromList']);
 
 
-/* Hide postcard for user */
-
-Route::put('/hide-postcard/{id}', [PostcardControllerAlias::class, 'hidePostcard']);
-
-
 /* set status */
 
 Route::put('/set-status-postcard/{id}', [PostcardControllerAlias::class, 'setStatusPostcard']);
+
+/* get postcards from ids */
+
+Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPostcardFromIds']);
