@@ -46,19 +46,30 @@ trait FileTrait
             } else if (isset($type) && MediaContentType::VIDEO == $type) {
                 $videoName = explode('image/', $imageName)[1];
                 $ffmpeg = FFMpeg::create();
-                $video = $ffmpeg->open('storage/'.$imageName);
+
                 $this->_createDir($folder."/clip/");
+                $ffprobe = FFProbe::create();
+                $video_dimensions = $ffprobe->
+                streams('storage/'.$imageName)   // extracts streams informations
+                ->videos()                      // filters video streams
+                ->first()                       // returns the first video stream
+                ->getDimensions();
+                $width = $video_dimensions->getWidth();
+                $height =  $video_dimensions->getHeight();
+                $xy =  (int)$width < $height ? ($height - $width) / 2 : ($width - $height) / 2;
                 foreach (SizeImage::keys() as $value) {
-
                     try {
+                        $video = $ffmpeg->open('storage/'.$imageName);
                         $this->_createDir($folder."/$value/");
-                        $size = explode('x' , $value)[0];
+                        $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
-                        $video->filters()
-                        ->crop(new \FFMpeg\Coordinate\Point("100", 100), new \FFMpeg\Coordinate\Dimension($size, $size))
-                        ->synchronize();
+                        $scaleW = $height < $width  ? 'trunc(oh*a/2)*2' : $size;
+                        $scaleH = $height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
+
+                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(10),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
+
                     } catch (\Throwable $th) {
                         //throw $th;
                     }
