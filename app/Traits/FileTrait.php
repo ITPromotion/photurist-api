@@ -54,6 +54,11 @@ trait FileTrait
                 ->videos()                      // filters video streams
                 ->first()                       // returns the first video stream
                 ->getDimensions();
+
+                $duration = $ffprobe->
+                streams('storage/'.$imageName)
+                ->videos()
+                ->first()->get('duration');
                 $width = $video_dimensions->getWidth();
                 $height =  $video_dimensions->getHeight();
                 $xy =  (int)$width < $height ? ($height - $width) / 2 : ($width - $height) / 2;
@@ -74,7 +79,7 @@ trait FileTrait
                         $scaleH = $height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
 
-                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
+                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ));
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$newVideoName);
 
                     } catch (\Throwable $th) {
