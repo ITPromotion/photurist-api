@@ -13,5 +13,5 @@ use Rexlabs\Enum\Enum;
 class Video extends Enum
 {
     const START = 1;
-    const DURATION = 3;
+    const DURATION = 5;
 }
