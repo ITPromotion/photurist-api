@@ -68,7 +68,7 @@ trait FileTrait
 
 
                         $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size");
-
+                        $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
 
                     } catch (\Throwable $th) {
