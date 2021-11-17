@@ -61,7 +61,7 @@ trait FileTrait
                 $fullHDH = $height > $width  ? $height : 'trunc(ow/a/2)*2';
 
                 $video = $ffmpeg->open('storage/'.$imageName);
-                $video->filters()->resize(new \FFMpeg\Coordinate\Dimension($fullHDW, $fullHDH));
+                // $video->filters()->resize("scale=w=$fullHDW:h=$fullHDH");
                 $newVideoName = explode('.', $videoName)[0].'.mp4';
                 $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$newVideoName);
                 foreach (SizeImage::keys() as $value) {
