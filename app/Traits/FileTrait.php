@@ -57,16 +57,16 @@ trait FileTrait
                 $width = $video_dimensions->getWidth();
                 $height =  $video_dimensions->getHeight();
                 $xy =  (int)$width < $height ? ($height - $width) / 2 : ($width - $height) / 2;
-                $fullHDW = $height < $width ? $width:'trunc(oh*a/2)*2';
-                $fullHDH = $height > $width  ? $height : 'trunc(ow/a/2)*2';
+                $fullHDW = $height < $width ? 1920 :'trunc(oh*a/2)*2';
+                $fullHDH = $height > $width  ? 1080 : 'trunc(ow/a/2)*2';
 
                 $video = $ffmpeg->open('storage/'.$imageName);
-                // $video->filters()->resize("scale=w=$fullHDW:h=$fullHDH");
+                $video->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
                 $newVideoName = explode('.', $videoName)[0].'.mp4';
-                $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$newVideoName);
+                $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
                 foreach (SizeImage::keys() as $value) {
                     try {
-                        $video = $ffmpeg->open('storage/'.$newVideoName);
+                        $video = $ffmpeg->open('storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
                         $this->_createDir($folder."/$value/");
                         $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
