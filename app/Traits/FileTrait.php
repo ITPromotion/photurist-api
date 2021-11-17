@@ -63,8 +63,8 @@ trait FileTrait
                         $this->_createDir($folder."/$value/");
                         $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
-                        $scaleW = (integer)$height < $width  ? 'trunc(oh*a/2)*2' : $size;
-                        $scaleH = (integer)$height > $width  ? 'trunc(ow/a/2)*2' : $size;
+                        $scaleW = $height < $width  ? 'trunc(oh*a/2)*2' : $size;
+                        $scaleH = $height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
 
                         $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size");
