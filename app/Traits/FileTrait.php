@@ -63,11 +63,11 @@ trait FileTrait
                         $this->_createDir($folder."/$value/");
                         $size = (integer)explode('x' , $value)[0];
                         $size = $size % 2 ? $size + 1 : $size;
-                        $scaleW = (integer)$height < $width  ? 0 : $size;
-                        $scaleH = (integer)$height > $width  ? 0 : $size;
+                        $scaleW = (integer)$height < $width  ? 'trunc(oh*a/2)*2' : $size;
+                        $scaleH = (integer)$height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
 
-                        $video->filters()->custom("scale=w=$size:h=trunc(ow/a/2)*2,crop=$size:$size");
+                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size");
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
 
