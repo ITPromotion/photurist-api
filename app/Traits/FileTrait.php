@@ -66,9 +66,14 @@ trait FileTrait
                 $fullHDH = $height > $width  ? 1080 : 'trunc(ow/a/2)*2';
 
                 $vidos = $ffmpeg->open('storage/'.$imageName);
-                $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
-                $newVideoName = explode('.', $videoName)[0].'s.mp4';
-                $vidos->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
+                // $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
+                if (explode('.', $videoName)[1] != 'mp4') {
+                    $newVideoName = explode('.', $videoName)[0].'s.mp4';
+                    $vidos->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
+                } else {
+                    $newVideoName = $videoName;
+                }
+
                 foreach (SizeImage::keys() as $value) {
                     try {
                         $video = $ffmpeg->open('storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
