@@ -63,7 +63,7 @@ trait FileTrait
                 $video = $ffmpeg->open('storage/'.$imageName);
                 $video->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
                 $newVideoName = explode('.', $videoName)[0].'.mp4';
-                $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
+                $video->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
                 foreach (SizeImage::keys() as $value) {
                     try {
                         $video = $ffmpeg->open('storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
@@ -75,14 +75,14 @@ trait FileTrait
 
 
                         $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
-                        $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$newVideoName);
+                        $video->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.$folder."/$value/".$newVideoName);
 
                     } catch (\Throwable $th) {
                         //throw $th;
                     }
                 }
                 $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
-                $clip->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/clip/".$newVideoName);
+                $clip->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.$folder."/clip/".$newVideoName);
                 return explode('image/', $imageName)[0].'image/'.$newVideoName;
             }
 
