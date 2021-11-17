@@ -63,7 +63,7 @@ trait FileTrait
                 $video = $ffmpeg->open('storage/'.$imageName);
                 $video->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
                 $newVideoName = explode('.', $videoName)[0].'.mp4';
-                $video->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
+                $video->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.'test.mp4');
                 foreach (SizeImage::keys() as $value) {
                     try {
                         $video = $ffmpeg->open('storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
