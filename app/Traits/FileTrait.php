@@ -66,8 +66,8 @@ trait FileTrait
                         $scaleW = (integer)$height < $width  ? 0 : $size;
                         $scaleH = (integer)$height > $width  ? 0 : $size;
 
-
-                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH");
+                        $
+                        $video->filters()->custom("scale=w=$scaleW:h=$scaleW");
 
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$videoName);
 
