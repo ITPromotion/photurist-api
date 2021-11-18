@@ -4,6 +4,7 @@ use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 use App\Http\Controllers\ClientApp\Api\v1\PostcardController as PostcardControllerAlias;
 use App\Http\Controllers\ClientApp\Api\v1\ProfileController;
 use App\Http\Controllers\ClientApp\Api\v1\UserController;
+use Illuminate\Http\Request;
 
 /* Checking OTP code */
 Route::post('/active-user', [LoginController::class,'activeUser']);
@@ -65,3 +66,15 @@ Route::put('/set-status-postcard/{id}', [PostcardControllerAlias::class, 'setSta
 /* get postcards from ids */
 
 Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPostcardFromIds']);
+
+
+Route::post('/test-push', function (Request $request) {
+    return (new \App\Services\NotificationService)->send([
+        'users' => [$request->fcm],
+        'title' => 'test-push',
+        'body' => 'test-push',
+        'img' => 'https://dev.photurist.com/storage/postcard/43/image/183x183/gjyatbtWy87xN7LHvGCcCcmr7pwOh1BKuhCisdzD.jpg',
+        'postcard_id' => 1,
+        'action_loc_key' => 'test-push',
+    ]);
+});
