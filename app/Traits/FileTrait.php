@@ -67,7 +67,7 @@ trait FileTrait
 
                 $vidos = $ffmpeg->open('storage/'.$imageName);
                 // $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
-                if (explode('.', $videoName)[1] != 'mp4') {
+                if (explode('.', $videoName)[1] != '') {
                     $newVideoName = explode('.', $videoName)[0].'s.mp4';
                     $vidos->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
                 } else {
@@ -84,7 +84,7 @@ trait FileTrait
                         $scaleH = $height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
 
-                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ));
+                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ));
                         $video->save(new \FFMpeg\Format\Video\X264(), 'storage/'.$folder."/$value/".$newVideoName);
 
                     } catch (\Throwable $th) {
