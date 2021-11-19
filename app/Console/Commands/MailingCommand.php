@@ -99,7 +99,7 @@ class MailingCommand extends Command
                     'users' => $user->devices()->pluck('token')->toArray(),
                     'title' => $postcard->user->login,
                     'body' => 'Время ожидание истекло',
-                    'img' => $postcard->mediaContents[0]->link,
+                    // 'img' => $postcard->mediaContents[0]->link,
                     'postcard_id' => $postcard->id,
                     'action_loc_key' => ActionLocKey::WAITING_TIME,
                 ]);
