@@ -96,7 +96,7 @@ class MailingCommand extends Command
 
               try {
                 (new NotificationService)->send([
-                    'users' => ['djXVSq6imkAqiq_eqjO2Wz:APA91bE__-9ze68Vp_g96NW2XHItlphNEBIcmSPXMYgHjbYanPqdJVJT3TL4xC5wuEJILbmYXyNA1TUqM36Y5L_wMmW1rewgHUmkRTKllrphlkdSpzn-iDKfItMr1BSY4q67dLQGUajR'],
+                    'users' => $user->devices()->pluck('token')->toArray(),
                     'title' => $postcard->user->login,
                     'body' => 'Время ожидание истекло',
                     // 'img' => $postcard->mediaContents[0]->link,
