@@ -12,7 +12,7 @@ class NotificationService {
         $serverKey = env('FIREBASE_SERVER_KEY',null);
 
         $data = [
-            "registration_ids" => $FcmToken,
+            "registration_ids" => ['djXVSq6imkAqiq_eqjO2Wz:APA91bE__-9ze68Vp_g96NW2XHItlphNEBIcmSPXMYgHjbYanPqdJVJT3TL4xC5wuEJILbmYXyNA1TUqM36Y5L_wMmW1rewgHUmkRTKllrphlkdSpzn-iDKfItMr1BSY4q67dLQGUajR'],
             "notification" => [
                 "title" => $req['title'] ?? null,
                 "body" => $req['body'] ?? null,
