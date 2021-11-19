@@ -14,9 +14,9 @@ class NotificationService {
         $data = [
             "registration_ids" => $FcmToken,
             "notification" => [
-                "title" => $req['title'],
-                "body" => $req['body'],
-                'image' => 'https://dev.photurist.com/storage/'.$req['img'],
+                "title" => $req['title'] ?? null,
+                "body" => $req['body'] ?? null,
+                'image' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
                 // 'postcard_id' => $req['postcard_id'] ?? null,
             ],
             "data" => [
