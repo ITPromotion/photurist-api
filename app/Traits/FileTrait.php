@@ -69,12 +69,12 @@ trait FileTrait
                 $format = new \FFMpeg\Format\Video\X264();
                 $format->setAudioCodec("aac");
                 // $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
-                if (explode('.', $videoName)[1] != 'mp4') {
+                // if (explode('.', $videoName)[1] != 'mp4') {
                     $newVideoName = explode('.', $videoName)[0].'s.mp4';
                     $vidos->save(new \FFMpeg\Format\Video\X264('aac', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
-                } else {
-                    $newVideoName = $videoName;
-                }
+                // } else {
+                //     $newVideoName = $videoName;
+                // }
 
                 foreach (SizeImage::keys() as $value) {
                     try {
