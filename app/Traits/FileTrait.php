@@ -67,11 +67,11 @@ trait FileTrait
 
                 $vidos = $ffmpeg->open('storage/'.$imageName);
                 $format = new \FFMpeg\Format\Video\X264();
-                $format->setAudioCodec("libmp3lame");
+                $format->setAudioCodec("aac");
                 // $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
                 if (explode('.', $videoName)[1] != 'mp4') {
                     $newVideoName = explode('.', $videoName)[0].'s.mp4';
-                    $vidos->save(new \FFMpeg\Format\Video\X264('libmp3lame', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
+                    $vidos->save(new \FFMpeg\Format\Video\X264('aac', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
                 } else {
                     $newVideoName = $videoName;
                 }
