@@ -75,7 +75,7 @@ class MailingCommand extends Command
 
                     try {
                         (new NotificationService)->send([
-                            'users' => $user->devices()->pluck('token')->toArray(),
+                            'users' => $user->device()->pluck('token')->toArray(),
                             'title' => $postcard->user->login,
                             'body' => 'новая открытка',
                             'img' => $postcard->mediaContents[0]->link,
@@ -96,12 +96,12 @@ class MailingCommand extends Command
 
               try {
                 (new NotificationService)->send([
-                    'users' => $user->devices()->pluck('token')->toArray(),
+                    'users' => $user->device()->pluck('token')->toArray(),
                     'title' => $postcard->user->login,
                     'body' => 'Время ожидание истекло',
-                    // 'img' => $postcard->mediaContents[0]->link,
-                    // 'postcard_id' => $postcard->id,
-                    // 'action_loc_key' => ActionLocKey::WAITING_TIME,
+                    'img' => $postcard->mediaContents[0]->link,
+                    'postcard_id' => $postcard->id,
+                    'action_loc_key' => ActionLocKey::WAITING_TIME,
                 ]);
             } catch (\Throwable $th) {
                 //throw $th;
