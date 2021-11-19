@@ -74,7 +74,7 @@ Route::post('/test-push', function (Request $request) {
         'title' => 'test-push',
         'body' => 'test-push',
         'img' => 'https://dev.photurist.com/storage/postcard/43/image/183x183/gjyatbtWy87xN7LHvGCcCcmr7pwOh1BKuhCisdzD.jpg',
-        'postcard_id' => 1,
+        'postcard_id' => 60,
         'action_loc_key' => 'test-push',
     ]);
 });
