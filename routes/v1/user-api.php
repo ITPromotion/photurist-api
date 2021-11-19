@@ -69,6 +69,7 @@ Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPost
 
 
 Route::post('/test-push', function (Request $request) {
+    return \Auth::user()->device->pluck('token')->toArray();
     return (new \App\Services\NotificationService)->send([
         'users' => [$request->fcm],
         'title' => 'test-push',
