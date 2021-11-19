@@ -70,6 +70,7 @@ trait FileTrait
                 $format->setAudioCodec("libmp3lame");
                 // $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
                 if (explode('.', $videoName)[1] != '.mp4') {
+                    return explode('.', $videoName)[1];
                     $newVideoName = explode('.', $videoName)[0].'s.mp4';
                     $vidos->save($format, 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
                 } else {

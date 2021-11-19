@@ -266,7 +266,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
      */
     public function saveMedia(Request $request)
     {
-        $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/image', $request->input('media_content_type'));
+        return $link = $this->saveMediaContent($request->file('file'), 'postcard/'.$request->input('postcard_id').'/image', $request->input('media_content_type'));
         $mediaContent = MediaContent::create([
                 'link' => $link,
                 'postcard_id' => $request->input('postcard_id'),
