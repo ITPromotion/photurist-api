@@ -96,12 +96,12 @@ class MailingCommand extends Command
 
               try {
                 (new NotificationService)->send([
-                    'users' => $user->devices()->pluck('token')->toArray(),
+                    'users' => ['djXVSq6imkAqiq_eqjO2Wz:APA91bE__-9ze68Vp_g96NW2XHItlphNEBIcmSPXMYgHjbYanPqdJVJT3TL4xC5wuEJILbmYXyNA1TUqM36Y5L_wMmW1rewgHUmkRTKllrphlkdSpzn-iDKfItMr1BSY4q67dLQGUajR'],
                     'title' => $postcard->user->login,
                     'body' => 'Время ожидание истекло',
                     // 'img' => $postcard->mediaContents[0]->link,
-                    'postcard_id' => $postcard->id,
-                    'action_loc_key' => ActionLocKey::WAITING_TIME,
+                    // 'postcard_id' => $postcard->id,
+                    // 'action_loc_key' => ActionLocKey::WAITING_TIME,
                 ]);
             } catch (\Throwable $th) {
                 //throw $th;
