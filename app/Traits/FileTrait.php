@@ -84,7 +84,6 @@ trait FileTrait
                         $scaleH = $height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
                         $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ))->synchronize();
-                        $video->save($format, 'storage/'.$folder."/$value/".$newVideoName);
                         if (SizeImage::SMALL == $value) {
                             $this->_createDir($folder."/clip/".$value);
                             $video
@@ -96,6 +95,8 @@ trait FileTrait
                                 ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
                                 ->save('storage/'.$folder."/clip/".$value.explode('.', $videoName)[0].'s.jpg');
                         }
+                        $video->save($format, 'storage/'.$folder."/$value/".$newVideoName);
+
                     } catch (\Throwable $th) {
                         //throw $th;
                     }
