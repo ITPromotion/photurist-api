@@ -84,7 +84,7 @@ trait FileTrait
                     try {
                         $video = $ffmpeg->open('storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
                         $this->_createDir($folder."/$value/");
-                        $this->_createDir($folder."/clip/$value/");
+                        $this->_createDir($folder."/frame/$value/");
                         $size = (integer)explode('x' , $value)[0];
 
                         $img = Image::make($frameName);
@@ -96,7 +96,7 @@ trait FileTrait
                             $constraint->upsize();
                         });
                         $img->crop($size, $size);
-                        $img->save('storage/'.$folder."/clip/$value".explode('.', $videoName)[0].'s.jpg');
+                        $img->save('storage/'.$folder."/frame/$value/".explode('.', $videoName)[0].'s.jpg');
                         $img->reset();
 
                         $size = $size % 2 ? $size + 1 : $size;

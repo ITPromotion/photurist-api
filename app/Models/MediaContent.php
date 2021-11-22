@@ -24,13 +24,33 @@ class MediaContent extends Model
         'postcard_id',
     ];
 
-    protected $appends = ['small', 'midle', 'large', 'clip'];
+    protected $appends = ['small', 'midle', 'large', 'frame', 'frame_small', 'frame_large'];
 
-    public function getClipAttribute() {
+    public function getFrameAttribute() {
         if ($this->media_content_type == MediaContentType::VIDEO) {
             $url = explode('image/', $this->link);
             $name = explode('.', $url[1])[0].'.jpg';
-            return $url[0]."image/clip/".$name;
+            return $url[0]."image/frame/".$name;
+        }
+        return '';
+
+    }
+
+    public function getFrameSmallAttribute() {
+        if ($this->media_content_type == MediaContentType::VIDEO) {
+            $url = explode('image/', $this->link);
+            $name = explode('.', $url[1])[0].'.jpg';
+            return $url[0]."image/frame/".SizeImage::SMALL.$name;
+        }
+        return '';
+
+    }
+
+    public function getFrameLargeAttribute() {
+        if ($this->media_content_type == MediaContentType::VIDEO) {
+            $url = explode('image/', $this->link);
+            $name = explode('.', $url[1])[0].'.jpg';
+            return $url[0]."image/frame/".SizeImage::LARGE.$name;
         }
         return '';
 
