@@ -15,5 +15,5 @@ class Video extends Enum
 {
     const START = 1;
     const DURATION = 5;
-    const FRAME = 15;
+    const FRAME = 20;
 }
