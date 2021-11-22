@@ -90,7 +90,7 @@ trait FileTrait
                             $video
                                 ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
                                 ->save('storage/'.$folder."/clip/".$value. explode('.', $videoName)[0].'s.jpg');
-                                                    } elseif (SizeImage::LARGE == $value) {
+                            } elseif (SizeImage::LARGE == $value) {
                                                         $this->_createDir($folder."/clip/".$value);
                                                         $video
                                 ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
