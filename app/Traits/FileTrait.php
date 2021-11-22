@@ -100,8 +100,8 @@ trait FileTrait
                         //throw $th;
                     }
                 }
-                $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
-                $clip->save($format, 'storage/'.$folder."/clip/".$newVideoName);
+                // $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
+                // $clip->save($format, 'storage/'.$folder."/clip/".$newVideoName);
                 return explode('image/', $imageName)[0].'image/'.$newVideoName;
             }
 
