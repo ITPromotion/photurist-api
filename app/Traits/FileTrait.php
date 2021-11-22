@@ -87,14 +87,20 @@ trait FileTrait
 
 
                         $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ));
+                        if ($size == 400) {
+                            $video
+                                ->frame(new \FFMpeg\Coordinate\TimeCode::fromSeconds(1))
+                                ->save($format, 'storage/'.$folder."/clip/".explode('.', $videoName)[0].'s.jpg');
+                        }
                         $video->save($format, 'storage/'.$folder."/$value/".$newVideoName);
 
                     } catch (\Throwable $th) {
                         //throw $th;
                     }
                 }
-                $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
-                $clip->save($format, 'storage/'.$folder."/clip/".$newVideoName);
+
+                // $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
+                // $clip->save();
                 return explode('image/', $imageName)[0].'image/'.$newVideoName;
             }
 
