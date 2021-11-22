@@ -93,8 +93,9 @@ trait FileTrait
                         //throw $th;
                     }
                 }
-                // $video->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
-                //             ->save('storage/'.$folder."/clip/".explode('.', $videoName)[0].'s.jpg');
+                $video->filters()->custom("scale=w=$scaleW:h=$scaleH")
+                            ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
+                            ->save('storage/'.$folder."/clip/".explode('.', $videoName)[0].'s.jpg');
                 return explode('image/', $imageName)[0].'image/'.$newVideoName;
             }
 
