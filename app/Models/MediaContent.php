@@ -29,7 +29,8 @@ class MediaContent extends Model
     public function getClipAttribute() {
         if ($this->media_content_type == MediaContentType::VIDEO) {
             $url = explode('image/', $this->link);
-            return $url[0]."image/clip/".$url[1];
+            $name = explode('.', $url[1])[0].'.jpg';
+            return $url[0]."image/clip/".$name;
         }
         return '';
 
