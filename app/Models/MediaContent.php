@@ -40,7 +40,7 @@ class MediaContent extends Model
         if ($this->media_content_type == MediaContentType::VIDEO) {
             $url = explode('image/', $this->link);
             $name = explode('.', $url[1])[0].'.jpg';
-            return $url[0]."image/frame/".SizeImage::SMALL.$name;
+            return $url[0]."image/frame/".SizeImage::SMALL.'/'.$name;
         }
         return '';
 
@@ -50,7 +50,7 @@ class MediaContent extends Model
         if ($this->media_content_type == MediaContentType::VIDEO) {
             $url = explode('image/', $this->link);
             $name = explode('.', $url[1])[0].'.jpg';
-            return $url[0]."image/frame/".SizeImage::LARGE.$name;
+            return $url[0]."image/frame/".SizeImage::LARGE.'/'.$name;
         }
         return '';
 
