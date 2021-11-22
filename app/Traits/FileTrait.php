@@ -88,6 +88,7 @@ trait FileTrait
 
                         $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ));
                         if ($size == '420') {
+                            return $size;
                             $video->frame( \FFMpeg\Coordinate\TimeCode::fromSeconds(1))
                                 ->save($format, 'storage/'.$folder."/clip/".explode('.', $videoName)[0].'s.jpg');
                         }
