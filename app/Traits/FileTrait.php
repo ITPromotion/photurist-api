@@ -46,8 +46,6 @@ trait FileTrait
             } else if (isset($type) && MediaContentType::VIDEO == $type) {
                 $videoName = explode('image/', $imageName)[1];
                 $ffmpeg = FFMpeg::create();
-
-                $this->_createDir($folder."/clip/");
                 $ffprobe = FFProbe::create();
                 $video_dimensions = $ffprobe->
                 streams('storage/'.$imageName)   // extracts streams informations
@@ -85,10 +83,19 @@ trait FileTrait
                         $scaleW = $height < $width  ? 'trunc(oh*a/2)*2' : $size;
                         $scaleH = $height > $width  ? 'trunc(ow/a/2)*2' : $size;
 
-
-                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ));
+                        $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ))->synchronize();
                         $video->save($format, 'storage/'.$folder."/$value/".$newVideoName);
-
+                        if (SizeImage::SMALL == $value) {
+                            $this->_createDir($folder."/clip/".$value);
+                            $video
+                                ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
+                                ->save('storage/'.$folder."/clip/".$value. explode('.', $videoName)[0].'s.jpg');
+                                                    } elseif (SizeImage::LARGE == $value) {
+                                                        $this->_createDir($folder."/clip/".$value);
+                                                        $video
+                                ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
+                                ->save('storage/'.$folder."/clip/".$value.explode('.', $videoName)[0].'s.jpg');
+                        }
                     } catch (\Throwable $th) {
                         //throw $th;
                     }
