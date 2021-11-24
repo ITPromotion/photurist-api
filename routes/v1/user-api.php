@@ -70,6 +70,14 @@ Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPost
 
 Route::put('/stop-mailings/{id}', [PostcardControllerAlias::class, 'stopMailings']);
 
+/* set view postcard mailings */
+
+Route::put('/set-view/{id}', [PostcardControllerAlias::class, 'setView']);
+
+/* delete postcards */
+
+Route::put('/delete-postcard/{id}', [PostcardControllerAlias::class, 'deletePostcard']);
+
 
 Route::post('/test-push', function (Request $request) {
     return (new \App\Services\NotificationService)->send([
