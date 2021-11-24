@@ -14,12 +14,14 @@ class NotificationService {
         $data = [
             "registration_ids" => $FcmToken,
             "notification" => [
-                "title" => $req['title'],
-                "body" => $req['body'],
-                'image' => 'https://dev.photurist.com/storage/'.$req['img'],
-                'postcard_id' => $req['postcard_id'] ?? null,
+                "title" => $req['title'] ?? null,
+                "body" => $req['body'] ?? null,
+                'image' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
+                // 'postcard_id' => $req['postcard_id'] ?? null,
+            ],
+            "data" => [
                 'action_loc_key' => $req['action_loc_key'] ?? null,
-
+                'postcard_id' => $req['postcard_id'] ?? null,
             ],
         ];
         $encodedData = json_encode($data);

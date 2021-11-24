@@ -69,3 +69,15 @@ Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPost
 /* stop mailings */
 
 Route::put('/stop-mailings/{id}', [PostcardControllerAlias::class, 'stopMailings']);
+
+
+Route::post('/test-push', function (Request $request) {
+    return (new \App\Services\NotificationService)->send([
+        'users' => [$request->fcm],
+        'title' => 'test-push',
+        'body' => 'test-push',
+        'img' => 'https://dev.photurist.com/storage/postcard/43/image/183x183/gjyatbtWy87xN7LHvGCcCcmr7pwOh1BKuhCisdzD.jpg',
+        'postcard_id' => $request->id,
+        'action_loc_key' => 'test-push',
+    ]);
+});

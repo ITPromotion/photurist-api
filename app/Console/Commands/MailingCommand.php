@@ -75,7 +75,7 @@ class MailingCommand extends Command
 
                     try {
                         (new NotificationService)->send([
-                            'users' => $user->devices()->pluck('token')->toArray(),
+                            'users' => $user->device->pluck('token')->toArray(),
                             'title' => $postcard->user->login,
                             'body' => 'новая открытка',
                             'img' => $postcard->mediaContents[0]->link,
@@ -96,7 +96,7 @@ class MailingCommand extends Command
 
               try {
                 (new NotificationService)->send([
-                    'users' => $user->devices()->pluck('token')->toArray(),
+                    'users' => $user->device->pluck('token')->toArray(),
                     'title' => $postcard->user->login,
                     'body' => 'Время ожидание истекло',
                     'img' => $postcard->mediaContents[0]->link,
