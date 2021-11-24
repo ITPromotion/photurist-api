@@ -65,3 +65,7 @@ Route::put('/set-status-postcard/{id}', [PostcardControllerAlias::class, 'setSta
 /* get postcards from ids */
 
 Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPostcardFromIds']);
+
+/* stop mailings */
+
+Route::put('/stop-mailings/{id}', [PostcardControllerAlias::class, 'stopMailings']);

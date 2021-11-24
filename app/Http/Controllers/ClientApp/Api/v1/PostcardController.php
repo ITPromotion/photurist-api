@@ -407,4 +407,18 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         return new PostcardCollection($postcards);
     }
 
+    public function stopMailings($id)
+    {
+        $postcard = Postcard::findOrFail($id);
+        $postcard->status = PostcardStatus::ARCHIVE;
+        $postcard->save();
+        DB::table('postcards_mailings')
+            ->where('postcard_id',$id)
+            ->update([
+                'stop'=> Carbon::now(),
+                'status'=> MailingType::CLOSED,
+            ]);
+        return new PostcardResource($postcard);
+    }
+
 }
