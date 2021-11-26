@@ -74,14 +74,16 @@ class MailingCommand extends Command
                     ]);
 
                     try {
-                        (new NotificationService)->send([
-                            'users' => $user->device->pluck('token')->toArray(),
-                            'title' => $postcard->user->login,
-                            'body' => 'новая открытка',
-                            'img' => $postcard->mediaContents[0]->link,
-                            'postcard_id' => $postcard->id,
-                            'action_loc_key' => ActionLocKey::GALLERY,
-                        ]);
+                        if ($postcard->user_id != $user->id) {
+                            (new NotificationService)->send([
+                                'users' => $user->device->pluck('token')->toArray(),
+                                'title' => $postcard->user->login,
+                                'body' => 'Новая открытка',
+                                'img' => $postcard->mediaContents[0]->link,
+                                'postcard_id' => $postcard->id,
+                                'action_loc_key' => ActionLocKey::GALLERY,
+                            ]);
+                        }
                     } catch (\Throwable $th) {
                         //throw $th;
                     }
