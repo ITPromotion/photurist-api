@@ -73,6 +73,9 @@ class Postcard extends Model
         $this->geoData()->delete();
         $this->tagData()->delete();
         $this->mediaContents()->delete();
+        DB::table('postcards_mailings')
+            ->where('postcard_id',$this->id)->delete();
+        $this->users()->delete();
 
         return parent::delete();
     }
@@ -113,5 +116,10 @@ class Postcard extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'postcards_users');
+    }
+
+    public function newPostcard()
+    {
+
     }
 }

@@ -4,7 +4,6 @@ use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 use App\Http\Controllers\ClientApp\Api\v1\PostcardController as PostcardControllerAlias;
 use App\Http\Controllers\ClientApp\Api\v1\ProfileController;
 use App\Http\Controllers\ClientApp\Api\v1\UserController;
-use Illuminate\Http\Request;
 
 /* Checking OTP code */
 Route::post('/active-user', [LoginController::class,'activeUser']);
@@ -66,6 +65,18 @@ Route::put('/set-status-postcard/{id}', [PostcardControllerAlias::class, 'setSta
 /* get postcards from ids */
 
 Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPostcardFromIds']);
+
+/* stop mailings */
+
+Route::put('/stop-mailings/{id}', [PostcardControllerAlias::class, 'stopMailings']);
+
+/* set view postcard mailings */
+
+Route::put('/set-view/{id}', [PostcardControllerAlias::class, 'setView']);
+
+/* delete postcards */
+
+Route::put('/delete-postcard/{id}', [PostcardControllerAlias::class, 'deletePostcard']);
 
 
 Route::post('/test-push', function (Request $request) {

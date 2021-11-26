@@ -75,14 +75,16 @@ class PostcardController extends Controller
             ->selectRaw('
            DISTINCT  *  from ((select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
-                IF(postcards.user_id=?, 1, 0) as author
+                IF(postcards.user_id=?, 1, 0) as author,
+                postcards_mailings.view
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
              where ((`postcards_mailings`.`start` < ? and `postcards_mailings`.`stop` > ? and `postcards_mailings`.`user_id` = ?) )
              and `postcards`.`deleted_at` is null)
 					UNION DISTINCT
          select pc1.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, pc1.created_at) as sort,
-                IF(pc1.user_id=?, 1, 0) as author
+                IF(pc1.user_id=?, 1, 0) as author,
+                postcards_mailings.view
              from `postcards` as pc1
 						 LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
 						 left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
@@ -91,7 +93,8 @@ class PostcardController extends Controller
 		UNION DISTINCT
 select pc1.*, null, null,
                 IFNULL(pc1.start_mailing, pc1.created_at) as sort,
-                IF(pc1.user_id=?, 1, 0) as author
+                IF(pc1.user_id=?, 1, 0) as author,
+                 null
              from `postcards` as pc1 where (`pc1`.`user_id` = ?) 	and
 						`pc1`.`deleted_at` is null
 
@@ -116,6 +119,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 $postcard->start = $postcardCollection->start;
                 $postcard->stop = $postcardCollection->stop;
             }
+            $postcard->view = $postcardCollection->view;
             $postcard->author = $postcardCollection->author;
             $postcard->save = 1;
             $usersIds = $postcard->users()->pluck('user_id');
@@ -405,6 +409,39 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 )->get();
 
         return new PostcardCollection($postcards);
+    }
+
+    public function stopMailings($id)
+    {
+        $postcard = Postcard::findOrFail($id);
+        $postcard->status = PostcardStatus::ARCHIVE;
+        $postcard->save();
+        DB::table('postcards_mailings')
+            ->where('postcard_id',$id)
+            ->update([
+                'stop'=> Carbon::now(),
+                'status'=> MailingType::CLOSED,
+            ]);
+        return new PostcardResource($postcard);
+    }
+
+    public function deletePostcard($id)
+    {
+        $postcard = Postcard::findOrFail($id);
+
+        $postcardService = new PostcardService($postcard);
+
+        $postcardService->deletePostcard();
+    }
+
+    public function setView($id)
+    {
+        DB::table('postcards_mailings')
+            ->where('postcard_id', $id)
+            ->where('user_id',Auth::id())
+            ->update([
+                'view' => true,
+            ]);
     }
 
 }
