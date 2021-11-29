@@ -78,6 +78,10 @@ Route::put('/set-view/{id}', [PostcardControllerAlias::class, 'setView']);
 
 Route::put('/delete-postcard/{id}', [PostcardControllerAlias::class, 'deletePostcard']);
 
+/* not view quantity */
+
+Route::get('/not-view-quantity', [PostcardControllerAlias::class, 'notViewQuantity']);
+
 
 Route::post('/test-push', function (Request $request) {
     return (new \App\Services\NotificationService)->send([

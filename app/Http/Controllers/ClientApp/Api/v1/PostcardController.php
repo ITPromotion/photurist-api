@@ -444,4 +444,15 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             ]);
     }
 
+    public function notViewQuantity()
+    {
+        return [
+            'not_view' => DB::table('postcards_mailings')
+            ->where('view', 0)
+            ->where('user_id',Auth::id())
+            ->where('status', PostcardStatus::ACTIVE)
+            ->count()
+            ];
+    }
+
 }
