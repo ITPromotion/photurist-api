@@ -432,7 +432,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         $postcardService = new PostcardService($postcard);
 
         try {
-            return $userIds = $postcard->allMailingsUserIds();
+            $userIds = $postcard->allMailingsUserIds();
             (new NotificationService)->send([
                 'users' => Device::getTokenUsers($userIds),
                 'title' => $postcard->user->login,
