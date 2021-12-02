@@ -42,7 +42,7 @@ class StopMailingCommand extends Command
     public function handle()
     {
         $postcards = DB::table('postcards_mailings')
-            ->where('status', MailingType::ACTIVE)
+            // ->where('status', MailingType::ACTIVE)
             ->where('stop','<', Carbon::now());
 
         $postcards->update(['status' => MailingType::CLOSED]);
@@ -61,6 +61,27 @@ class StopMailingCommand extends Command
                 'postcard_id' => '',
                 'action_loc_key' => ActionLocKey::TIME_IS_UP,
             ]);
+            // foreach ($postcards->get() as $postcard) {
+            //     \Illuminate\Support\Facades\Log::info($postcards->first());
+            //     break;
+            // }
+            // foreach ($postcards->get() as $postcard) {
+            //     \Illuminate\Support\Facades\Log::info($postcard->userPostcardNotifications);
+            //     $postcard->userPostcardNotifications;
+            //     try {
+            //         (new \App\Services\NotificationService)->send([
+            //             'users' => $postcard->users->device->pluck('token')->toArray(),
+            //             'title' => $postcard->user->login,
+            //             'body' => 'Время ожидание истекло',
+            //             'img' => $postcard->mediaContents[0]->link,
+            //             'postcard_id' => $postcard->id,
+            //             'action_loc_key' => ActionLocKey::WAITING_TIME,
+            //         ]);
+            //     } catch (\Throwable $th) {
+            //         //throw $th;
+            //     }
+            // }
+
         } catch (\Throwable $th) {
             //throw $th;
         }

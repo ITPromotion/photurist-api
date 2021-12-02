@@ -102,18 +102,18 @@ class MailingCommand extends Command
               $postcard->status = PostcardStatus::ARCHIVE;
               $postcard->save();
 
-              try {
-                (new NotificationService)->send([
-                    'users' => $user->device->pluck('token')->toArray(),
-                    'title' => $postcard->user->login,
-                    'body' => 'Время ожидание истекло',
-                    'img' => $postcard->mediaContents[0]->link,
-                    'postcard_id' => $postcard->id,
-                    'action_loc_key' => ActionLocKey::WAITING_TIME,
-                ]);
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
+            //   try {
+            //     (new NotificationService)->send([
+            //         'users' => $user->device->pluck('token')->toArray(),
+            //         'title' => $postcard->user->login,
+            //         'body' => 'Время ожидание истекло',
+            //         'img' => $postcard->mediaContents[0]->link,
+            //         'postcard_id' => $postcard->id,
+            //         'action_loc_key' => ActionLocKey::WAITING_TIME,
+            //     ]);
+            // } catch (\Throwable $th) {
+            //     //throw $th;
+            // }
             };
         }
 
