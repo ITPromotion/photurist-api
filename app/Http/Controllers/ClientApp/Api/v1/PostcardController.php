@@ -12,6 +12,7 @@ use App\Http\Requests\ClientApp\Postcard\SetStatusPostcardRequest;
 use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
+use App\Jobs\MediaContentCrop;
 use App\Models\AudioData;
 use App\Models\MediaContent;
 use App\Models\Postcard;
@@ -277,6 +278,10 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 'postcard_id' => $request->input('postcard_id'),
                 'media_content_type' => $request->input('media_content_type')
         ]);
+
+        $mediaContentCropJob = new MediaContentCrop($mediaContent);
+        $this->dispatch($mediaContentCropJob);
+
         return new MediaContentResource($mediaContent);
 
     }
