@@ -138,6 +138,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 'mediaContents.textData',
                 'mediaContents.geoData',
                 'mediaContents.audioData',
+                'userPostcardNotifications',
             );
 
             $postcards[] = $postcard;
@@ -453,6 +454,20 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             ->where('status', PostcardStatus::ACTIVE)
             ->count()
             ];
+    }
+
+    public function offUserPostcardNotification ($id)
+    {
+        $userPostcardNotification = Auth::user()->userPostcardNotifications();
+        $userPostcardNotification->syncWithoutDetaching($id);
+        return true;
+    }
+
+    public function onUserPostcardNotification ($id)
+    {
+        $userPostcardNotification = Auth::user()->userPostcardNotifications();
+        $userPostcardNotification->detach($id);
+        return true;
     }
 
 }

@@ -8,6 +8,7 @@ use App\Models\Postcard;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificationService;
 use App\Enums\ActionLocKey;
@@ -82,6 +83,11 @@ class MailingCommand extends Command
                                 'img' => $postcard->mediaContents[0]->link,
                                 'postcard_id' => $postcard->id,
                                 'action_loc_key' => ActionLocKey::GALLERY,
+                                'badge' => DB::table('postcards_mailings')
+                                    ->where('view', 0)
+                                    ->where('user_id',Auth::id())
+                                    ->where('status', PostcardStatus::ACTIVE)
+                                    ->count()
                             ]);
                         }
                     } catch (\Throwable $th) {

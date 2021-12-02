@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Postcard extends Model
@@ -118,8 +119,8 @@ class Postcard extends Model
         return $this->belongsToMany(User::class, 'postcards_users');
     }
 
-    public function newPostcard()
+    public function userPostcardNotifications()
     {
-
+        return $this->BelongsToMany(User::class, 'user_postcard_notifications')->where('user_id', Auth::id());
     }
 }

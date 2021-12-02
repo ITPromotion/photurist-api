@@ -78,6 +78,14 @@ Route::put('/set-view/{id}', [PostcardControllerAlias::class, 'setView']);
 
 Route::put('/delete-postcard/{id}', [PostcardControllerAlias::class, 'deletePostcard']);
 
+/* off user postcard notification */
+
+Route::put('/off-user-postcard-notification/{id}', [PostcardControllerAlias::class, 'offUserPostcardNotification']);
+
+/* off user postcard notification */
+
+Route::put('/on-user-postcard-notification/{id}', [PostcardControllerAlias::class, 'onUserPostcardNotification']);
+
 /* not view quantity */
 
 Route::get('/not-view-quantity', [PostcardControllerAlias::class, 'notViewQuantity']);

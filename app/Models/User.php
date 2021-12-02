@@ -74,4 +74,11 @@ class User extends Authenticatable
     public function favorites():BelongsToMany {
         return $this->BelongsToMany(Postcard::class, 'favorites')->withPivot('user_id', 'postcard_id');
     }
+
+    public function userPostcardNotifications():BelongsToMany
+    {
+        return $this->BelongsToMany(Postcard::class, 'user_postcard_notifications');
+    }
+
+
 }
