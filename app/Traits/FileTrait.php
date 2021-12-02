@@ -16,10 +16,6 @@ use \FFMpeg\Coordinate\TimeCode;
 
 trait FileTrait
 {
-    private function _createDir($file)
-    {
-        return Storage::disk('public')->makeDirectory($file);
-    }
 
     public function saveMediaContent($image, $folder = 'postcard', $type = null): string
     {

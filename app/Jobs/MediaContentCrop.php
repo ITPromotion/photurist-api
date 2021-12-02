@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 class MediaContentCrop implements ShouldQueue
@@ -33,6 +34,10 @@ class MediaContentCrop implements ShouldQueue
         $this->mediaContent = $mediaContent;
     }
 
+    private function _createDir($file)
+    {
+        return Storage::disk('public')->makeDirectory($file);
+    }
     /**
      * Execute the job.
      *
