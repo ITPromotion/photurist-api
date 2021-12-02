@@ -26,7 +26,7 @@ trait FileTrait
         if ($image->isValid() && $image->getSize() !== 0) {
             $imageName = Storage::disk('public')->putFile($folder, $image);
 
-            if (isset($type) && MediaContentType::PHOTO == $type) {
+            if (isset($this->mediaContent->media_content_type) && MediaContentType::PHOTO == $this->mediaContent->media_content_type) {
                 $imgName = explode('image/', $imageName)[1];
                 $img = Image::make($image);
                 $img->backup();
@@ -43,7 +43,7 @@ trait FileTrait
                     $img->save('storage/'.$folder."/$value/".$imgName);
                     $img->reset();
                 }
-            } else if (isset($type) && MediaContentType::VIDEO == $type) {
+            } else if (isset($this->mediaContent->media_content_type) && MediaContentType::VIDEO == $this->mediaContent->media_content_type) {
                 $videoName = explode('image/', $imageName)[1];
                 $ffmpeg = FFMpeg::create();
 
