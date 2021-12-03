@@ -45,10 +45,13 @@ class MediaContentCrop implements ShouldQueue
      */
     public function handle()
     {
+        $folder = 'image/'.$this->mediaContent->id;
+
         if (isset($this->mediaContent->media_content_type) && MediaContentType::PHOTO == $this->mediaContent->media_content_type) {
             $imgName = explode('image/', $this->mediaContent->link)[1];
-            $img = Image::make($image);
+            $img = Image::make($this->mediaContent->link);
             $img->backup();
+
             foreach (SizeImage::keys() as $value) {
                 $this->_createDir($folder."/$value/");
                 $size = explode('x' , $value)[0];
@@ -63,19 +66,19 @@ class MediaContentCrop implements ShouldQueue
                 $img->reset();
             }
         } elseif (isset($this->mediaContent->media_content_type) && MediaContentType::VIDEO == $this->mediaContent->media_content_type) {
-            $videoName = explode('image/', $imageName)[1];
+            $videoName = explode('image/', $this->mediaContent->link)[1];
             $ffmpeg = FFMpeg::create();
 
             $this->_createDir($folder."/clip/");
             $ffprobe = FFProbe::create();
             $video_dimensions = $ffprobe->
-            streams('storage/'.$imageName)   // extracts streams informations
+            streams('storage/'.$this->mediaContent->link)   // extracts streams informations
             ->videos()                      // filters video streams
             ->first()                       // returns the first video stream
             ->getDimensions();
 
             $duration = $ffprobe->
-            streams('storage/'.$imageName)
+            streams('storage/'.$this->mediaContent->link)
                 ->videos()
                 ->first()->get('duration');
             $width = $video_dimensions->getWidth();
@@ -84,7 +87,7 @@ class MediaContentCrop implements ShouldQueue
             $fullHDW = $height < $width ? 1920 :'trunc(oh*a/2)*2';
             $fullHDH = $height > $width  ? 1080 : 'trunc(ow/a/2)*2';
 
-            $vidos = $ffmpeg->open('storage/'.$imageName);
+            $vidos = $ffmpeg->open('storage/'.$this->mediaContent->link);
             $format = new \FFMpeg\Format\Video\X264();
             $format->setAudioCodec("aac");
             // $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
@@ -94,14 +97,14 @@ class MediaContentCrop implements ShouldQueue
             $vidos->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
                 ->save($frameName);
 
-            $vidos->save(new \FFMpeg\Format\Video\X264('aac', 'libx264'), 'storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
+            $vidos->save(new \FFMpeg\Format\Video\X264('aac', 'libx264'), 'storage/'.explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName);
             // } else {
             //     $newVideoName = $videoName;
             // }
 
             foreach (SizeImage::keys() as $value) {
                 try {
-                    $video = $ffmpeg->open('storage/'.explode('image/', $imageName)[0].'image/'.$newVideoName);
+                    $video = $ffmpeg->open('storage/'.explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName);
                     $this->_createDir($folder."/$value/");
                     $this->_createDir($folder."/frame/$value/");
                     $size = (integer)explode('x' , $value)[0];
@@ -132,7 +135,7 @@ class MediaContentCrop implements ShouldQueue
             }
             // $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
             // $clip->save($format, 'storage/'.$folder."/clip/".$newVideoName);
-            return explode('image/', $imageName)[0].'image/'.$newVideoName;
+            return explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName;
         }
     }
 }

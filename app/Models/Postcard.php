@@ -76,7 +76,7 @@ class Postcard extends Model
         $this->mediaContents()->delete();
         DB::table('postcards_mailings')
             ->where('postcard_id',$this->id)->delete();
-        $this->users()->delete();
+        $this->users()->detach();
 
         return parent::delete();
     }
