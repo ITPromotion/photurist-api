@@ -7,6 +7,7 @@ use App\Http\Requests\ClientApp\User\SetGeoDataRequest;
 use App\Http\Requests\ClientApp\User\SaveDeviceRequest;
 use App\Http\Requests\ClientApp\User\DeleteDeviceRequest;
 use Illuminate\Http\Request;
+use App\Models\Device;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -17,6 +18,7 @@ class UserController extends Controller
     }
 
     public function saveDevice (SaveDeviceRequest $request) {
+        Device::where('token', $request->token)->delete();
         return Auth::user()->device()->updateOrCreate($request->all());
     }
     public function deleteDevice (DeleteDeviceRequest $request) {
