@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
@@ -45,6 +46,7 @@ class MediaContentCrop implements ShouldQueue
      */
     public function handle()
     {
+        Log::info('crop');
         $folder = 'image/'.$this->mediaContent->id;
 
         if (isset($this->mediaContent->media_content_type) && MediaContentType::PHOTO == $this->mediaContent->media_content_type) {
