@@ -32,7 +32,7 @@ class Postcard extends Model
     protected $appends = ['favorite'];
 
     public function getFavoriteAttribute() {
-        $favorite = $this->favorites()->wherePivot('user_id', \Auth::user()->id)->first();
+        $favorite = $this->favorites()->wherePivot('user_id', \Auth::user()->id ?? null)->first();
         if ($favorite) {
             return true;
         }
@@ -121,6 +121,6 @@ class Postcard extends Model
 
     public function userPostcardNotifications()
     {
-        return $this->BelongsToMany(User::class, 'user_postcard_notifications')->where('user_id', Auth::id());
+        return $this->BelongsToMany(User::class, 'user_postcard_notifications');
     }
 }

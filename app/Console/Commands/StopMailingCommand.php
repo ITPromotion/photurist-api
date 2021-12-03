@@ -6,6 +6,7 @@ use App\Enums\MailingType;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Models\Postcard;
 use App\Enums\ActionLocKey;
 
 class StopMailingCommand extends Command
@@ -42,7 +43,7 @@ class StopMailingCommand extends Command
     public function handle()
     {
         $postcards = DB::table('postcards_mailings')
-            // ->where('status', MailingType::ACTIVE)
+            ->where('status', MailingType::ACTIVE)
             ->where('stop','<', Carbon::now());
 
         $postcards->update(['status' => MailingType::CLOSED]);
@@ -53,34 +54,33 @@ class StopMailingCommand extends Command
 
             $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
             $users = DB::table('devices')->whereIn('user_id', $userIds)->pluck('token')->toArray();
-            (new \App\Services\NotificationService)->send([
+            \Illuminate\Support\Facades\Log::info('Время рассылки истекло'.(new \App\Services\NotificationService)->send([
                 'users' => $users,
                 'title' => null,
                 'body' => 'Время рассылки истекло, открытка больше не рассылается новым получателям',
                 'img' => null,
                 'postcard_id' => '',
                 'action_loc_key' => ActionLocKey::TIME_IS_UP,
-            ]);
-            // foreach ($postcards->get() as $postcard) {
-            //     \Illuminate\Support\Facades\Log::info($postcards->first());
-            //     break;
-            // }
-            // foreach ($postcards->get() as $postcard) {
-            //     \Illuminate\Support\Facades\Log::info($postcard->userPostcardNotifications);
-            //     $postcard->userPostcardNotifications;
-            //     try {
-            //         (new \App\Services\NotificationService)->send([
-            //             'users' => $postcard->users->device->pluck('token')->toArray(),
-            //             'title' => $postcard->user->login,
-            //             'body' => 'Время ожидание истекло',
-            //             'img' => $postcard->mediaContents[0]->link,
-            //             'postcard_id' => $postcard->id,
-            //             'action_loc_key' => ActionLocKey::WAITING_TIME,
-            //         ]);
-            //     } catch (\Throwable $th) {
-            //         //throw $th;
-            //     }
-            // }
+            ]));
+            //
+            foreach (Postcard::whereIn('id', $postcards->pluck('postcard_id')->toArray())->get() as $postcard) {
+                $t = $postcards;
+                $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
+                $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
+                // \Illuminate\Support\Facades\Log::info($postcardsUserId);
+                try {
+                    \Illuminate\Support\Facades\Log::info('Время ожидание истекло'.(new \App\Services\NotificationService)->send([
+                        'users' => \App\Models\Device::whereIn('user_id', $userPostcardNotificationsUsers)->pluck('token')->toArray(),
+                        'title' => $postcard->user->login,
+                        'body' => 'Время ожидание истекло',
+                        'img' => $postcard->mediaContents[0]->link,
+                        'postcard_id' => $postcard->id,
+                        'action_loc_key' => ActionLocKey::WAITING_TIME,
+                    ]));
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+            }
 
         } catch (\Throwable $th) {
             //throw $th;
