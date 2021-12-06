@@ -4,7 +4,7 @@ use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 use App\Http\Controllers\ClientApp\Api\v1\PostcardController as PostcardControllerAlias;
 use App\Http\Controllers\ClientApp\Api\v1\ProfileController;
 use App\Http\Controllers\ClientApp\Api\v1\UserController;
-
+use Illuminate\Http\Request;
 /* Checking OTP code */
 Route::post('/active-user', [LoginController::class,'activeUser']);
 
