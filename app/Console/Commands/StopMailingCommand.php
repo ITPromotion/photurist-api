@@ -50,18 +50,21 @@ class StopMailingCommand extends Command
 
 
         try {
-            $postcardIds = $postcards->pluck('postcard_id')->toArray();
+            // $postcardIds = $postcards->pluck('postcard_id')->toArray();
 
-            $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
-            $users = DB::table('devices')->whereIn('user_id', $userIds)->pluck('token')->toArray();
-            \Illuminate\Support\Facades\Log::info('Время рассылки истекло'.(new \App\Services\NotificationService)->send([
-                'users' => $users,
-                'title' => null,
-                'body' => 'Время рассылки истекло, открытка больше не рассылается новым получателям',
-                'img' => null,
-                'postcard_id' => '',
-                'action_loc_key' => ActionLocKey::TIME_IS_UP,
-            ]));
+            // $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
+            // $users = DB::table('devices')->whereIn('user_id', $userIds)->pluck('token')->toArray();
+            foreach ($postcards->get() as $postcard) {
+                \Illuminate\Support\Facades\Log::info('Время рассылки истекло'.(new \App\Services\NotificationService)->send([
+                    'users' => $postcard->user->device->pluck('token')->toArray(),
+                    'title' => $postcard->user->login,
+                    'body' => 'Время рассылки истекло, открытка больше не рассылается новым получателям',
+                    'img' => $postcard->mediaContents[0]->link,
+                    'postcard_id' => $postcard->id,
+                    'action_loc_key' => ActionLocKey::TIME_IS_UP,
+                ]));
+            }
+
             //
             foreach (Postcard::whereIn('id', $postcards->pluck('postcard_id')->toArray())->get() as $postcard) {
                 $t = $postcards;
