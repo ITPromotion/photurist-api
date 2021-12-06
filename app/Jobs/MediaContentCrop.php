@@ -35,10 +35,11 @@ class MediaContentCrop implements ShouldQueue
         $this->mediaContent = $mediaContent;
     }
 
-    private function _createDir($file)
-    {
-        return Storage::disk('public')->makeDirectory($file);
-    }
+    // private function _createDir($file)
+    // {
+    //     return Storage::disk('public')->makeDirectory($file);
+    //     Log::info('Storage');
+    // }
     /**
      * Execute the job.
      *
@@ -47,15 +48,16 @@ class MediaContentCrop implements ShouldQueue
     public function handle()
     {
         Log::info('crop');
-        $folder = 'image/'.$this->mediaContent->id;
+        $folder = "/postcard/".$this->mediaContent->postcard_id."/image";
 
         if (isset($this->mediaContent->media_content_type) && MediaContentType::PHOTO == $this->mediaContent->media_content_type) {
             $imgName = explode('image/', $this->mediaContent->link)[1];
-            $img = Image::make($this->mediaContent->link);
+            Log::info($this->mediaContent->link);
+            $img = Image::make('storage/'.$this->mediaContent->link);
             $img->backup();
 
             foreach (SizeImage::keys() as $value) {
-                $this->_createDir($folder."/$value/");
+                Log::info(Storage::disk('public')->makeDirectory($folder."/$value/"));
                 $size = explode('x' , $value)[0];
                 $height = $img->height() > $img->width();
                 $width = $img->height() < $img->width();
@@ -71,7 +73,7 @@ class MediaContentCrop implements ShouldQueue
             $videoName = explode('image/', $this->mediaContent->link)[1];
             $ffmpeg = FFMpeg::create();
 
-            $this->_createDir($folder."/clip/");
+            Storage::disk('public')->makeDirectory($folder."/clip/");
             $ffprobe = FFProbe::create();
             $video_dimensions = $ffprobe->
             streams('storage/'.$this->mediaContent->link)   // extracts streams informations
@@ -105,10 +107,11 @@ class MediaContentCrop implements ShouldQueue
             // }
 
             foreach (SizeImage::keys() as $value) {
+                Log::info('crop2');
                 try {
                     $video = $ffmpeg->open('storage/'.explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName);
-                    $this->_createDir($folder."/$value/");
-                    $this->_createDir($folder."/frame/$value/");
+                    Log::info(Storage::disk('public')->makeDirectory($folder."/$value/"));
+                    Storage::disk('public')->makeDirectory($folder."/frame/$value/");
                     $size = (integer)explode('x' , $value)[0];
 
                     $img = Image::make($frameName);
@@ -137,7 +140,11 @@ class MediaContentCrop implements ShouldQueue
             }
             // $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
             // $clip->save($format, 'storage/'.$folder."/clip/".$newVideoName);
-            return explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName;
+            $this->mediaContent->update([
+                'link' =>  explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName,
+            ]);
+            Log::info($this->mediaContent);
+            return;
         }
     }
 }
