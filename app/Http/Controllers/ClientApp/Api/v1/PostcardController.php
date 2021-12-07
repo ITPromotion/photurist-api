@@ -250,7 +250,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             (new NotificationService)->send([
                 'users' => Device::getTokenUsers($userIds),
                 'title' => $postcard->user->login,
-                'body' => 'Открытка удалена',
+                'body' => ActionLocKey::DELETE_POSTCARD_TEXT,
                 'img' => $postcard->mediaContents[0]->link,
                 'postcard_id' => $postcard->id,
                 'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
@@ -442,7 +442,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             (new NotificationService)->send([
                 'users' => Device::getTokenUsers($userIds),
                 'title' => $postcard->user->login,
-                'body' => 'Открытка удалена',
+                'body' => ActionLocKey::DELETE_POSTCARD_TEXT,
                 'img' => $postcard->mediaContents[0]->link,
                 'postcard_id' => $postcard->id,
                 'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
