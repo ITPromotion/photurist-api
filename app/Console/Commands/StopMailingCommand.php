@@ -58,7 +58,7 @@ class StopMailingCommand extends Command
                 \Illuminate\Support\Facades\Log::info('Время рассылки истекло'.(new \App\Services\NotificationService)->send([
                     'users' => $postcard->user->device->pluck('token')->toArray(),
                     'title' => $postcard->user->login,
-                    'body' => 'Время рассылки истекло, открытка больше не рассылается новым получателям',
+                    'body' => ActionLocKey::TIME_IS_UP_TEXT,
                     'img' => $postcard->mediaContents[0]->link,
                     'postcard_id' => $postcard->id,
                     'action_loc_key' => ActionLocKey::TIME_IS_UP,
@@ -75,7 +75,7 @@ class StopMailingCommand extends Command
                     \Illuminate\Support\Facades\Log::info('Время ожидание истекло'.(new \App\Services\NotificationService)->send([
                         'users' => \App\Models\Device::whereIn('user_id', $userPostcardNotificationsUsers)->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
-                        'body' => 'Время ожидание истекло',
+                        'body' => ActionLocKey::WAITING_TIME_TEXT,
                         'img' => $postcard->mediaContents[0]->link,
                         'postcard_id' => $postcard->id,
                         'action_loc_key' => ActionLocKey::WAITING_TIME,

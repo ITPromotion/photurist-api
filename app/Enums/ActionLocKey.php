@@ -18,4 +18,10 @@ class ActionLocKey extends Enum
     const TIME_IS_UP = 'time_is_up';
     const POSTCARD_DELETE = 'postcard_delete';
     const WAITING_TIME = 'waiting_time_has_elapsed';
+
+    const GALLERY_TEXT = 'Новая открытка';
+    const TIME_IS_UP_TEXT = 'Время рассылки открытки истекло';
+    const DELETE_POSTCARD_TEXT = 'Открытка удалена';
+    const WAITING_TIME_TEXT = 'Время ожидания открытки истекло';
+
 }

@@ -79,7 +79,7 @@ class MailingCommand extends Command
                             (new NotificationService)->send([
                                 'users' => $user->device->pluck('token')->toArray(),
                                 'title' => $postcard->user->login,
-                                'body' => 'Новая открытка',
+                                'body' => ActionLocKey::GALLERY_TEXT,
                                 'img' => $postcard->mediaContents[0]->link,
                                 'postcard_id' => $postcard->id,
                                 'action_loc_key' => ActionLocKey::GALLERY,

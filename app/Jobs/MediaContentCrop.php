@@ -53,7 +53,7 @@ class MediaContentCrop implements ShouldQueue
         if (isset($this->mediaContent->media_content_type) && MediaContentType::PHOTO == $this->mediaContent->media_content_type) {
             $imgName = explode('image/', $this->mediaContent->link)[1];
             Log::info($this->mediaContent->link);
-            $img = Image::make('storage/'.$this->mediaContent->link);
+            $img = Image::make(public_path('storage/'.$this->mediaContent->link));
             $img->backup();
 
             foreach (SizeImage::keys() as $value) {
@@ -66,7 +66,7 @@ class MediaContentCrop implements ShouldQueue
                     $constraint->upsize();
                 });
                 $img->crop($size, $size);
-                $img->save('storage/'.$folder."/$value/".$imgName);
+                $img->save(public_path('storage/'.$folder."/$value/".$imgName));
                 $img->reset();
             }
         } elseif (isset($this->mediaContent->media_content_type) && MediaContentType::VIDEO == $this->mediaContent->media_content_type) {
@@ -75,14 +75,16 @@ class MediaContentCrop implements ShouldQueue
 
             Storage::disk('public')->makeDirectory($folder."/clip/");
             $ffprobe = FFProbe::create();
+            Log::info(public_path('storage/'.$this->mediaContent->link));
+
             $video_dimensions = $ffprobe->
-            streams('storage/'.$this->mediaContent->link)   // extracts streams informations
+            streams(public_path('storage/'.$this->mediaContent->link))   // extracts streams informations
             ->videos()                      // filters video streams
             ->first()                       // returns the first video stream
             ->getDimensions();
 
             $duration = $ffprobe->
-            streams('storage/'.$this->mediaContent->link)
+            streams(public_path('storage/'.$this->mediaContent->link))
                 ->videos()
                 ->first()->get('duration');
             $width = $video_dimensions->getWidth();
@@ -91,17 +93,17 @@ class MediaContentCrop implements ShouldQueue
             $fullHDW = $height < $width ? 1920 :'trunc(oh*a/2)*2';
             $fullHDH = $height > $width  ? 1080 : 'trunc(ow/a/2)*2';
 
-            $vidos = $ffmpeg->open('storage/'.$this->mediaContent->link);
+            $vidos = $ffmpeg->open(public_path('storage/'.$this->mediaContent->link));
             $format = new \FFMpeg\Format\Video\X264();
             $format->setAudioCodec("aac");
             // $vidos->filters()->custom("scale=w=$fullHDW:h=$fullHDH");
             // if (explode('.', $videoName)[1] != 'mp4') {
             $newVideoName = explode('.', $videoName)[0].'s.mp4';
-            $frameName = 'storage/'.$folder."/clip/".explode('.', $videoName)[0].'s.jpg';
+            $frameName = public_path('storage/'.$folder."/clip/".explode('.', $videoName)[0].'s.jpg');
             $vidos->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(1))
                 ->save($frameName);
 
-            $vidos->save(new \FFMpeg\Format\Video\X264('aac', 'libx264'), 'storage/'.explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName);
+            $vidos->save(new \FFMpeg\Format\Video\X264('aac', 'libx264'), public_path('storage/'.explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName));
             // } else {
             //     $newVideoName = $videoName;
             // }
@@ -109,7 +111,7 @@ class MediaContentCrop implements ShouldQueue
             foreach (SizeImage::keys() as $value) {
                 Log::info('crop2');
                 try {
-                    $video = $ffmpeg->open('storage/'.explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName);
+                    $video = $ffmpeg->open(public_path('storage/'.explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName));
                     Log::info(Storage::disk('public')->makeDirectory($folder."/$value/"));
                     Storage::disk('public')->makeDirectory($folder."/frame/$value/");
                     $size = (integer)explode('x' , $value)[0];
@@ -123,7 +125,7 @@ class MediaContentCrop implements ShouldQueue
                         $constraint->upsize();
                     });
                     $img->crop($size, $size);
-                    $img->save('storage/'.$folder."/frame/$value/".explode('.', $videoName)[0].'s.jpg');
+                    $img->save(public_path('storage/'.$folder."/frame/$value/".explode('.', $videoName)[0].'s.jpg'));
                     $img->reset();
 
                     $size = $size % 2 ? $size + 1 : $size;
@@ -132,7 +134,7 @@ class MediaContentCrop implements ShouldQueue
 
 
                     $video->filters()->custom("scale=w=$scaleW:h=$scaleH,crop=$size:$size")->framerate(new \FFMpeg\Coordinate\FrameRate(Video::FRAME),4)->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds($duration >= Video::DURATION ? Video::DURATION : $duration ));
-                    $video->save($format, 'storage/'.$folder."/$value/".$newVideoName);
+                    $video->save($format, public_path('storage/'.$folder."/$value/".$newVideoName));
 
                 } catch (\Throwable $th) {
                    return;
