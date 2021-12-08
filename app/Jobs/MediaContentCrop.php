@@ -135,15 +135,20 @@ class MediaContentCrop implements ShouldQueue
                     $video->save($format, 'storage/'.$folder."/$value/".$newVideoName);
 
                 } catch (\Throwable $th) {
-                    //throw $th;
+                   return;
                 }
             }
             // $clip = $video->clip(TimeCode::fromSeconds(Video::START), TimeCode::fromSeconds(Video::DURATION));
             // $clip->save($format, 'storage/'.$folder."/clip/".$newVideoName);
             $this->mediaContent->update([
                 'link' =>  explode('image/', $this->mediaContent->link)[0].'image/'.$newVideoName,
+                'loading' => true,
             ]);
+
             Log::info($this->mediaContent);
+
+
+
             return;
         }
     }

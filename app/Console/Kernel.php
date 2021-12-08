@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('command:mailing')->everyMinute();
         $schedule->command('command:stop_mailing')->everyMinute();
+        $schedule->command('command:active_status_postcard')->everyMinute();
     }
 
     /**
