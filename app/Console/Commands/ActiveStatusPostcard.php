@@ -66,8 +66,9 @@ class ActiveStatusPostcard extends Command
 
                 $postcard->save();
 
-                //try {
+                try {
                     $user = $postcard->user;
+                    Log::info($user->device->pluck('token')->toArray());
                         (new NotificationService)->send([
                             'users' => $user->device->pluck('token')->toArray(),
                             'title' => $postcard->user->login,
@@ -81,9 +82,9 @@ class ActiveStatusPostcard extends Command
                                 ->where('status', PostcardStatus::ACTIVE)
                                 ->count()
                         ]);
-               /* } catch (\Throwable $th) {
+                } catch (\Throwable $th) {
                     //throw $th;
-                }*/
+                }
 
             };
         }
