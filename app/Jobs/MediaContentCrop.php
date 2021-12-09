@@ -69,6 +69,10 @@ class MediaContentCrop implements ShouldQueue
                 $img->save(public_path('storage/'.$folder."/$value/".$imgName));
                 $img->reset();
             }
+            $this->mediaContent->update([
+                'loading' => true,
+            ]);
+
         } elseif (isset($this->mediaContent->media_content_type) && MediaContentType::VIDEO == $this->mediaContent->media_content_type) {
             $videoName = explode('image/', $this->mediaContent->link)[1];
             $ffmpeg = FFMpeg::create();
