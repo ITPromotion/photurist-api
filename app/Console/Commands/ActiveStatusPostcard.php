@@ -68,7 +68,7 @@ class ActiveStatusPostcard extends Command
 
                 try {
                     $user = $postcard->user;
-                    Log::info([
+                    Log::info((new NotificationService)->send([
                         'users' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
                         'body' => __('notifications.postcard_status_active'),
@@ -80,7 +80,7 @@ class ActiveStatusPostcard extends Command
                             ->where('user_id',Auth::id())
                             ->where('status', PostcardStatus::ACTIVE)
                             ->count()
-                    ]);
+                    ]));
                         (new NotificationService)->send([
                             'users' => $user->device->pluck('token')->toArray(),
                             'title' => $postcard->user->login,
