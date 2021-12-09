@@ -2,11 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\ActionLocKey;
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
 use App\Models\Postcard;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ActiveStatusPostcard extends Command
 {
@@ -56,6 +60,25 @@ class ActiveStatusPostcard extends Command
                     $postcard->start_mailing = Carbon::now();
 
                 $postcard->save();
+
+                try {
+                    $user = $postcard->user;
+                        (new NotificationService)->send([
+                            'users' => $user->device->pluck('token')->toArray(),
+                            'title' => $postcard->user->login,
+                            'body' => __('notifications.postcard_status_active'),
+                            'img' => $postcard->mediaContents[0]->link,
+                            'postcard_id' => $postcard->id,
+                            'action_loc_key' => ActionLocKey::GALLERY,
+                            'badge' => DB::table('postcards_mailings')
+                                ->where('view', 0)
+                                ->where('user_id',Auth::id())
+                                ->where('status', PostcardStatus::ACTIVE)
+                                ->count()
+                        ]);
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
 
             };
         }
