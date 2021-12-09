@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ActiveStatusPostcard extends Command
 {
@@ -58,6 +59,8 @@ class ActiveStatusPostcard extends Command
 
                 if($postcard->status == MailingType::ACTIVE)
                     $postcard->start_mailing = Carbon::now();
+
+                Log::info($postcard->start_mailing);
 
                 $postcard->save();
 
