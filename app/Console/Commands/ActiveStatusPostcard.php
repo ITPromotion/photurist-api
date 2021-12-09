@@ -50,6 +50,8 @@ class ActiveStatusPostcard extends Command
 
                 $postcard->status = PostcardStatus::ACTIVE;
 
+                $postcard->loading=true;
+
                 if($postcard->status == MailingType::ACTIVE)
                     $postcard->start_mailing = Carbon::now();
 
