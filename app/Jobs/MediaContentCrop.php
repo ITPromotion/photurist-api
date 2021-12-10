@@ -157,5 +157,7 @@ class MediaContentCrop implements ShouldQueue
 
             return;
         }
+
+
     }
 }
