@@ -68,19 +68,19 @@ class ActiveStatusPostcard extends Command
 
                 try {
                     $user = $postcard->user;
-                    Log::info((new NotificationService)->send([
-                        'users' => $user->device->pluck('token')->toArray(),
-                        'title' => $postcard->user->login,
-                        'body' => __('notifications.postcard_status_active'),
-                        'img' => $postcard->mediaContents[0]->link,
-                        'postcard_id' => $postcard->id,
-                        'action_loc_key' => ActionLocKey::GALLERY,
-                        'badge' => DB::table('postcards_mailings')
-                            ->where('view', 0)
-                            ->where('user_id',Auth::id())
-                            ->where('status', PostcardStatus::ACTIVE)
-                            ->count()
-                    ]));
+                    // Log::info((new NotificationService)->send([
+                    //     'users' => $user->device->pluck('token')->toArray(),
+                    //     'title' => $postcard->user->login,
+                    //     'body' => __('notifications.postcard_status_active'),
+                    //     'img' => $postcard->mediaContents[0]->link,
+                    //     'postcard_id' => $postcard->id,
+                    //     'action_loc_key' => ActionLocKey::GALLERY,
+                    //     'badge' => DB::table('postcards_mailings')
+                    //         ->where('view', 0)
+                    //         ->where('user_id',Auth::id())
+                    //         ->where('status', PostcardStatus::ACTIVE)
+                    //         ->count()
+                    // ]));
                         (new NotificationService)->send([
                             'users' => $user->device->pluck('token')->toArray(),
                             'title' => $postcard->user->login,

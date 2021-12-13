@@ -6,6 +6,7 @@ use App\Enums\MailingType;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 use App\Models\Postcard;
 use App\Enums\ActionLocKey;
 
@@ -54,40 +55,17 @@ class StopMailingCommand extends Command
 
             // $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
             // $users = DB::table('devices')->whereIn('user_id', $userIds)->pluck('token')->toArray();
+
             foreach ($postcards->get() as $postcard) {
-                \Illuminate\Support\Facades\Log::info('Время рассылки истекло'.(new \App\Services\NotificationService)->send([
-                    'users' => $postcard->user->device->pluck('token')->toArray(),
-                    'title' => $postcard->user->login,
-                    'body' => ActionLocKey::TIME_IS_UP_TEXT,
-                    'img' => $postcard->mediaContents[0]->link,
-                    'postcard_id' => $postcard->id,
+                \Illuminate\Support\Facades\Log::info('TIME_IS_UP_TEXT'.(new \App\Services\NotificationService)->send([
+                    'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
+                    'title' => User::find($postcard->user_id)->login,
+                    'body' => __('notifications.time_is_up_text'),
+                    'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
+                    'postcard_id' => $postcard->postcard_id,
                     'action_loc_key' => ActionLocKey::TIME_IS_UP,
                 ]));
             }
-
-            //
-            foreach (Postcard::whereIn('id', $postcards->pluck('postcard_id')->toArray())->get() as $postcard) {
-                $t = $postcards;
-                $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
-                $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
-                // \Illuminate\Support\Facades\Log::info($postcardsUserId);
-                // try {
-                    \Illuminate\Support\Facades\Log::info('Время ожидание истекло'.(new \App\Services\NotificationService)->send([
-                        'users' => \App\Models\Device::whereIn('user_id', $userPostcardNotificationsUsers)->pluck('token')->toArray(),
-                        'title' => $postcard->user->login,
-                        'body' => ActionLocKey::WAITING_TIME_TEXT,
-                        'img' => $postcard->mediaContents[0]->link,
-                        'postcard_id' => $postcard->id,
-                        'action_loc_key' => ActionLocKey::WAITING_TIME,
-                    ]));
-                // } catch (\Throwable $th) {
-                //     //throw $th;
-                // }
-            }
-
-        // } catch (\Throwable $th) {
-        //     //throw $th;
-        // }
         return 0;
     }
 }

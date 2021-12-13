@@ -46,8 +46,7 @@ class MailingCommand extends Command
     public function handle()
     {
 
-        $postcards = Postcard::where('status',PostcardStatus::ACTIVE)->where('loading', true)->get();
-
+        $postcards = Postcard::get();
         foreach($postcards as $postcard){
 
             $lastMailing = $postcard->lastMailing();
@@ -79,7 +78,7 @@ class MailingCommand extends Command
                             (new NotificationService)->send([
                                 'users' => $user->device->pluck('token')->toArray(),
                                 'title' => $postcard->user->login,
-                                'body' => ActionLocKey::GALLERY_TEXT,
+                                'body' => __('notifications.gallery_text'),
                                 'img' => $postcard->mediaContents[0]->link,
                                 'postcard_id' => $postcard->id,
                                 'action_loc_key' => ActionLocKey::GALLERY,
@@ -99,21 +98,24 @@ class MailingCommand extends Command
             $firstMailing = $postcard->firstMailing();
 
             if(($firstMailing)&&(Carbon::parse($firstMailing->start)<Carbon::now()->subMinutes($postcard->interval_send))){
-              $postcard->status = PostcardStatus::ARCHIVE;
-              $postcard->save();
+                $postcard->status = PostcardStatus::ARCHIVE;
+                $postcard->save();
 
-            //   try {
-            //     (new NotificationService)->send([
-            //         'users' => $user->device->pluck('token')->toArray(),
-            //         'title' => $postcard->user->login,
-            //         'body' => 'Время ожидание истекло',
-            //         'img' => $postcard->mediaContents[0]->link,
-            //         'postcard_id' => $postcard->id,
-            //         'action_loc_key' => ActionLocKey::WAITING_TIME,
-            //     ]);
-            // } catch (\Throwable $th) {
-            //     //throw $th;
-            // }
+                $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
+                $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
+                foreach ($postcardsUserId as $id) {
+                    \Illuminate\Support\Facades\Log::info('WAITING_TIME');
+                    (new \App\Services\NotificationService)->send([
+                        'users' => User::find($id)->device->pluck('token')->toArray(),
+                        'title' => $postcard->user->login,
+                        'body' => __('notifications.waiting_time_text'),
+                        'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                        'postcard_id' => $postcard->id,
+                        'action_loc_key' => ActionLocKey::WAITING_TIME,
+                    ]);
+                }
+
+
             };
         }
 
