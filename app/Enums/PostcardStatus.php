@@ -20,4 +20,6 @@ class PostcardStatus extends Enum
     const CREATED = 'draft';
 
     const ARCHIVE = 'archive';
+
+    const LOADING = 'loading';
 }

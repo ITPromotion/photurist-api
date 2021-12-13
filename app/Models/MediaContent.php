@@ -22,6 +22,7 @@ class MediaContent extends Model
         'link',
         'media_content_type',
         'postcard_id',
+        'loading',
     ];
 
     protected $appends = ['small', 'midle', 'large', 'frame', 'frame_small', 'frame_large'];

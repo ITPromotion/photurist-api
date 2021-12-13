@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,6 +27,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('command:mailing')->everyMinute();
         $schedule->command('command:stop_mailing')->everyMinute();
+        $schedule->command('command:active_status_postcard')->everyMinute();
+        Log::info('end');
     }
 
     /**
