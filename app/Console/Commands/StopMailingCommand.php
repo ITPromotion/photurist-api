@@ -49,7 +49,7 @@ class StopMailingCommand extends Command
         $postcards->update(['status' => MailingType::CLOSED]);
 
 
-        try {
+        // try {
             // $postcardIds = $postcards->pluck('postcard_id')->toArray();
 
             // $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
@@ -71,7 +71,7 @@ class StopMailingCommand extends Command
                 $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
                 $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
                 // \Illuminate\Support\Facades\Log::info($postcardsUserId);
-                try {
+                // try {
                     \Illuminate\Support\Facades\Log::info('Время ожидание истекло'.(new \App\Services\NotificationService)->send([
                         'users' => \App\Models\Device::whereIn('user_id', $userPostcardNotificationsUsers)->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
@@ -80,14 +80,14 @@ class StopMailingCommand extends Command
                         'postcard_id' => $postcard->id,
                         'action_loc_key' => ActionLocKey::WAITING_TIME,
                     ]));
-                } catch (\Throwable $th) {
-                    //throw $th;
-                }
+                // } catch (\Throwable $th) {
+                //     //throw $th;
+                // }
             }
 
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        // } catch (\Throwable $th) {
+        //     //throw $th;
+        // }
         return 0;
     }
 }
