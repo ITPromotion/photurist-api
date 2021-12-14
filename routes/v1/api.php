@@ -3,6 +3,13 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientApp\Api\v1\LoginController;
+use App\Enums\MailingType;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Postcard;
+use App\Enums\ActionLocKey;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +23,14 @@ use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 */
 /* Checking phone number */
 Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
+Route::get('/test', function () {
+    $postcards = DB::table('postcards_mailings')
+            ->where('status', MailingType::ACTIVE)
+            ->where('stop','<', Carbon::now());
 
+        $postcards->update(['status' => MailingType::CLOSED]);
+        dd($postcards->get());
+});
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
 
