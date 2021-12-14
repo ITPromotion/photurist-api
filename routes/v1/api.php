@@ -23,29 +23,7 @@ use App\Enums\ActionLocKey;
 */
 /* Checking phone number */
 Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
-Route::get('/test', function () {
-    $postcards = DB::table('postcards_mailings')
-            ->where('status', MailingType::ACTIVE)
-            ->where('stop','<', Carbon::now());
 
-        foreach ($postcards->get() as $postcard) {
-            \Illuminate\Support\Facades\Log::info('waiting_time_text');
-            if (!Postcard::where('id', $postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
-            (new \App\Services\NotificationService)->send([
-                'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
-                'title' => User::find($postcard->user_id)->login,
-                'body' => __('notifications.waiting_time_text'),
-                'img' => count(Postcard::find($postcard->postcard_id)->first()->mediaContents) ? Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link : null,
-                'postcard_id' => $postcard->postcard_id,
-                'action_loc_key' => ActionLocKey::WAITING_TIME,
-            ]);
-        }
-        $postcards->update(['status' => MailingType::CLOSED]);
-
-
-
-
-});
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
 
