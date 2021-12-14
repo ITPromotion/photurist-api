@@ -27,8 +27,6 @@ Route::get('/test', function () {
     $postcards = DB::table('postcards_mailings')
             ->where('status', MailingType::ACTIVE)
             ->where('stop','<', Carbon::now());
-            return $postcards->get();
-        $postcards->update(['status' => MailingType::CLOSED]);
 
         foreach ($postcards->get() as $postcard) {
             \Illuminate\Support\Facades\Log::info('waiting_time_text');
@@ -42,6 +40,8 @@ Route::get('/test', function () {
                 'action_loc_key' => ActionLocKey::WAITING_TIME,
             ]);
         }
+        $postcards->update(['status' => MailingType::CLOSED]);
+
 
 
 
