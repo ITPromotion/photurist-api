@@ -17,6 +17,7 @@ class NotificationService {
                 "title" => $req['title'] ?? null,
                 "body" => $req['body'] ?? null,
                 'image' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
+                'sound' => 'default',
                 // 'postcard_id' => $req['postcard_id'] ?? null,
             ],
             "data" => [
