@@ -29,6 +29,7 @@ class Postcard extends Model
             'regions',
             'cities',
             'loading',
+            'draft',
         ];
     protected $appends = ['favorite'];
 
