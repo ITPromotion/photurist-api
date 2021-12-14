@@ -47,7 +47,7 @@ class StopMailingCommand extends Command
             ->where('status', MailingType::ACTIVE)
             ->where('stop','<', Carbon::now());
 
-        $postcards->update(['status' => MailingType::CLOSED]);
+        // $postcards->update(['status' => MailingType::CLOSED]);
 
 
         // try {

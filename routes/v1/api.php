@@ -29,7 +29,22 @@ Route::get('/test', function () {
             ->where('stop','<', Carbon::now());
 
         $postcards->update(['status' => MailingType::CLOSED]);
+
+        foreach ($postcards->get() as $postcard) {
+            \Illuminate\Support\Facades\Log::info('waiting_time_text');
+            if (!Postcard::where($postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
+            (new \App\Services\NotificationService)->send([
+                'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
+                'title' => User::find($postcard->user_id)->login,
+                'body' => __('notifications.waiting_time_text'),
+                'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
+                'postcard_id' => $postcard->postcard_id,
+                'action_loc_key' => ActionLocKey::WAITING_TIME,
+            ]);
+        }
         return $postcards->get();
+
+
 });
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
