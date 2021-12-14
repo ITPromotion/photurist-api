@@ -23,14 +23,7 @@ use App\Enums\ActionLocKey;
 */
 /* Checking phone number */
 Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
-Route::get('/test', function () {
-    $postcards = DB::table('postcards_mailings')
-            ->where('status', MailingType::ACTIVE)
-            ->where('stop','<', Carbon::now());
 
-        $postcards->update(['status' => MailingType::CLOSED]);
-        dd($postcards->get());
-});
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
 
