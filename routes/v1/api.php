@@ -29,7 +29,7 @@ Route::get('/test', function () {
             ->where('stop','<', Carbon::now());
 
         $postcards->update(['status' => MailingType::CLOSED]);
-        dd($postcards->get());
+        return $postcards->get();
 });
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
