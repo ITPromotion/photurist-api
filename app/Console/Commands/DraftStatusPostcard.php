@@ -13,14 +13,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class ActiveStatusPostcard extends Command
+class DraftStatusPostcard extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:active_status_postcard';
+    protected $signature = 'command:draft_status_postcard';
 
     /**
      * The console command description.
@@ -46,7 +46,7 @@ class ActiveStatusPostcard extends Command
      */
     public function handle()
     {
-        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('draft',false)->get();
+        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('draft',true)->get();
 
         Log::info($postcards);
 
@@ -55,32 +55,25 @@ class ActiveStatusPostcard extends Command
 
                 $postcard->loading!=true;
 
-                $postcard->status = PostcardStatus::ACTIVE;
+                $postcard->status = PostcardStatus::DRAFT;
 
-                $postcard->draft = false;
+                $postcard->loading=true;
 
-                if($postcard->status == MailingType::ACTIVE)
-                    $postcard->start_mailing = Carbon::now();
 
-                Log::info('loading');
+                Log::info('loading draft');
 
                 $postcard->save();
 
                 try {
                     $user = $postcard->user;
-                        (new NotificationService)->send([
-                            'users' => $user->device->pluck('token')->toArray(),
-                            'title' => $postcard->user->login,
-                            'body' => __('notifications.postcard_status_active'),
-                            'img' => $postcard->mediaContents[0]->link,
-                            'postcard_id' => $postcard->id,
-                            'action_loc_key' => ActionLocKey::GALLERY,
-                            'badge' => DB::table('postcards_mailings')
-                                ->where('view', 0)
-                                ->where('user_id',Auth::id())
-                                ->where('status', PostcardStatus::ACTIVE)
-                                ->count()
-                        ]);
+                    (new NotificationService)->send([
+                        'users' => $user->device->pluck('token')->toArray(),
+                        'title' => $postcard->user->login,
+                        'body' => __('notifications.postcard_status_draft'),
+                        'img' => $postcard->mediaContents[0]->link,
+                        'postcard_id' => $postcard->id,
+                        'action_loc_key' => ActionLocKey::GALLERY_DRAFT,
+                    ]);
                 } catch (\Throwable $th) {
                     //throw $th;
                 }
