@@ -30,7 +30,7 @@ Route::get('/test', function () {
 
         foreach ($postcards->get() as $postcard) {
             \Illuminate\Support\Facades\Log::info('waiting_time_text');
-            if (!Postcard::where($postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
+            if (!Postcard::where('id', $postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
             (new \App\Services\NotificationService)->send([
                 'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
                 'title' => User::find($postcard->user_id)->login,
