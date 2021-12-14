@@ -48,19 +48,26 @@ class StopMailingCommand extends Command
             ->where('stop','<', Carbon::now());
 
         $postcards->update(['status' => MailingType::CLOSED]);
-        \Illuminate\Support\Facades\Log::info('waiting_time_text');
+
+
+        // try {
+            // $postcardIds = $postcards->pluck('postcard_id')->toArray();
+
+            // $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
+            // $users = DB::table('devices')->whereIn('user_id', $userIds)->pluck('token')->toArray();
+            // $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
+            // $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
             foreach ($postcards->get() as $postcard) {
                 \Illuminate\Support\Facades\Log::info('waiting_time_text');
-                if (!Postcard::where('id', $postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first()) {
-                    (new \App\Services\NotificationService)->send([
-                        'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
-                        'title' => User::find($postcard->user_id)->login,
-                        'body' => __('notifications.waiting_time_text'),
-                        'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
-                        'postcard_id' => $postcard->postcard_id,
-                        'action_loc_key' => ActionLocKey::WAITING_TIME,
-                    ]);
-                }
+                if (!Postcard::where($postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
+                (new \App\Services\NotificationService)->send([
+                    'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
+                    'title' => User::find($postcard->user_id)->login,
+                    'body' => __('notifications.waiting_time_text'),
+                    'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
+                    'postcard_id' => $postcard->postcard_id,
+                    'action_loc_key' => ActionLocKey::WAITING_TIME,
+                ]);
             }
         return 0;
     }
