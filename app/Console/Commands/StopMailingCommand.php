@@ -45,24 +45,24 @@ class StopMailingCommand extends Command
     {
         $postcards = DB::table('postcards_mailings')
             ->where('status', MailingType::ACTIVE)
-            ->where('stop','<', Carbon::now())->get();
+            ->get();
 
         // $postcards->update(['status' => MailingType::CLOSED]);
         \Illuminate\Support\Facades\Log::info($postcards);
         \Illuminate\Support\Facades\Log::info('waiting_time_text');
-            foreach ($postcards as $postcard) {
-                \Illuminate\Support\Facades\Log::info('waiting_time_text');
-                if (!Postcard::where('id', $postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first()) {
-                    (new \App\Services\NotificationService)->send([
-                        'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
-                        'title' => User::find($postcard->user_id)->login,
-                        'body' => __('notifications.waiting_time_text'),
-                        'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
-                        'postcard_id' => $postcard->postcard_id,
-                        'action_loc_key' => ActionLocKey::WAITING_TIME,
-                    ]);
-                }
-            }
+            // foreach ($postcards as $postcard) {
+            //     \Illuminate\Support\Facades\Log::info('waiting_time_text');
+            //     if (!Postcard::where('id', $postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first()) {
+            //         (new \App\Services\NotificationService)->send([
+            //             'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
+            //             'title' => User::find($postcard->user_id)->login,
+            //             'body' => __('notifications.waiting_time_text'),
+            //             'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
+            //             'postcard_id' => $postcard->postcard_id,
+            //             'action_loc_key' => ActionLocKey::WAITING_TIME,
+            //         ]);
+            //     }
+            // }
         return 0;
     }
 }
