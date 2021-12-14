@@ -53,8 +53,6 @@ class ActiveStatusPostcard extends Command
         foreach ($postcards as $postcard){
             if($postcard->mediaContents()->where('loading', false)->get()->isEmpty()){
 
-                $postcard->loading!=true;
-
                 $postcard->status = PostcardStatus::ACTIVE;
 
                 $postcard->draft = false;

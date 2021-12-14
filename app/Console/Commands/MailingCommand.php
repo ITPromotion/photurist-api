@@ -46,7 +46,7 @@ class MailingCommand extends Command
     public function handle()
     {
 
-        $postcards = Postcard::where('status',PostcardStatus::ACTIVE)->where('loading', true)->get();
+        $postcards = Postcard::where('status',PostcardStatus::ACTIVE)->get();
         foreach($postcards as $postcard){
 
             $lastMailing = $postcard->lastMailing();
