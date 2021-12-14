@@ -55,12 +55,13 @@ class StopMailingCommand extends Command
 
             // $userIds = DB::table('postcards')->whereIn('id', $postcardIds)->pluck('user_id')->toArray();
             // $users = DB::table('devices')->whereIn('user_id', $userIds)->pluck('token')->toArray();
-
+            // $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
+            // $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
             foreach ($postcards->get() as $postcard) {
                 \Illuminate\Support\Facades\Log::info('TIME_IS_UP_TEXT'.(new \App\Services\NotificationService)->send([
                     'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
                     'title' => User::find($postcard->user_id)->login,
-                    'body' => __('notifications.time_is_up_text'),
+                    'body' => __('notifications.waiting_time_text'),
                     'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
                     'postcard_id' => $postcard->postcard_id,
                     'action_loc_key' => ActionLocKey::TIME_IS_UP,

@@ -78,7 +78,7 @@ class MailingCommand extends Command
                             (new NotificationService)->send([
                                 'users' => $user->device->pluck('token')->toArray(),
                                 'title' => $postcard->user->login,
-                                'body' => __('notifications.gallery_text'),
+                                'body' => ActionLocKey::GALLERY_TEXT,
                                 'img' => $postcard->mediaContents[0]->link,
                                 'postcard_id' => $postcard->id,
                                 'action_loc_key' => ActionLocKey::GALLERY,
@@ -101,21 +101,15 @@ class MailingCommand extends Command
                 $postcard->status = PostcardStatus::ARCHIVE;
                 $postcard->save();
 
-                $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
-                $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
-                foreach ($postcardsUserId as $id) {
-                    \Illuminate\Support\Facades\Log::info('WAITING_TIME');
+                    \Illuminate\Support\Facades\Log::info('time_is_up_text');
                     (new \App\Services\NotificationService)->send([
-                        'users' => User::find($id)->device->pluck('token')->toArray(),
+                        'users' => $postcard->user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
-                        'body' => __('notifications.waiting_time_text'),
+                        'body' => __('notifications.time_is_up_text'),
                         'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
                         'postcard_id' => $postcard->id,
-                        'action_loc_key' => ActionLocKey::WAITING_TIME,
+                        'action_loc_key' => ActionLocKey::TIME_IS_UP,
                     ]);
-                }
-
-
             };
         }
 
