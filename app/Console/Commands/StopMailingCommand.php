@@ -45,9 +45,10 @@ class StopMailingCommand extends Command
     {
         $postcards = DB::table('postcards_mailings')
             ->where('status', MailingType::ACTIVE)
-            ->where('stop','<', Carbon::now());
+            ->where('post_card_id',317);
 
         $postcards->update(['status' => MailingType::CLOSED]);
+        \Illuminate\Support\Facades\Log::info($postcards->get());
         \Illuminate\Support\Facades\Log::info('waiting_time_text');
             foreach ($postcards->get() as $postcard) {
                 \Illuminate\Support\Facades\Log::info('waiting_time_text');
