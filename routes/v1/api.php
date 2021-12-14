@@ -35,7 +35,7 @@ Route::get('/test', function () {
                 'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
                 'title' => User::find($postcard->user_id)->login,
                 'body' => __('notifications.waiting_time_text'),
-                'img' => Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link,
+                'img' => count(Postcard::find($postcard->postcard_id)->first()->mediaContents) ? Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link : null,
                 'postcard_id' => $postcard->postcard_id,
                 'action_loc_key' => ActionLocKey::WAITING_TIME,
             ]);
