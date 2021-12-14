@@ -47,7 +47,7 @@ class StopMailingCommand extends Command
             ->where('status', MailingType::ACTIVE)
             ->where('stop','<', Carbon::now());
 
-        // $postcards->update(['status' => MailingType::CLOSED]);
+        $postcards->update(['status' => MailingType::CLOSED]);
 
 
         // try {
@@ -58,7 +58,6 @@ class StopMailingCommand extends Command
             // $userPostcardNotificationsUsers = $postcard->userPostcardNotifications->pluck('id')->toArray();
             // $postcardsUserId = DB::table('postcards_mailings')->where('postcard_id',$postcard->id)->whereNotIn('user_id', $userPostcardNotificationsUsers)->pluck('user_id')->toArray();
             foreach ($postcards->get() as $postcard) {
-
                 \Illuminate\Support\Facades\Log::info('waiting_time_text');
                 if (!Postcard::where($postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
                 (new \App\Services\NotificationService)->send([
@@ -69,7 +68,6 @@ class StopMailingCommand extends Command
                     'postcard_id' => $postcard->postcard_id,
                     'action_loc_key' => ActionLocKey::WAITING_TIME,
                 ]);
-                $postcard->update(['status' => MailingType::CLOSED]);
             }
         return 0;
     }
