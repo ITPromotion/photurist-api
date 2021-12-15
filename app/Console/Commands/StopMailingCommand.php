@@ -52,7 +52,7 @@ class StopMailingCommand extends Command
             if (!Postcard::where('id', $postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
             (new \App\Services\NotificationService)->send([
                 'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
-                'title' => User::find($postcard->user_id)->login,
+                'title' => Postcard::find($postcard->postcard_id)->user->login,
                 'body' => __('notifications.waiting_time_text'),
                 'img' => count(Postcard::find($postcard->postcard_id)->first()->mediaContents) ? Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link : null,
                 'postcard_id' => $postcard->postcard_id,
