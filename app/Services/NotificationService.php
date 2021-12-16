@@ -23,6 +23,7 @@ class NotificationService {
             "data" => [
                 'action_loc_key' => $req['action_loc_key'] ?? null,
                 'postcard_id' => $req['postcard_id'] ?? null,
+                'badge' => $req['badge'] ?? null,
             ],
         ];
         $encodedData = json_encode($data);
