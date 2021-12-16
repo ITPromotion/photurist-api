@@ -112,37 +112,45 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         $postcardCollections = $postcardsQuery->get();
 
         foreach ($postcardCollections as $postcardCollection){
+
+            $postcard_active = DB::table('postcards_mailings')->where('postcard_id', $postcardCollection->id)
+                                ->where('user_id', Auth::user()->id)->where('status', MailingType::ACTIVE)->first();
             $postcard = Postcard::find($postcardCollection->id);
-            if(($postcard->user_id==$user->id)&&($postcard->status==PostcardStatus::ACTIVE)){
-                $postcard->start = Carbon::parse($postcard->start_mailing)->format('Y-m-d h:i:s');
-                $postcard->stop = Carbon::parse($postcard->start_mailing)->addMinutes($postcard->interval_send)->format('Y-m-d h:i:s');
-            }else {
-                $postcard->start = $postcardCollection->start;
-                $postcard->stop = $postcardCollection->stop;
-            }
-            $postcard->view = $postcardCollection->view;
-            $postcard->author = $postcardCollection->author;
-            $postcard->save = 1;
-            $usersIds = $postcard->users()->pluck('user_id');
+            if ($postcard_active || $postcard->user_id == Auth::user()->id) {
 
-            if($usersIds->search($user->id)!==false){
+
+                $postcard = Postcard::find($postcardCollection->id);
+                if(($postcard->user_id==$user->id)&&($postcard->status==PostcardStatus::ACTIVE)){
+                    $postcard->start = Carbon::parse($postcard->start_mailing)->format('Y-m-d h:i:s');
+                    $postcard->stop = Carbon::parse($postcard->start_mailing)->addMinutes($postcard->interval_send)->format('Y-m-d h:i:s');
+                }else {
+                    $postcard->start = $postcardCollection->start;
+                    $postcard->stop = $postcardCollection->stop;
+                }
+                $postcard->view = $postcardCollection->view;
+                $postcard->author = $postcardCollection->author;
                 $postcard->save = 1;
-            } else {
-                $postcard->save = 0;
-            };
+                $usersIds = $postcard->users()->pluck('user_id');
 
-            $postcard->load('user:id,login',
-                'textData',
-                'geoData',
-                'tagData',
-                'audioData',
-                'mediaContents.textData',
-                'mediaContents.geoData',
-                'mediaContents.audioData',
-                'userPostcardNotifications',
-            );
+                if($usersIds->search($user->id)!==false){
+                    $postcard->save = 1;
+                } else {
+                    $postcard->save = 0;
+                };
 
-            $postcards[] = $postcard;
+                $postcard->load('user:id,login',
+                    'textData',
+                    'geoData',
+                    'tagData',
+                    'audioData',
+                    'mediaContents.textData',
+                    'mediaContents.geoData',
+                    'mediaContents.audioData',
+                    'userPostcardNotifications',
+                );
+
+                $postcards[] = $postcard;
+            }
         }
 
         /*$postcardsQuery->with(
