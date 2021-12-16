@@ -47,17 +47,17 @@ class LoginController extends Controller
 
         }
 
-        // if(env('APP_DEBUG')!='true') {
-        //     $result = (new RegisterSms())->send($phoneNumber, $otp->otp);
-        // }else{
-        //     $result =true;
-        // }
+        if(env('APP_DEBUG')!='true') {
+            $result = (new RegisterSms())->send($phoneNumber, $otp->otp);
+        }else{
+            $result =true;
+        }
 
 
 
-        // if ($result !== true) {
-        //     return response()->json(['errorCode' => 'SMS not send'], 204);
-        // }
+        if ($result !== true) {
+            return response()->json(['errorCode' => 'SMS not send'], 204);
+        }
 
         $otp->status = 'SENT';
         $otp->save();
@@ -66,9 +66,9 @@ class LoginController extends Controller
             ['phone' => $phoneNumber],
             ['otp_id' => $otp->id]
         );
-        // if(env('APP_DEBUG')!='true'){
-        //     return  response()->json([],201);
-        // }
+        if(env('APP_DEBUG')!='true'){
+            return  response()->json([],201);
+        }
         return response()->json([
             'codeOTP'   => $otp->otp,
         ], 201);
