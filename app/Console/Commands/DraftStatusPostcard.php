@@ -73,6 +73,11 @@ class DraftStatusPostcard extends Command
                         'img' => $postcard->mediaContents[0]->link,
                         'postcard_id' => $postcard->id,
                         'action_loc_key' => ActionLocKey::GALLERY_DRAFT,
+                        'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
+                                    ->where('view', 0)
+                                    ->where('user_id',$user->id)
+                                    ->where('status', \App\Enums\PostcardStatus::ACTIVE)
+                                    ->count()
                     ]);
                 } catch (\Throwable $th) {
                     //throw $th;

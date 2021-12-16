@@ -58,6 +58,11 @@ class StopMailingCommand extends Command
                 'img' => count($postcard_->mediaContents) ? $postcard_->mediaContents[0]->link : null,
                 'postcard_id' => $postcard->postcard_id,
                 'action_loc_key' => ActionLocKey::WAITING_TIME,
+                'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
+                                    ->where('view', 0)
+                                    ->where('user_id',$postcard->user_id)
+                                    ->where('status', \App\Enums\PostcardStatus::ACTIVE)
+                                    ->count()
             ]);
         }
         $postcards->update(['status' => MailingType::CLOSED]);
