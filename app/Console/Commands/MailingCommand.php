@@ -64,34 +64,37 @@ class MailingCommand extends Command
 
                 if($usersOther->isNotEmpty()) {
                     $user = $usersOther->random(1)->first();
+                    if ($user->id != $postcard->user_id) {
 
-                    DB::table('postcards_mailings')->insert([
-                        'user_id' => $user->id,
-                        'postcard_id' => $postcard->id,
-                        'status' => MailingType::ACTIVE,
-                        'start' => Carbon::now(),
-                        'stop' => Carbon::now()->addMinutes($postcard->interval_wait),
-                    ]);
+                        DB::table('postcards_mailings')->insert([
+                            'user_id' => $user->id,
+                            'postcard_id' => $postcard->id,
+                            'status' => MailingType::ACTIVE,
+                            'start' => Carbon::now(),
+                            'stop' => Carbon::now()->addMinutes($postcard->interval_wait),
+                        ]);
 
-                    try {
-                        if ($postcard->user_id != $user->id) {
-                            (new NotificationService)->send([
-                                'users' => $user->device->pluck('token')->toArray(),
-                                'title' => $postcard->user->login,
-                                'body' => ActionLocKey::GALLERY_TEXT,
-                                'img' => $postcard->mediaContents[0]->link,
-                                'postcard_id' => $postcard->id,
-                                'action_loc_key' => ActionLocKey::GALLERY,
-                                'badge' => DB::table('postcards_mailings')
-                                    ->where('view', 0)
-                                    ->where('user_id',$user->id)
-                                    ->where('status', PostcardStatus::ACTIVE)
-                                    ->count()
-                            ]);
+                        try {
+                            if ($postcard->user_id != $user->id) {
+                                (new NotificationService)->send([
+                                    'users' => $user->device->pluck('token')->toArray(),
+                                    'title' => $postcard->user->login,
+                                    'body' => ActionLocKey::GALLERY_TEXT,
+                                    'img' => $postcard->mediaContents[0]->link,
+                                    'postcard_id' => $postcard->id,
+                                    'action_loc_key' => ActionLocKey::GALLERY,
+                                    'badge' => DB::table('postcards_mailings')
+                                        ->where('view', 0)
+                                        ->where('user_id',$user->id)
+                                        ->where('status', PostcardStatus::ACTIVE)
+                                        ->count()
+                                ]);
+                            }
+                        } catch (\Throwable $th) {
+                            //throw $th;
                         }
-                    } catch (\Throwable $th) {
-                        //throw $th;
                     }
+
                 }
             }
 
