@@ -46,7 +46,7 @@ class ActiveStatusPostcard extends Command
      */
     public function handle()
     {
-        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('draft',false)->get();
+        $postcards = Postcard::where('status', PostcardStatus::LOADING)->get();
 
         foreach ($postcards as $postcard){
             Log::info([$postcard]);
