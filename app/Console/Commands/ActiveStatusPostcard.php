@@ -46,10 +46,11 @@ class ActiveStatusPostcard extends Command
      */
     public function handle()
     {
-        $postcards = Postcard::where('status', PostcardStatus::LOADING)->get();
+        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('draft',false)->get();
+
+        Log::info($postcards);
 
         foreach ($postcards as $postcard){
-            Log::info([$postcard]);
             if($postcard->mediaContents()->where('loading', false)->get()->isEmpty()){
 
                 $postcard->status = PostcardStatus::ACTIVE;
