@@ -61,10 +61,18 @@ class MediaContentCrop implements ShouldQueue
                 $size = explode('x' , $value)[0];
                 $height = $img->height() > $img->width();
                 $width = $img->height() < $img->width();
-                $img->resize($height ? $size : null, $width ? $size : null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+                try {
+                    $img->resize($height ? $size : null, $width ? $size : null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+                } catch (\Throwable $th) {
+                    $img->resize($size, $width ? $size : null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+                }
+
                 $img->crop($size, $size);
                 $img->save(public_path('storage/'.$folder."/$value/".$imgName));
                 $img->reset();
