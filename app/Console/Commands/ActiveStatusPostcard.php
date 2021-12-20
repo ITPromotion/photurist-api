@@ -75,7 +75,7 @@ class ActiveStatusPostcard extends Command
                             'action_loc_key' => ActionLocKey::GALLERY,
                             'badge' => DB::table('postcards_mailings')
                                 ->where('view', 0)
-                                ->where('user_id',Auth::id())
+                                ->where('user_id',$user->id)
                                 ->where('status', PostcardStatus::ACTIVE)
                                 ->count()
                         ]);

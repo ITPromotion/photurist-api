@@ -49,14 +49,20 @@ class StopMailingCommand extends Command
 
         foreach ($postcards->get() as $postcard) {
             \Illuminate\Support\Facades\Log::info('waiting_time_text');
-            if (!Postcard::where('id', $postcard->postcard_id)->first()->userPostcardNotifications()->where('user_id', $postcard->user_id)->first())
+            $postcard_ = Postcard::find($postcard->postcard_id);
+            if (!$postcard_->userPostcardNotifications()->where('user_id', $postcard->user_id)->first() && $postcard->user_id != $postcard_->user_id)
             (new \App\Services\NotificationService)->send([
                 'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
-                'title' => User::find($postcard->user_id)->login,
+                'title' => $postcard_->user->login,
                 'body' => __('notifications.waiting_time_text'),
-                'img' => count(Postcard::find($postcard->postcard_id)->first()->mediaContents) ? Postcard::find($postcard->postcard_id)->first()->mediaContents[0]->link : null,
+                'img' => count($postcard_->mediaContents) ? $postcard_->mediaContents[0]->link : null,
                 'postcard_id' => $postcard->postcard_id,
                 'action_loc_key' => ActionLocKey::WAITING_TIME,
+                'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
+                                    ->where('view', 0)
+                                    ->where('user_id',$postcard->user_id)
+                                    ->where('status', \App\Enums\PostcardStatus::ACTIVE)
+                                    ->count()
             ]);
         }
         $postcards->update(['status' => MailingType::CLOSED]);

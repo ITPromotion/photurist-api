@@ -17,11 +17,14 @@ class NotificationService {
                 "title" => $req['title'] ?? null,
                 "body" => $req['body'] ?? null,
                 'image' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
+                'sound' => 'default',
+                'badge' => $req['badge'] ?? null,
                 // 'postcard_id' => $req['postcard_id'] ?? null,
             ],
             "data" => [
                 'action_loc_key' => $req['action_loc_key'] ?? null,
                 'postcard_id' => $req['postcard_id'] ?? null,
+                'badge' => $req['badge'] ?? null,
             ],
         ];
         $encodedData = json_encode($data);
