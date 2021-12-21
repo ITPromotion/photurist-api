@@ -60,11 +60,10 @@ class MailingCommand extends Command
 
 
 
-                $usersOther = User::whereNotIn('id', $userIds)->get();
+                $usersOther = User::whereNotIn('id', $userIds)->where('id', '!=', $postcard->user_id)->get();
 
                 if($usersOther->isNotEmpty()) {
                     $user = $usersOther->random(1)->first();
-                    if ($user->id != $postcard->user_id) {
 
                         DB::table('postcards_mailings')->insert([
                             'user_id' => $user->id,
@@ -93,7 +92,6 @@ class MailingCommand extends Command
                         } catch (\Throwable $th) {
                             //throw $th;
                         }
-                    }
 
                 }
             }

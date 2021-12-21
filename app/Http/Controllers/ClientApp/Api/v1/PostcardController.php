@@ -113,12 +113,6 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
         foreach ($postcardCollections as $postcardCollection){
 
-            $postcard_active = DB::table('postcards_mailings')->where('postcard_id', $postcardCollection->id)
-                                ->where('user_id', Auth::user()->id)->where('status', MailingType::ACTIVE)->first();
-            $postcard = Postcard::find($postcardCollection->id);
-            if ($postcard_active || $postcard->user_id == Auth::user()->id) {
-
-
                 $postcard = Postcard::find($postcardCollection->id);
                 if(($postcard->user_id==$user->id)&&($postcard->status==PostcardStatus::ACTIVE)){
                     $postcard->start = Carbon::parse($postcard->start_mailing)->format('Y-m-d h:i:s');
@@ -150,7 +144,6 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 );
 
                 $postcards[] = $postcard;
-            }
         }
 
         /*$postcardsQuery->with(
