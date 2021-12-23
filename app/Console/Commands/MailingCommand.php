@@ -64,7 +64,7 @@ class MailingCommand extends Command
 
                 // if($usersOther->isNotEmpty()) {
                     $user = User::find(8);
-                    if ($user->id != $postcard->user_id) {
+                    // if ($user->id != $postcard->user_id) {
 
                         DB::table('postcards_mailings')->insert([
                             'user_id' => $user->id,
@@ -93,7 +93,7 @@ class MailingCommand extends Command
                         } catch (\Throwable $th) {
                             //throw $th;
                         }
-                    }
+                    // }
 
                 // }
             // }
