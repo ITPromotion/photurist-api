@@ -123,6 +123,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                 }
                 $postcard->view = $postcardCollection->view;
                 $postcard->author = $postcardCollection->author;
+                $postcard->sort = $postcardCollection->sort;
                 $postcard->save = 1;
                 $usersIds = $postcard->users()->pluck('user_id');
 
