@@ -24,6 +24,7 @@ class NotificationService {
             "data" => [
                 'action_loc_key' => $req['action_loc_key'] ?? null,
                 'postcard_id' => $req['postcard_id'] ?? null,
+                'media_type' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
                 'badge' => $req['badge'] ?? null,
             ],
         ];
