@@ -123,6 +123,11 @@ class Postcard extends Model
 
     public function userPostcardNotifications()
     {
-        return $this->BelongsToMany(User::class, 'user_postcard_notifications');
+        if (Auth::user()) {
+            return $this->BelongsToMany(User::class, 'user_postcard_notifications')->where('user_id', Auth::id());
+        } else {
+            return $this->BelongsToMany(User::class, 'user_postcard_notifications');
+        }
+
     }
 }
