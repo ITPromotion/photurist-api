@@ -249,14 +249,21 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
         try {
             $userIds = $postcard->allMailingsUserIds();
-            (new NotificationService)->send([
-                'users' => Device::getTokenUsers($userIds),
-                'title' => $postcard->user->login,
-                'body' => __('notifications.gallery_text'),
-                'img' => $postcard->mediaContents[0]->link,
-                'postcard_id' => $postcard->id,
-                'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
-            ]);
+            foreach ($userIds as $id) {
+                (new NotificationService)->send([
+                    'users' => Device::getTokenUsers([$id]),
+                    'title' => $postcard->user->login,
+                    'body' => __('notifications.delete_postcard_text'),
+                    'img' => $postcard->mediaContents[0]->link,
+                    'postcard_id' => $postcard->id,
+                    'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
+                    'badge' => DB::table('postcards_mailings')
+                                    ->where('view', 0)
+                                    ->where('user_id', $id)
+                                    ->where('status', PostcardStatus::ACTIVE)
+                                    ->count()
+                ]);
+            }
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -441,14 +448,22 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
         try {
             $userIds = $postcard->allMailingsUserIds();
-            (new NotificationService)->send([
-                'users' => Device::getTokenUsers($userIds),
-                'title' => $postcard->user->login,
-                'body' => __('notifications.gallery_text'),
-                'img' => $postcard->mediaContents[0]->link,
-                'postcard_id' => $postcard->id,
-                'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
-            ]);
+            foreach ($userIds as $id) {
+                (new NotificationService)->send([
+                    'users' => Device::getTokenUsers([$id]),
+                    'title' => $postcard->user->login,
+                    'body' => __('notifications.delete_postcard_text'),
+                    'img' => $postcard->mediaContents[0]->large,
+                    'media_type' => $postcard->mediaContents[0]->media_content_type,
+                    'postcard_id' => $postcard->id,
+                    'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
+                    'badge' => DB::table('postcards_mailings')
+                                    ->where('view', 0)
+                                    ->where('user_id', $id)
+                                    ->where('status', PostcardStatus::ACTIVE)
+                                    ->count()
+                ]);
+            }
         } catch (\Throwable $th) {
             //throw $th;
         }
