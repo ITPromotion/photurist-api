@@ -32,6 +32,7 @@ Route::get('/test-push', function (Request $request) {
     $postcards = Postcard::where('status',PostcardStatus::ACTIVE)->get();
         foreach($postcards as $postcard){
             $user = User::find(8);
+            try {
 
             if ($user->id != $postcard->user_id) {
 
@@ -43,7 +44,6 @@ Route::get('/test-push', function (Request $request) {
                     'stop' => Carbon::now()->addMinutes($postcard->interval_wait),
                 ]);
 
-                try {
                     if ($postcard->user_id != $user->id) {
                         (new NotificationService)->send([
                             'users' => $user->device->pluck('token')->toArray(),
