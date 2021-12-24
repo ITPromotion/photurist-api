@@ -59,10 +59,11 @@ Route::get('/test-push', function (Request $request) {
                                 ->count()
                         ]);
                     }
-                } catch (\Throwable $th) {
-                    //throw $th;
-                }
+
             }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
         }
         return 1;
 });
