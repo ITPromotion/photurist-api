@@ -31,8 +31,8 @@ Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
 Route::get('/test-push', function (Request $request) {
     $postcards = Postcard::where('status',PostcardStatus::ACTIVE)->get();
         foreach($postcards as $postcard){
-            $user = User::find($request->user_id);
-            dd($request->all());
+            $user = User::find(8);
+
             if ($user->id != $postcard->user_id) {
 
                 DB::table('postcards_mailings')->insert([
