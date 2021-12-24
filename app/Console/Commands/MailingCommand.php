@@ -63,7 +63,7 @@ class MailingCommand extends Command
                 $usersOther = User::whereNotIn('id', $userIds)->get();
 
                 // if($usersOther->isNotEmpty()) {
-                    $user = User::find(7);
+                    $user = User::find(1);
                     if ($user->id != $postcard->user_id) {
 
                         DB::table('postcards_mailings')->insert([
