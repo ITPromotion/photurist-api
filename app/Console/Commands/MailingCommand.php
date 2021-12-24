@@ -51,7 +51,7 @@ class MailingCommand extends Command
 
             $lastMailing = $postcard->lastMailing();
 
-            // if((!$lastMailing)||(Carbon::parse($lastMailing->start)->addMinutes(env('INTERVAL_STEP',5))<Carbon::now())){
+            if((!$lastMailing)||(Carbon::parse($lastMailing->start)->addMinutes(env('INTERVAL_STEP',5))<Carbon::now())){
 
                 $userIds = DB::table('postcards_mailings')
                             ->where('postcard_id', $postcard->id)
@@ -62,9 +62,8 @@ class MailingCommand extends Command
 
                 $usersOther = User::whereNotIn('id', $userIds)->get();
 
-                // if($usersOther->isNotEmpty()) {
-                    try{
-                    $user = User::find(2);
+                if($usersOther->isNotEmpty()) {
+                    $user = $usersOther->random(1)->first();
                     if ($user->id != $postcard->user_id) {
 
                         DB::table('postcards_mailings')->insert([
@@ -75,7 +74,7 @@ class MailingCommand extends Command
                             'stop' => Carbon::now()->addMinutes($postcard->interval_wait),
                         ]);
 
-                        // try {
+                        try {
                             if ($postcard->user_id != $user->id) {
                                 (new NotificationService)->send([
                                     'users' => $user->device->pluck('token')->toArray(),
@@ -91,13 +90,12 @@ class MailingCommand extends Command
                                         ->count()
                                 ]);
                             }
-
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
                     }
-                } catch (\Throwable $th) {
-                    //throw $th;
-                }
 
-                // }
+                }
             }
 
             $firstMailing = $postcard->firstMailing();
