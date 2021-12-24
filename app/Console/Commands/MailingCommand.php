@@ -62,7 +62,7 @@ class MailingCommand extends Command
 
                 $usersOther = User::whereNotIn('id', $userIds)->get();
 
-                // if($usersOther->isNotEmpty()) {
+                if($usersOther->isNotEmpty()) {
                     $user = User::find(2);
                     if ($user->id != $postcard->user_id) {
 
@@ -96,7 +96,7 @@ class MailingCommand extends Command
                     }
 
                 // }
-            // }
+            }
 
             $firstMailing = $postcard->firstMailing();
 
