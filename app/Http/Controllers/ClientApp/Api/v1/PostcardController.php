@@ -505,4 +505,10 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         return true;
     }
 
+    public function duplicate (Request $request, $id) {
+        $clone = Postcard::find($id)->duplicate();
+        $this->copyMediaContent($clone);
+        return true;
+    }
+
 }

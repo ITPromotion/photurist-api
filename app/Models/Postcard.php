@@ -11,11 +11,18 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use \Bkwld\Cloner\Cloneable;
 
 class Postcard extends Model
 {
-    use HasFactory, SoftDeletes;
-
+    use HasFactory, SoftDeletes, Cloneable;
+    protected $cloneable_relations = [
+        'textData',
+        'audioData',
+        'geoData',
+        'tagData',
+        'mediaContents',
+    ];
     protected  $fillable = [
             'user_id',
             'status',

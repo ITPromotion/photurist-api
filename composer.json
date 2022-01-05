@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "bkwld/cloner": "^3.9",
         "cerbero/laravel-enum": "^1.3",
         "doctrine/dbal": "^3.1",
         "fruitcake/laravel-cors": "^2.0",
