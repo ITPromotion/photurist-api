@@ -47,6 +47,13 @@ trait FileTrait
                 $mediaContent->update(['link' => $pathOrigin]);
             }
         }
+
+        if ($postcard->audioData && $postcard->audioData->link) {
+            $fileName = explode('audio', $mediaContent->link)[1];
+            $pathOrigin = 'postcard/'.$postcard->id.'/audio/'.$fileName;
+            Storage::disk('public')->copy($postcard->audioData->link, $pathOrigin);
+            $postcard->audioData->update(['link' => $pathOrigin]);
+        }
         return $postcard->mediaContents;
     }
 
