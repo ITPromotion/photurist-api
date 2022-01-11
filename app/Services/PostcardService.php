@@ -78,7 +78,11 @@ class PostcardService
             ]);
         }
         $this->postcard->restore();
-        $this->postcard->status = $request->input('status')==PostcardStatus::ACTIVE?PostcardStatus::LOADING:$request->input('status');
+
+        if($request->input('additional_postcard_id'))
+            $this->postcard->additional_postcard_id = $request->input('additional_postcard_id');
+
+        $this->postcard->status = PostcardStatus::LOADING;
 
         $this->postcard->draft = $request->input('status')==PostcardStatus::ACTIVE?false:true;
 
