@@ -142,6 +142,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                     'mediaContents.geoData',
                     'mediaContents.audioData',
                     'userPostcardNotifications',
+                    'additionally',
                 );
 
                 $postcards[] = $postcard;

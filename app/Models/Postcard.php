@@ -137,4 +137,9 @@ class Postcard extends Model
         }
 
     }
+
+    public function additionally():HasMany
+    {
+        return $this->hasMany(Postcard::class,'additional_postcard_id','id');
+    }
 }
