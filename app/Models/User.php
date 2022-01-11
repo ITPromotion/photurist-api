@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -80,5 +81,18 @@ class User extends Authenticatable
         return $this->BelongsToMany(Postcard::class, 'user_postcard_notifications');
     }
 
+    public function textData():HasOne
+    {
+        return $this->hasOne(TextData::class);
+    }
 
+    public function audioData():HasOne
+    {
+        return $this->hasOne(AudioData::class);
+    }
+
+    public function mediaContents():HasMany
+    {
+        return $this->hasMany(MediaContent::class);
+    }
 }
