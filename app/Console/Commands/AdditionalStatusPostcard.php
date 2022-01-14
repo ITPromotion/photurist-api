@@ -60,15 +60,15 @@ class AdditionalStatusPostcard extends Command
 
                 $postcard->save();
 
-                /*try {
+                try {
                     $user = $postcard->user;
                     (new NotificationService)->send([
                         'users' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
-                        'body' => __('notifications.postcard_status_draft'),
+                        'body' => __('notifications.additional_postcard'),
                         'img' => $postcard->mediaContents[0]->link,
                         'postcard_id' => $postcard->id,
-                        'action_loc_key' => ActionLocKey::GALLERY_DRAFT,
+                        'action_loc_key' => ActionLocKey::ADDITIONAL_POSTCARD,
                         'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
                             ->where('view', 0)
                             ->where('user_id',$user->id)
@@ -77,7 +77,7 @@ class AdditionalStatusPostcard extends Command
                     ]);
                 } catch (\Throwable $th) {
                     //throw $th;
-                }*/
+                }
 
             };
         }

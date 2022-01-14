@@ -8,4 +8,5 @@ return [
     'time_is_up_text' => 'Время рассылки открытки истекло',
     'delete_postcard_text' => 'Открытка удалена',
     'waiting_time_text' => 'Время ожидания открытки истекло',
+    'additional_postcard' => 'Добавлена дополнительная открытка'
 ];
