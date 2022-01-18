@@ -62,6 +62,8 @@ Route::post('/add-block-contacts', [UserController::class, 'addContactsBlock']);
 
 Route::get('/get-block-contacts', [UserController::class, 'getContactsActive']);
 
+Route::put('/remove-contacts', [UserController::class, 'removeContacts']);
+
 
 /* Remove postcard from list */
 

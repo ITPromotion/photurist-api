@@ -64,7 +64,7 @@ class UserController extends Controller
 
         $users = $userService->addContactsBlock($request);
 
-        return new UserPhoneResource(['users' => $users]);
+        return new UserPhoneResource(['result' => $users]);
     }
 
     public function getContactsBlock(Request $request):UserPhoneResource
@@ -74,5 +74,14 @@ class UserController extends Controller
         $users = $userService->getContactsBlock($request);
 
         return new UserPhoneResource(['users' => $users]);
+    }
+
+    public function removeContacts(AddClientsActiveRequest $request):UserPhoneResource
+    {
+        $userService = new UserService(Auth::user());
+
+        $users = $userService->removeContacts($request);
+
+        return new UserPhoneResource(['result' => $users]);
     }
 }

@@ -85,4 +85,11 @@ class UserService
 
         return $clientsQuery->select('users.id','users.phone', 'users.login')->get();
     }
+
+    public function removeContacts(AddClientsActiveRequest $request)
+    {
+        $this->user->clients()->detach($request->input('ids'));
+
+        return true;
+    }
 }

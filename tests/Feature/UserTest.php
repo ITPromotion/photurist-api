@@ -155,4 +155,27 @@ class UserTest extends TestCase
         $response
             ->assertStatus(200);
     }
+
+    public function test_remove_clients_active()
+    {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'remove-contacts';
+
+        $this->singIn();
+
+        Passport::actingAs(
+            $this->user,
+            [$url]
+        );
+
+        $client = User::where('login','unittest2')->select('phone','id')->first();
+
+        $response = $this->putJson(
+            $url, ['ids' =>[$client->id]
+        ]);
+
+        $response
+            ->assertStatus(200);
+    }
 }
