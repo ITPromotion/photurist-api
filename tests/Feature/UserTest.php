@@ -10,6 +10,8 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
+    CONST PREFIX = '/api/v1/user/';
+
     protected $user;
 
     use WithFaker;
@@ -27,7 +29,7 @@ class UserTest extends TestCase
     {
         $this->setUpFaker();
 
-        $url = '/api/v1/user/check-contacts';
+        $url = self::PREFIX.'check-contacts';
 
         $this->singIn();
 
