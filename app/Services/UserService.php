@@ -10,6 +10,7 @@ use App\Http\Requests\ClientApp\User\AddClientsActiveRequest;
 use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class UserService
 {
@@ -30,7 +31,7 @@ class UserService
         return $users;
     }
 
-    public function addContactsActive(AddClientsActiveRequest $request):Collection
+    public function addContactsActive(AddClientsActiveRequest $request):bool
     {
 
         foreach($request->input('ids') as $id){
@@ -38,8 +39,8 @@ class UserService
                     'status' => ClientStatus::ACTIVE
             ];
         }
-        $this->user->clients()->sync($ids,false, );
+        $this->user->clients()->sync($ids,false );
 
-        return $this->user->clients()->select('users.id','users.phone','users.login')->get();
+        return true;
     }
 }

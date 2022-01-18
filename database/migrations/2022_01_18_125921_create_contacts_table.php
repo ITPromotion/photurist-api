@@ -21,7 +21,6 @@ class CreateContactsTable extends Migration
             $table->unsignedBigInteger('client_id')->nullable();
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
             $table->enum('status', ClientStatus::keys())->nullable();
-            $table->timestamps();
         });
     }
 
