@@ -48,7 +48,34 @@ class UserService
     public function getContactsActive(Request $request):Collection
     {
 
-        $clientsQuery = $this->user->clients();
+        $clientsQuery = $this->user->clients()->wherePivot('status', ClientStatus::ACTIVE);
+
+        if(is_numeric($request->input('offset')))
+            $clientsQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $clientsQuery->limit($request->input('limit'));
+
+        return $clientsQuery->select('users.id','users.phone', 'users.login')->get();
+    }
+
+    public function addContactsBlock(AddClientsActiveRequest $request):bool
+    {
+
+        foreach($request->input('ids') as $id){
+            $ids[$id]=  [
+                'status' => ClientStatus::BLOCK,
+            ];
+        }
+        $this->user->clients()->sync($ids,false );
+
+        return true;
+    }
+
+    public function getContactsBlock(Request $request):Collection
+    {
+
+        $clientsQuery = $this->user->clients()->wherePivot('status', ClientStatus::BLOCK);
 
         if(is_numeric($request->input('offset')))
             $clientsQuery->offset($request->input('offset'));

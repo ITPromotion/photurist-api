@@ -56,7 +56,11 @@ Route::put('/check-contacts', [UserController::class, 'checkContacts']);
 
 Route::post('/add-contacts', [UserController::class, 'addContactsActive']);
 
-Route::post('/get-contacts', [UserController::class, 'getContactsActive']);
+Route::get('/get-contacts', [UserController::class, 'getContactsActive']);
+
+Route::post('/add-block-contacts', [UserController::class, 'addContactsBlock']);
+
+Route::get('/get-block-contacts', [UserController::class, 'getContactsActive']);
 
 
 /* Remove postcard from list */

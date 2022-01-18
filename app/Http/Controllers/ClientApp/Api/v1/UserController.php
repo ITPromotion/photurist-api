@@ -40,7 +40,7 @@ class UserController extends Controller
         return new UserPhoneResource(['users' => $users]);
     }
 
-    public function addContactsActive(AddClientsActiveRequest $request)
+    public function addContactsActive(AddClientsActiveRequest $request):UserPhoneResource
     {
         $userService = new UserService(Auth::user());
 
@@ -49,11 +49,29 @@ class UserController extends Controller
         return new UserPhoneResource(['users' => $users]);
     }
 
-    public function getContactsActive(Request $request)
+    public function getContactsActive(Request $request):UserPhoneResource
     {
         $userService = new UserService(Auth::user());
 
         $users = $userService->getContactsActive($request);
+
+        return new UserPhoneResource(['users' => $users]);
+    }
+
+    public function addContactsBlock(AddClientsActiveRequest $request):UserPhoneResource
+    {
+        $userService = new UserService(Auth::user());
+
+        $users = $userService->addContactsBlock($request);
+
+        return new UserPhoneResource(['users' => $users]);
+    }
+
+    public function getContactsBlock(Request $request):UserPhoneResource
+    {
+        $userService = new UserService(Auth::user());
+
+        $users = $userService->getContactsBlock($request);
 
         return new UserPhoneResource(['users' => $users]);
     }
