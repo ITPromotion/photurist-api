@@ -12,6 +12,8 @@ class UserTest extends TestCase
 {
     protected $user;
 
+    use WithFaker;
+
     public function singIn()
     {
         $this->user = User::first();
@@ -23,6 +25,8 @@ class UserTest extends TestCase
      */
     public function test_check_contacts()
     {
+        $this->setUpFaker();
+
         $url = '/api/v1/user/check-contacts';
 
         $this->singIn();
@@ -33,7 +37,7 @@ class UserTest extends TestCase
         );
 
         $phones = [
-            "380677188771",
+            $this->faker->numerify('############'),
             $this->user->phone,
         ];
 
