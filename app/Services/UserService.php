@@ -9,6 +9,7 @@ use App\Enums\UserStatus;
 use App\Http\Requests\ClientApp\User\AddClientsActiveRequest;
 use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use phpDocumentor\Reflection\Types\Boolean;
 
@@ -42,5 +43,19 @@ class UserService
         $this->user->clients()->sync($ids,false );
 
         return true;
+    }
+
+    public function getContactsActive(Request $request):Collection
+    {
+
+        $clientsQuery = $this->user->clients();
+
+        if(is_numeric($request->input('offset')))
+            $clientsQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $clientsQuery->limit($request->input('limit'));
+
+        return $clientsQuery->select('users.id','users.phone', 'users.login')->get();
     }
 }

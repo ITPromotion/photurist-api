@@ -48,4 +48,13 @@ class UserController extends Controller
 
         return new UserPhoneResource(['users' => $users]);
     }
+
+    public function getContactsActive(Request $request)
+    {
+        $userService = new UserService(Auth::user());
+
+        $users = $userService->getContactsActive($request);
+
+        return new UserPhoneResource(['users' => $users]);
+    }
 }
