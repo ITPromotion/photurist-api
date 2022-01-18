@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ClientApp\Api\v1;
 
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientApp\User\AddClientsActiveRequest;
 use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Http\Requests\ClientApp\User\SetGeoDataRequest;
 use App\Http\Requests\ClientApp\User\SaveDeviceRequest;
@@ -30,12 +31,21 @@ class UserController extends Controller
         Auth::user()->device()->where('token', $request->token)->delete();
     }
 
-    public function checkContacts(CheckContactsRequest $request){
+    public function checkContacts(CheckContactsRequest $request):UserPhoneResource
+    {
+        $userService = new UserService(Auth::user());
 
-        $postcardService = new UserService(Auth::user());
+        $users = $userService->checkContacts($request);
 
-        $phones = $postcardService->checkContacts($request);
+        return new UserPhoneResource(['users' => $users]);
+    }
 
-        return new UserPhoneResource(['phones' => $phones]);
+    public function addContactsActive(AddClientsActiveRequest $request)
+    {
+        $userService = new UserService(Auth::user());
+
+        $users = $userService->addContactsActive($request);
+
+        return new UserPhoneResource(['users' => $users]);
     }
 }

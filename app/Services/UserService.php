@@ -4,9 +4,12 @@
 namespace App\Services;
 
 
+use App\Enums\ClientStatus;
 use App\Enums\UserStatus;
+use App\Http\Requests\ClientApp\User\AddClientsActiveRequest;
 use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserService
 {
@@ -17,19 +20,26 @@ class UserService
        $this->user = $user;
     }
 
-    public function checkContacts(CheckContactsRequest $request)
+    public function checkContacts(CheckContactsRequest $request):Collection
     {
         $users = User::where('status', UserStatus::ACTIVE)
             ->whereIn('phone', $request->phones)
-            ->select('phone')
+            ->select('id','phone')
             ->get();
 
-        $phones = [];
+        return $users;
+    }
 
-        if($users->isNotEmpty()){
-            $phones = $users->pluck('phone');
+    public function addContactsActive(AddClientsActiveRequest $request):Collection
+    {
+
+        foreach($request->input('ids') as $id){
+            $ids[$id]=  [
+                    'status' => ClientStatus::ACTIVE
+            ];
         }
+        $this->user->clients()->sync($ids,false, );
 
-        return $phones;
+        return $this->user->clients()->select('users.id','users.phone','users.login')->get();
     }
 }

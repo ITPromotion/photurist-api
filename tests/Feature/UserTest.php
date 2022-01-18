@@ -18,7 +18,7 @@ class UserTest extends TestCase
 
     public function singIn()
     {
-        $this->user = User::first();
+        $this->user = User::where('login','unittest1')->first();
     }
     /**
      * A basic feature test example.
@@ -45,8 +45,11 @@ class UserTest extends TestCase
 
         $responseData = [
             'data' => [
-                'phones' => [
-                    $this->user->phone,
+                'users' => [
+                        [
+                            'id' => $this->user->id,
+                            'phone' => $this->user->phone,
+                        ],
                     ],
             ],
         ];
@@ -57,5 +60,27 @@ class UserTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson($responseData) ;
+    }
+
+    public function test_add_clients_active()
+    {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'add-contacts';
+
+        $this->singIn();
+
+        Passport::actingAs(
+            $this->user,
+            [$url]
+        );
+
+        $client = User::where('login','unittest2')->select('phone','id')->first();
+
+        $response = $this->postJson($url, ['ids' =>[$client->id]
+        ]);
+
+        $response
+            ->assertStatus(200);
     }
 }
