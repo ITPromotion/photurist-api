@@ -10,6 +10,7 @@ use App\Http\Requests\ClientApp\User\SaveDeviceRequest;
 use App\Http\Requests\ClientApp\User\DeleteDeviceRequest;
 use App\Http\Resources\UserPhoneResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use App\Models\Device;
 use Illuminate\Support\Facades\Auth;
@@ -30,15 +31,11 @@ class UserController extends Controller
     }
 
     public function checkContacts(CheckContactsRequest $request){
-        $users = User::where('status', UserStatus::ACTIVE)
-                        ->whereIn('phone', $request->phones)
-                        ->select('phone')
-                        ->get();
-        $phones = [];
 
-        if($users->isNotEmpty()){
-            $phones = $users->pluck('phone');
-        }
+        $postcardService = new UserService(Auth::user());
+
+        $phones = $postcardService->checkContacts($request);
+
         return new UserPhoneResource(['phones' => $phones]);
     }
 }
