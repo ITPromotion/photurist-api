@@ -52,6 +52,8 @@ Route::post('/add-favorites', [PostcardControllerAlias::class, 'addFavorite']);
 
 Route::delete('/delete-favorites', [PostcardControllerAlias::class, 'deleteFavorite']);
 
+Route::put('/check-contacts', [UserController::class, 'checkContacts']);
+
 
 /* Remove postcard from list */
 
