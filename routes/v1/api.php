@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Postcard;
 use App\Enums\ActionLocKey;
+use App\Services\NotificationService;
+use App\Enums\PostcardStatus;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +26,37 @@ use App\Enums\ActionLocKey;
 */
 /* Checking phone number */
 Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
+
+Route::post('/send', function (Request $request) {
+    DB::table('postcards_mailings')->insert([
+        'user_id' => $request->user_id,
+        'postcard_id' => $request->postcard_id,
+        'status' => MailingType::ACTIVE,
+        'start' => Carbon::now(),
+        'stop' => Carbon::now()->addMinutes(30),
+    ]);
+
+    try {
+        $postcard =  \App\Models\Postcard::find($request->postcard_id);
+        // if ($postcard->user_id != $user->id) {
+            (new NotificationService)->send([
+                'users' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
+                'title' => $postcard->user->login,
+                'body' => ActionLocKey::GALLERY_TEXT,
+                'img' => $postcard->mediaContents[0]->link,
+                'postcard_id' => $postcard->id,
+                'action_loc_key' => ActionLocKey::GALLERY,
+                'badge' => DB::table('postcards_mailings')
+                    ->where('view', 0)
+                    ->where('user_id',$request->user_id)
+                    ->where('status', PostcardStatus::ACTIVE)
+                    ->count()
+            ]);
+        // }
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
+});
 
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
@@ -41,3 +75,16 @@ Route::prefix('/user')->as('.user.')->group(function (){
 
 
 });
+Route::prefix('/admin')->as('.admin.')->group(function (){
+    Route::post('/login', [LoginController::class,'loginAdmin']);
+
+    Route::group([
+        'middleware' => 'auth:api',
+        'namespace' => 'App\Http\Controllers\ClientApp\Api\v1',
+    ], function () {
+
+        require 'user-api.php';
+
+    });
+});
+

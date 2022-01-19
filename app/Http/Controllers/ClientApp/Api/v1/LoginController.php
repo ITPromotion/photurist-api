@@ -12,6 +12,7 @@ use App\Models\TempNumber;
 use App\Models\User;
 use App\Models\User\UserNotificationToken;
 use App\Services\Notification\Sms\RegisterSms;
+use Spatie\Permission\Models\Role;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,13 @@ class LoginController extends Controller
 
             $phoneNumber = $user->phone;
 
+        }
+
+        if ($request->input('admin_panel')) {
+            $user = User::where('phone', $request->input('phone'))->first();
+            if (!$user || !$user->hasAnyRole(Role::all()) && !$user->hasRole('Super Admin')) {
+                return response()->json(['errorCode' => 'permission denied'], 403);
+            }
         }
 
         if(env('APP_DEBUG')!='true') {
@@ -159,5 +167,9 @@ class LoginController extends Controller
 
         return response()->json($user);
 
+    }
+
+    public function loginAdmin (Request $request) {
+        dd($request->all());
     }
 }

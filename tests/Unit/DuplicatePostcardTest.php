@@ -24,7 +24,7 @@ class DuplicatePostcardTest extends TestCase
 			])
 		]);
         $postcard = new Postcard;
-        $postcard->first();
+
 	    $clone = $postcard->duplicate();
 		$this->assertInstanceOf('App\Models\Postcard', $clone);
 	}
