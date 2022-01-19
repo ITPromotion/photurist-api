@@ -236,6 +236,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
     public function update($id, Request $request)
     {
         $postcard = Postcard::withTrashed()->findOrFail($id);
+
         $postcardService = new PostcardService($postcard);
 
         $postcardService->updatePostcard($request);
