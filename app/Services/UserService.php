@@ -26,7 +26,7 @@ class UserService
     {
         $users = User::where('status', UserStatus::ACTIVE)
             ->whereIn('phone', $request->phones)
-            ->select('id','phone')
+            ->select('id','phone', 'avatar')
             ->get();
 
         return $users;
@@ -56,7 +56,7 @@ class UserService
         if(is_numeric($request->input('limit')))
             $clientsQuery->limit($request->input('limit'));
 
-        return $clientsQuery->select('users.id','users.phone', 'users.login')->get();
+        return $clientsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
     public function addContactsBlock(AddClientsActiveRequest $request):bool
@@ -83,7 +83,7 @@ class UserService
         if(is_numeric($request->input('limit')))
             $clientsQuery->limit($request->input('limit'));
 
-        return $clientsQuery->select('users.id','users.phone', 'users.login')->get();
+        return $clientsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
     public function removeContacts(AddClientsActiveRequest $request)
