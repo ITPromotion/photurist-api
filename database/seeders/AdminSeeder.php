@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
+use App\Models\Admin;
 use Spatie\Permission\Models\Role;
 
 class AdminSeeder extends Seeder
@@ -15,13 +15,12 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::create([
+        $user = Admin::create([
             'name' => 'admin',
             'email' => 'admin@ph.com',
             'phone' => 380679938836,
-            'login' => 'admin',
         ]);
-        $role = Role::create(['name' => 'Super Admin']);
+        $role = Role::create(['name' => 'Super Admin', 'guard_name' => 'api-admin']);
 
         $user->assignRole($role);
     }

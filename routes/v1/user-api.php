@@ -105,18 +105,4 @@ Route::get('/not-view-quantity', [PostcardControllerAlias::class, 'notViewQuanti
 Route::get('/duplicate-postcard/{id}', [PostcardControllerAlias::class, 'duplicate']);
 
 
-Route::post('/test-push', function (Request $request) {
-    return (new \App\Services\NotificationService)->send([
-        'users' => [$request->fcm],
-        'title' => 'test-push',
-        'body' => 'test-push',
-        'img' => 'https://dev.photurist.com/storage/postcard/43/image/183x183/gjyatbtWy87xN7LHvGCcCcmr7pwOh1BKuhCisdzD.jpg',
-        'postcard_id' => $request->id,
-        'action_loc_key' => 'test-push',
-        'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
-                                    ->where('view', 0)
-                                    ->where('user_id',\Auth::id())
-                                    ->where('status', \App\Enums\PostcardStatus::ACTIVE)
-                                    ->count()
-    ]);
-});
+

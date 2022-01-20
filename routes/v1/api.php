@@ -61,6 +61,8 @@ Route::post('/send', function (Request $request) {
 /* Checking OTP code */
 Route::post('/check-otp', [LoginController::class,'checkOTP']);
 
+Route::post('/admin-check-otp', [LoginController::class, 'checkOTPAdmin']);
+
 Route::prefix('/user')->as('.user.')->group(function (){
     Route::post('/login', [LoginController::class, 'login'])->name('login');
 
@@ -79,11 +81,11 @@ Route::prefix('/admin')->as('.admin.')->group(function (){
     Route::post('/login', [LoginController::class,'loginAdmin']);
 
     Route::group([
-        'middleware' => 'auth:api',
-        'namespace' => 'App\Http\Controllers\ClientApp\Api\v1',
+        'middleware' => 'auth:api-admin',
+        'namespace' => 'App\Http\Controllers\AdminPanel\Api\v1',
     ], function () {
 
-        require 'user-api.php';
+        require 'admin-api.php';
 
     });
 });

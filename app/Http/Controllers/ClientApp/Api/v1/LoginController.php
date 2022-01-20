@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\User\UserNotificationToken;
 use App\Services\Notification\Sms\RegisterSms;
 use Spatie\Permission\Models\Role;
+use App\Models\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,8 +50,8 @@ class LoginController extends Controller
         }
 
         if ($request->input('admin_panel')) {
-            $user = User::where('phone', $request->input('phone'))->first();
-            if (!$user || !$user->hasAnyRole(Role::all()) && !$user->hasRole('Super Admin')) {
+            $admin = Admin::where('phone', $request->input('phone'))->first();
+            if (!$admin || !$admin->hasAnyRole(Role::all())) {
                 return response()->json(['errorCode' => 'permission denied'], 403);
             }
         }
@@ -169,7 +170,32 @@ class LoginController extends Controller
 
     }
 
-    public function loginAdmin (Request $request) {
-        dd($request->all());
+    public function checkOTPAdmin (CheckOtpRequest $request) {
+        $codeOTP = $request->input('code_otp');
+        $phoneNumber = $request->input('phone_number');
+
+        $tempNumber = TempNumber::where('phone', $phoneNumber)->first();
+        $otp = OTP::find($tempNumber->otp_id);
+
+        if ($otp !== null) {
+            $result = $otp->validate($codeOTP);
+            $admin = Admin::where('phone', $phoneNumber)->first();
+
+            if ($result === true) {
+                if(!$admin || !$admin->hasAnyRole(Role::all())) {
+                    return response()->json(['errorCode' => 'permission denied'], 403);
+                }
+
+                Auth::login($admin);
+
+                $accessToken = Auth::user()->createToken('authToken')->accessToken;
+                // dd($accessToken);
+                return response(['user' => Auth::user(), 'access_token' => $accessToken]);
+            }
+        }
+        return response()->json([
+            'errorCode' => $result['short_desc'],
+            'description' => $result['long_desc']
+        ], 203);
     }
 }
