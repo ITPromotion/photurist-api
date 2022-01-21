@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Postcard;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
+use App\Enums\PostcardStatus;
 
 class PostcardTest extends TestCase
 {
@@ -27,7 +28,7 @@ class PostcardTest extends TestCase
     public function test_duplicate()
     {
         $this->setUpFaker();
-        $postcardId = Postcard::all()->last()->id;;
+        $postcardId = Postcard::where('status', PostcardStatus::ACTIVE)->all()->last()->id;
         $url = self::PREFIX.'duplicate-postcard/'.$postcardId;
         $this->singIn();
 
