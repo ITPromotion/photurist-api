@@ -16,6 +16,7 @@ class PostcardTest extends TestCase
 
     protected $user;
 
+
     use WithFaker;
 
     public function singIn()
