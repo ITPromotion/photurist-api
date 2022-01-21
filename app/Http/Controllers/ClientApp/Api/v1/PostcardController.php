@@ -519,7 +519,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             'status' => PostcardStatus::CREATED,
         ]);
         $this->copyMediaContent($clone);
-        return new PostcardResource($clone);
+        return new PostcardCollection($clone);;
     }
 
 }
