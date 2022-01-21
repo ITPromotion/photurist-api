@@ -37,6 +37,6 @@ class PostcardTest extends TestCase
             [$url]
         );
         $response = $this->put($url);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 }
