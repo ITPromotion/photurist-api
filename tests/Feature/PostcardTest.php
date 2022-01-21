@@ -28,7 +28,7 @@ class PostcardTest extends TestCase
     public function test_duplicate()
     {
         $this->setUpFaker();
-        $postcard = Postcard::where('status', PostcardStatus::ACTIVE)->first();
+        $postcard = Postcard::first();
         if(!$postcard)
             return;
 
