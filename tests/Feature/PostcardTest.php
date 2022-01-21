@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\User;
 use App\Models\Postcard;
 use Laravel\Passport\Passport;
+use Mockery;
 use Tests\TestCase;
 use App\Enums\PostcardStatus;
 
@@ -32,7 +33,7 @@ class PostcardTest extends TestCase
         if(!$postcard)
             return;
 
-        $url = self::PREFIX.'duplicate-postcard/'.$postcard->id;
+        $url = self::PREFIX.'duplicate-postcard/776';
         $this->singIn();
 
         Passport::actingAs(

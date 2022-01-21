@@ -518,7 +518,11 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         $clone->update([
             'status' => PostcardStatus::CREATED,
         ]);
-        $this->copyMediaContent($clone);
+        try {
+            $this->copyMediaContent($clone);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
         return new PostcardResource($clone);
     }
 
