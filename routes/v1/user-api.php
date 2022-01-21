@@ -102,7 +102,7 @@ Route::put('/on-user-postcard-notification/{id}', [PostcardControllerAlias::clas
 
 Route::get('/not-view-quantity', [PostcardControllerAlias::class, 'notViewQuantity']);
 
-Route::get('/duplicate-postcard/{id}', [PostcardControllerAlias::class, 'duplicate']);
+Route::put('/duplicate-postcard/{id}', [PostcardControllerAlias::class, 'duplicate']);
 
 
 

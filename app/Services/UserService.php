@@ -12,6 +12,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use phpDocumentor\Reflection\Types\Boolean;
+use App\Enums\ActionLocKey;
+use Illuminate\Support\Facades\DB;
+use App\Enums\PostcardStatus;
 
 class UserService
 {
@@ -42,6 +45,23 @@ class UserService
         }
         $this->user->clients()->sync($ids,false );
 
+        $this->user->clients()->sync($ids,false);
+
+        foreach ($ids as  $key => $value) {
+            (new NotificationService)->send([
+                'users' => User::find($key)->device()->pluck('token')->toArray(),
+                'title' => $this->user->login,
+                'body' => __('notifications.add_contacts'),
+                'img' => $this->user->avatar,
+                'user_id' => $this->user->id,
+                'action_loc_key' => ActionLocKey::ADD_CONTACTS,
+                'badge' => DB::table('postcards_mailings')
+                    ->where('view', 0)
+                    ->where('user_id', $key)
+                    ->where('status', PostcardStatus::ACTIVE)
+                    ->count()
+            ]);
+        }
         return true;
     }
 
@@ -89,7 +109,21 @@ class UserService
     public function removeContacts(AddClientsActiveRequest $request)
     {
         $this->user->clients()->detach($request->input('ids'));
-
+        foreach ($request->input('ids') as  $id) {
+            (new NotificationService)->send([
+                'users' => User::find($id)->device()->pluck('token')->toArray(),
+                'title' => $this->user->login,
+                'body' => __('notifications.remov_contacts'),
+                'img' => $this->user->avatar,
+                'user_id' => $this->user->id,
+                'action_loc_key' => ActionLocKey::REMOV_CONTACTS,
+                'badge' => DB::table('postcards_mailings')
+                    ->where('view', 0)
+                    ->where('user_id', $id)
+                    ->where('status', PostcardStatus::ACTIVE)
+                    ->count()
+            ]);
+        }
         return true;
     }
 }

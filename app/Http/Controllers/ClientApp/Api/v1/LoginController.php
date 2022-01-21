@@ -11,7 +11,7 @@ use App\Models\Sto\Sto;
 use App\Models\TempNumber;
 use App\Models\User;
 use App\Models\User\UserNotificationToken;
-use App\Services\Notification\Sms\RegisterSms;
+// use App\Services\Notification\Sms\RegisterSms;
 use Spatie\Permission\Models\Role;
 use App\Models\Admin;
 
@@ -55,12 +55,12 @@ class LoginController extends Controller
                 return response()->json(['errorCode' => 'permission denied'], 403);
             }
         }
-
-        if(env('APP_DEBUG')!='true') {
-            $result = (new RegisterSms())->send($phoneNumber, $otp->otp);
-        }else{
-            $result =true;
-        }
+        $result =true;
+        // if(env('APP_DEBUG')!='true') {
+        //     $result = (new RegisterSms())->send($phoneNumber, $otp->otp);
+        // }else{
+        //     $result =true;
+        // }
 
 
 
@@ -75,9 +75,9 @@ class LoginController extends Controller
             ['phone' => $phoneNumber],
             ['otp_id' => $otp->id]
         );
-        if(env('APP_DEBUG')!='true'){
-            return  response()->json([],201);
-        }
+        // if(env('APP_DEBUG')!='true'){
+        //     return  response()->json([],201);
+        // }
         return response()->json([
             'codeOTP'   => $otp->otp,
         ], 201);
