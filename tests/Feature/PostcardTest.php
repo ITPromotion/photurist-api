@@ -27,9 +27,8 @@ class PostcardTest extends TestCase
     public function test_duplicate()
     {
         $this->setUpFaker();
-        $postcardId = Postcard::first()->id;
-        $url = self::PREFIX.'duplicate/776';
-
+        $postcardId = Postcard::all()->last()->id;;
+        $url = self::PREFIX.'duplicate-postcard/'.$postcardId;
         $this->singIn();
 
         Passport::actingAs(
