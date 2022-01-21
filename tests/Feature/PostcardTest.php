@@ -28,7 +28,7 @@ class PostcardTest extends TestCase
     {
         $this->setUpFaker();
         $postcardId = Postcard::first()->id;
-        $url = self::PREFIX.'duplicate/'.$postcardId;
+        $url = self::PREFIX.'duplicate/776';
 
         $this->singIn();
 
