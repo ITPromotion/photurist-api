@@ -12,6 +12,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Jobs\NotificationJob;
 
 class ActiveStatusPostcard extends Command
 {
@@ -65,20 +66,32 @@ class ActiveStatusPostcard extends Command
                 $postcard->save();
 
                 try {
+
                     $user = $postcard->user;
-                        (new NotificationService)->send([
-                            'users' => $user->device->pluck('token')->toArray(),
-                            'title' => $postcard->user->login,
-                            'body' => __('notifications.postcard_status_active'),
-                            'img' => $postcard->mediaContents[0]->link,
-                            'postcard_id' => $postcard->id,
-                            'action_loc_key' => ActionLocKey::GALLERY,
-                            'badge' => DB::table('postcards_mailings')
-                                ->where('view', 0)
-                                ->where('user_id', $user->id)
-                                ->where('status', PostcardStatus::ACTIVE)
-                                ->count()
-                        ]);
+                    $notification = [
+                        'token' => $user->device->pluck('token')->toArray(),
+                        'title' => $postcard->user->login,
+                        'body' => __('notifications.postcard_status_active'),
+                        'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                        'action_loc_key' =>  ActionLocKey::GALLERY,
+                        'user_id' => $user->id,
+                        'postcard_id' => $postcard->id,
+                    ];
+                    dispatch(new NotificationJob($notification));
+
+                        // (new NotificationService)->send([
+                        //     'users' => $user->device->pluck('token')->toArray(),
+                        //     'title' => $postcard->user->login,
+                        //     'body' => __('notifications.postcard_status_active'),
+                        //     'img' => $postcard->mediaContents[0]->link,
+                        //     'postcard_id' => $postcard->id,
+                        //     'action_loc_key' => ActionLocKey::GALLERY,
+                        //     'badge' => DB::table('postcards_mailings')
+                        //         ->where('view', 0)
+                        //         ->where('user_id', $user->id)
+                        //         ->where('status', PostcardStatus::ACTIVE)
+                        //         ->count()
+                        // ]);
                 } catch (\Throwable $th) {
                     //throw $th;
                 }
