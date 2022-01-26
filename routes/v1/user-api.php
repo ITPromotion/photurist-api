@@ -104,5 +104,7 @@ Route::get('/not-view-quantity', [PostcardControllerAlias::class, 'notViewQuanti
 
 Route::put('/duplicate-postcard/{id}', [PostcardControllerAlias::class, 'duplicate']);
 
+Route::post('/save-avatar', [PostcardControllerAlias::class, 'saveAvatar']);
+
 
 

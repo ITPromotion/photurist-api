@@ -104,20 +104,26 @@ class MailingCommand extends Command
                 $postcard->status = PostcardStatus::ARCHIVE;
                 $postcard->save();
 
-                    \Illuminate\Support\Facades\Log::info('time_is_up_text');
-                    (new \App\Services\NotificationService)->send([
-                        'users' => $postcard->user->device->pluck('token')->toArray(),
-                        'title' => $postcard->user->login,
-                        'body' => __('notifications.time_is_up_text'),
-                        'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
-                        'postcard_id' => $postcard->id,
-                        'action_loc_key' => ActionLocKey::TIME_IS_UP,
-                        'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
-                                    ->where('view', 0)
-                                    ->where('user_id',$postcard->user->id)
-                                    ->where('status', \App\Enums\PostcardStatus::ACTIVE)
-                                    ->count()
-                    ]);
+
+                    try {
+                        \Illuminate\Support\Facades\Log::info('time_is_up_text');
+                        (new \App\Services\NotificationService)->send([
+                            'users' => $postcard->user->device->pluck('token')->toArray(),
+                            'title' => $postcard->user->login,
+                            'body' => __('notifications.time_is_up_text'),
+                            'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                            'postcard_id' => $postcard->id,
+                            'action_loc_key' => ActionLocKey::TIME_IS_UP,
+                            'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
+                                        ->where('view', 0)
+                                        ->where('user_id',$postcard->user->id)
+                                        ->where('status', \App\Enums\PostcardStatus::ACTIVE)
+                                        ->count()
+                        ]);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
+
             };
         }
 
