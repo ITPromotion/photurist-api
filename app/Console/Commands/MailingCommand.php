@@ -83,11 +83,10 @@ class MailingCommand extends Command
                                     'body' => __('notifications.gallery_text'),
                                     'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
                                     'action_loc_key' => ActionLocKey::GALLERY_TEXT,
-                                    'user_id',$postcard->user_id,
+                                    'user_id' => $postcard->user_id,
                                     'postcard_id' => $postcard->id,
                                 ];
-                                $notificationJob = new NotificationJob($notification);
-                                $this->dispatch($notificationJob);
+                                dispatch(new NotificationJob($notification));
 
 
                                 // (new NotificationService)->send([
@@ -126,11 +125,10 @@ class MailingCommand extends Command
                             'body' => __('notifications.time_is_up_text'),
                             'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
                             'action_loc_key' => ActionLocKey::GALLERY_TEXT,
-                            'user_id',$postcard->user_id,
+                            'user_id' => $postcard->user_id,
                             'postcard_id' => $postcard->id,
                         ];
-                        $notificationJob = new NotificationJob($notification);
-                        $this->dispatch($notificationJob);
+                        dispatch(new NotificationJob($notification));
 
                         \Illuminate\Support\Facades\Log::info('time_is_up_text');
                         // (new \App\Services\NotificationService)->send([

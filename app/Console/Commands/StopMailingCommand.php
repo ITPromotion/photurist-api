@@ -61,11 +61,10 @@ class StopMailingCommand extends Command
                     'body' => __('notifications.waiting_time_text'),
                     'img' => count($postcard_->mediaContents) ? $postcard_->mediaContents[0]->link : null,
                     'action_loc_key' => ActionLocKey::WAITING_TIME,
-                    'user_id',$postcard->user_id,
+                    'user_id' => $postcard->user_id,
                     'postcard_id' => $postcard->postcard_id,
                 ];
-                $notificationJob = new NotificationJob($notification);
-                $this->dispatch($notificationJob);
+                dispatch(new NotificationJob($notification));
 
             // (new \App\Services\NotificationService)->send([
             //     'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),

@@ -21,13 +21,7 @@ class NotificationJob implements ShouldQueue
      */
     public function __construct($notification)
     {
-        $this->postcard = $notification['token'];
-        $this->title = $notification['title'];
-        $this->body = $notification['body'];
-        $this->img = $notification['img'];
-        $this->postcard_id = $notification['postcard_id'];
-        $this->action_loc_key = $notification['action_loc_key'];
-        $this->user_id = $notification['user_id'];
+        $this->notification = $notification;
     }
 
     /**
@@ -37,18 +31,21 @@ class NotificationJob implements ShouldQueue
      */
     public function handle()
     {
+        \Illuminate\Support\Facades\Log::info($this->notification);
         (new \App\Services\NotificationService)->send([
-            'users' => $this->token,
-            'title' => $this->title,
-            'body' => $this->body,
-            'img' => $this->img,
-            'postcard_id' => $this->postcard_id,
-            'action_loc_key' => $this->action_loc_key,
+            'users' => $this->notification['token'],
+            'title' => $this->notification['title'],
+            'body' => $this->notification['body'],
+            'img' => $this->notification['img'],
+            'postcard_id' => $this->notification['postcard_id'],
+            'action_loc_key' => $this->notification['action_loc_key'],
             'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
                                 ->where('view', 0)
-                                ->where('user_id',$this->user_id)
+                                ->where('user_id', $this->notification['user_id'])
                                 ->where('status', \App\Enums\PostcardStatus::ACTIVE)
                                 ->count()
         ]);
+
+        return;
     }
 }

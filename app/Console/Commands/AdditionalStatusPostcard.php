@@ -8,6 +8,7 @@ use App\Models\Postcard;
 use App\Services\NotificationService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use App\Jobs\NotificationJob;
 
 class AdditionalStatusPostcard extends Command
 {
@@ -61,20 +62,31 @@ class AdditionalStatusPostcard extends Command
                 $postcard->save();
 
                 try {
+
                     $user = $postcard->user;
-                    (new NotificationService)->send([
-                        'users' => $user->device->pluck('token')->toArray(),
+                    $notification = [
+                        'token' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
                         'body' => __('notifications.additional_postcard'),
-                        'img' => $postcard->mediaContents[0]->link,
+                        'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                        'action_loc_key' =>  ActionLocKey::ADDITIONAL_POSTCARD,
+                        'user_id' => $user->id,
                         'postcard_id' => $postcard->id,
-                        'action_loc_key' => ActionLocKey::ADDITIONAL_POSTCARD,
-                        'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
-                            ->where('view', 0)
-                            ->where('user_id',$user->id)
-                            ->where('status', \App\Enums\PostcardStatus::ACTIVE)
-                            ->count()
-                    ]);
+                    ];
+                    dispatch(new NotificationJob($notification));
+                    // (new NotificationService)->send([
+                    //     'users' => $user->device->pluck('token')->toArray(),
+                    //     'title' => $postcard->user->login,
+                    //     'body' => __('notifications.additional_postcard'),
+                    //     'img' => $postcard->mediaContents[0]->link,
+                    //     'postcard_id' => $postcard->id,
+                    //     'action_loc_key' => ActionLocKey::ADDITIONAL_POSTCARD,
+                    //     'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
+                    //         ->where('view', 0)
+                    //         ->where('user_id',$user->id)
+                    //         ->where('status', \App\Enums\PostcardStatus::ACTIVE)
+                    //         ->count()
+                    // ]);
                 } catch (\Throwable $th) {
                     //throw $th;
                 }

@@ -12,6 +12,8 @@ use App\Models\Postcard;
 use App\Enums\ActionLocKey;
 use App\Services\NotificationService;
 use App\Enums\PostcardStatus;
+use App\Jobs\NotificationJob;
+use App\Jobs\MediaContentCrop;
 
 
 /*
@@ -38,21 +40,16 @@ Route::post('/send', function (Request $request) {
 
     try {
         $postcard =  \App\Models\Postcard::find($request->postcard_id);
-        // if ($postcard->user_id != $user->id) {
-            (new NotificationService)->send([
-                'users' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
+            $notification = [
+                'token' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
                 'title' => $postcard->user->login,
                 'body' => ActionLocKey::GALLERY_TEXT,
-                'img' => $postcard->mediaContents[0]->link,
+                'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                'action_loc_key' =>  ActionLocKey::GALLERY,
+                'user_id' => $request->user_id,
                 'postcard_id' => $postcard->id,
-                'action_loc_key' => ActionLocKey::GALLERY,
-                'badge' => DB::table('postcards_mailings')
-                    ->where('view', 0)
-                    ->where('user_id',$request->user_id)
-                    ->where('status', PostcardStatus::ACTIVE)
-                    ->count()
-            ]);
-        // }
+            ];
+            dispatch(new App\Jobs\NotificationJob($notification));
     } catch (\Throwable $th) {
         //throw $th;
     }
