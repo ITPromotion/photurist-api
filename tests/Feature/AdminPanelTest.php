@@ -116,6 +116,7 @@ class AdminPanelTest extends TestCase
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->unique()->phoneNumber(),
+            'role_id' => 1,
         ]);
 
         $response->assertStatus(201);
