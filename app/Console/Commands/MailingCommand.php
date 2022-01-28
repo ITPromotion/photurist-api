@@ -111,12 +111,11 @@ class MailingCommand extends Command
                 }
             }
 
-            $firstMailing = $postcard->firstMailing();
-
-            if(($firstMailing)&&(Carbon::parse($firstMailing->start)<Carbon::now()->subMinutes($postcard->interval_send))){
+            $firstMailing = $postcard->start_mailing;
+            if(($firstMailing)&&(Carbon::parse($firstMailing)<Carbon::now()->subMinutes($postcard->interval_send))){
                 $postcard->status = PostcardStatus::ARCHIVE;
                 $postcard->save();
-
+                \Illuminate\Support\Facades\Log::info('time_is_up_text');
 
                     try {
                         $notification = [
