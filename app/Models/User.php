@@ -37,6 +37,7 @@ class User extends Authenticatable
         'region_name',
         'city_id',
         'city_name',
+        'avatar'
     ];
 
     /**
