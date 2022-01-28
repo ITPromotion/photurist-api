@@ -32,12 +32,12 @@ class PermissionController extends Controller
     }
 
     public function createPersonnel(PersonnelRequest $request) {
-        return new AdminResource(Admin::create($request->all()));
+        return new AdminResource(Admin::create($request->all())->assignRole(Role::find($request->role_id)));
     }
 
-    public function addRoleToPersonnel (RoleToPersonnelRequest $request) {
-        return new AdminResource(Admin::find($request->admin_id)->assignRole(Role::find($request->role_id)));
-    }
+    // public function addRoleToPersonnel (RoleToPersonnelRequest $request) {
+    //     return new AdminResource(Admin::find($request->admin_id)->assignRole(Role::find($request->role_id)));
+    // }
 
     public function addPermissionToRole (RoleToPersonnelRequest $request) {
         return new AdminResource(Role::find($request->role_id)->givePermissionTo(Permission::find($request->permission_id)));
