@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Device;
 use App\Services\NotificationService;
 use App\Enums\ActionLocKey;
+use App\Jobs\NotificationJob;
 
 class PostcardController extends Controller
 {
@@ -258,19 +259,29 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         try {
             $userIds = $postcard->allMailingsUserIds();
             foreach ($userIds as $id) {
-                (new NotificationService)->send([
-                    'users' => Device::getTokenUsers([$id]),
+                // (new NotificationService)->send([
+                //     'users' => Device::getTokenUsers([$id]),
+                //     'title' => $postcard->user->login,
+                //     'body' => __('notifications.delete_postcard_text'),
+                //     'img' => $postcard->mediaContents[0]->link,
+                //     'postcard_id' => $postcard->id,
+                //     'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
+                //     'badge' => DB::table('postcards_mailings')
+                //                     ->where('view', 0)
+                //                     ->where('user_id', $id)
+                //                     ->where('status', PostcardStatus::ACTIVE)
+                //                     ->count()
+                // ]);
+                $notification = [
+                    'token' => Device::getTokenUsers([$id]),
                     'title' => $postcard->user->login,
                     'body' => __('notifications.delete_postcard_text'),
-                    'img' => $postcard->mediaContents[0]->link,
-                    'postcard_id' => $postcard->id,
+                    'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
                     'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
-                    'badge' => DB::table('postcards_mailings')
-                                    ->where('view', 0)
-                                    ->where('user_id', $id)
-                                    ->where('status', PostcardStatus::ACTIVE)
-                                    ->count()
-                ]);
+                    'user_id' => $id,
+                    'postcard_id' => $postcard->id,
+                ];
+                dispatch(new NotificationJob($notification));
             }
         } catch (\Throwable $th) {
             //throw $th;
@@ -471,20 +482,31 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
         try {
             $userIds = $postcard->allMailingsUserIds();
             foreach ($userIds as $id) {
-                (new NotificationService)->send([
-                    'users' => Device::getTokenUsers([$id]),
+                // (new NotificationService)->send([
+                //     'users' => Device::getTokenUsers([$id]),
+                //     'title' => $postcard->user->login,
+                //     'body' => __('notifications.delete_postcard_text'),
+                //     'img' => $postcard->mediaContents[0]->large,
+                //     'media_type' => $postcard->mediaContents[0]->media_content_type,
+                //     'postcard_id' => $postcard->id,
+                //     'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
+                //     'badge' => DB::table('postcards_mailings')
+                //                     ->where('view', 0)
+                //                     ->where('user_id', $id)
+                //                     ->where('status', PostcardStatus::ACTIVE)
+                //                     ->count()
+                // ]);
+
+                $notification = [
+                    'token' => Device::getTokenUsers([$id]),
                     'title' => $postcard->user->login,
                     'body' => __('notifications.delete_postcard_text'),
-                    'img' => $postcard->mediaContents[0]->large,
-                    'media_type' => $postcard->mediaContents[0]->media_content_type,
-                    'postcard_id' => $postcard->id,
+                    'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->large : null,
                     'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
-                    'badge' => DB::table('postcards_mailings')
-                                    ->where('view', 0)
-                                    ->where('user_id', $id)
-                                    ->where('status', PostcardStatus::ACTIVE)
-                                    ->count()
-                ]);
+                    'user_id' => $id,
+                    'postcard_id' => $postcard->id,
+                ];
+                dispatch(new NotificationJob($notification));
             }
         } catch (\Throwable $th) {
             //throw $th;

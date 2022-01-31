@@ -2,14 +2,13 @@
 
 
 return [
-    'postcard_status_active' => 'Открытка отправлена в рассылку',
-    'postcard_status_draft'  => 'Черновик открытки сохранен',
-    'gallery_text' => 'Новая открытка',
-    'time_is_up_text' => 'Время рассылки открытки истекло',
-    'delete_postcard_text' => 'Открытка удалена',
-    'waiting_time_text' => 'Время ожидания открытки истекло',
-    'additional_postcard' => 'Добавлена дополнительная открытка',
+    'postcard_status_active' => 'The card has been sent',
+    'postcard_status_draft'  => 'Draft card saved',
+    'gallery_text' => 'New card',
+    'time_is_up_text' => 'Card time expired',
+    'delete_postcard_text' => 'Card deleted',
+    'waiting_time_text' => 'Card timed out',
+    'additional_postcard' => 'Additional card has been added',
 
-    'add_contacts' => "Добавил Вас в контакты",
-    'remov_contacts' => "Удалил Вас с контактов"
+    'add_contacts' => "Added you to contacts",
 ];
