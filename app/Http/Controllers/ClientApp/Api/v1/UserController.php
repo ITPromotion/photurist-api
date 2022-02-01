@@ -4,7 +4,7 @@ namespace App\Http\Controllers\ClientApp\Api\v1;
 
 use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ClientApp\User\AddClientsActiveRequest;
+use App\Http\Requests\ClientApp\User\AddContactsRequest;
 use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Http\Requests\ClientApp\User\SetGeoDataRequest;
 use App\Http\Requests\ClientApp\User\SaveDeviceRequest;
@@ -40,13 +40,13 @@ class UserController extends Controller
         return new UserPhoneResource(['users' => $users]);
     }
 
-    public function addContactsActive(AddClientsActiveRequest $request):UserPhoneResource
+    public function addContactsActive(AddContactsRequest $request):UserPhoneResource
     {
         $userService = new UserService(Auth::user());
 
-        $users = $userService->addContactsActive($request);
+        $result = $userService->addContactsActive($request);
 
-        return new UserPhoneResource(['users' => $users]);
+        return new UserPhoneResource(['result' => $result]);
     }
 
     public function getContactsActive(Request $request):UserPhoneResource
@@ -58,13 +58,13 @@ class UserController extends Controller
         return new UserPhoneResource(['users' => $users]);
     }
 
-    public function addContactsBlock(AddClientsActiveRequest $request):UserPhoneResource
+    public function addContactsBlock(AddContactsRequest $request):UserPhoneResource
     {
         $userService = new UserService(Auth::user());
 
-        $users = $userService->addContactsBlock($request);
+        $result = $userService->addContactsBlock($request);
 
-        return new UserPhoneResource(['result' => $users]);
+        return new UserPhoneResource(['result' => $result]);
     }
 
     public function getContactsBlock(Request $request):UserPhoneResource
@@ -76,7 +76,25 @@ class UserController extends Controller
         return new UserPhoneResource(['users' => $users]);
     }
 
-    public function removeContacts(AddClientsActiveRequest $request):UserPhoneResource
+    public function addContactsIgnore(AddContactsRequest $request):UserPhoneResource
+    {
+        $userService = new UserService(Auth::user());
+
+        $result = $userService->addContactsIgnore($request);
+
+        return new UserPhoneResource(['result' => $result]);
+    }
+
+    public function getContactsIgnore(Request $request):UserPhoneResource
+    {
+        $userService = new UserService(Auth::user());
+
+        $users = $userService->getContactsIgnore($request);
+
+        return new UserPhoneResource(['users' => $users]);
+    }
+
+    public function removeContacts(AddContactsRequest $request):UserPhoneResource
     {
         $userService = new UserService(Auth::user());
 

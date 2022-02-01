@@ -10,10 +10,14 @@ use Rexlabs\Enum\Enum;
  * @method static self ACTIVE()
  *
  * @method static self BLOCK()
+ *
+ * @method static self IGNORE()
  */
-class ClientStatus extends Enum
+class ContactStatuses extends Enum
 {
     const ACTIVE = 'active';
 
     const BLOCK = 'block';
+
+    const IGNORE = 'ignore';
 }

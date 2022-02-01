@@ -4,9 +4,9 @@
 namespace App\Services;
 
 
-use App\Enums\ClientStatus;
+use App\Enums\ContactStatuses;
 use App\Enums\UserStatus;
-use App\Http\Requests\ClientApp\User\AddClientsActiveRequest;
+use App\Http\Requests\ClientApp\User\AddContactsRequest;
 use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -35,17 +35,15 @@ class UserService
         return $users;
     }
 
-    public function addContactsActive(AddClientsActiveRequest $request):bool
+    public function addContactsActive(AddContactsRequest $request):bool
     {
 
         foreach($request->input('ids') as $id){
             $ids[$id]=  [
-                    'status' => ClientStatus::ACTIVE
+                    'status' => ContactStatuses::ACTIVE
             ];
         }
-        $this->user->clients()->sync($ids,false );
-
-        $this->user->clients()->sync($ids,false);
+        $this->user->contacts()->sync($ids,false );
 
         foreach ($ids as  $key => $value) {
             (new NotificationService)->send([
@@ -68,26 +66,26 @@ class UserService
     public function getContactsActive(Request $request):Collection
     {
 
-        $clientsQuery = $this->user->clients()->wherePivot('status', ClientStatus::ACTIVE);
+        $contactsQuery = $this->user->contacts()->wherePivot('status', ContactStatuses::ACTIVE);
 
         if(is_numeric($request->input('offset')))
-            $clientsQuery->offset($request->input('offset'));
+            $contactsQuery->offset($request->input('offset'));
 
         if(is_numeric($request->input('limit')))
-            $clientsQuery->limit($request->input('limit'));
+            $contactsQuery->limit($request->input('limit'));
 
-        return $clientsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
+        return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
-    public function addContactsBlock(AddClientsActiveRequest $request):bool
+    public function addContactsBlock(AddContactsRequest $request):bool
     {
 
         foreach($request->input('ids') as $id){
             $ids[$id]=  [
-                'status' => ClientStatus::BLOCK,
+                'status' => ContactStatuses::BLOCK,
             ];
         }
-        $this->user->clients()->sync($ids,false );
+        $this->user->contacts()->sync($ids,false );
 
         return true;
     }
@@ -95,20 +93,47 @@ class UserService
     public function getContactsBlock(Request $request):Collection
     {
 
-        $clientsQuery = $this->user->clients()->wherePivot('status', ClientStatus::BLOCK);
+        $contactsQuery = $this->user->contacts()->wherePivot('status', ContactStatuses::BLOCK);
 
         if(is_numeric($request->input('offset')))
-            $clientsQuery->offset($request->input('offset'));
+            $contactsQuery->offset($request->input('offset'));
 
         if(is_numeric($request->input('limit')))
-            $clientsQuery->limit($request->input('limit'));
+            $contactsQuery->limit($request->input('limit'));
 
-        return $clientsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
+        return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
-    public function removeContacts(AddClientsActiveRequest $request)
+    public function addContactsIgnore(AddContactsRequest $request):bool
     {
-        $this->user->clients()->detach($request->input('ids'));
+
+        foreach($request->input('ids') as $id){
+            $ids[$id]=  [
+                'status' => ContactStatuses::IGNORE,
+            ];
+        }
+        $this->user->contacts()->sync($ids,false );
+
+        return true;
+    }
+
+    public function getContactsIgnore(Request $request):Collection
+    {
+
+        $contactsQuery = $this->user->contacts()->wherePivot('status', ContactStatuses::IGNORE);
+
+        if(is_numeric($request->input('offset')))
+            $contactsQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $contactsQuery->limit($request->input('limit'));
+
+        return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
+    }
+
+    public function removeContacts(AddContactsRequest $request)
+    {
+        $this->user->contacts()->detach($request->input('ids'));
         foreach ($request->input('ids') as  $id) {
             (new NotificationService)->send([
                 'users' => User::find($id)->device()->pluck('token')->toArray(),

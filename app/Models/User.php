@@ -97,9 +97,9 @@ class User extends Authenticatable
         return $this->hasMany(MediaContent::class);
     }
 
-    public function clients():BelongsToMany
+    public function contacts():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'contacts', 'user_id', 'client_id')->withPivot('status');
+        return $this->belongsToMany(User::class, 'contacts', 'user_id', 'contact_id')->withPivot('status');
     }
 
 }

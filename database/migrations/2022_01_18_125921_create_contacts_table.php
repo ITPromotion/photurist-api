@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ClientStatus;
+use App\Enums\ContactStatuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,9 +18,9 @@ class CreateContactsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('client_id')->nullable();
-            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
-            $table->enum('status', ClientStatus::keys())->nullable();
+            $table->unsignedBigInteger('contact_id')->nullable();
+            $table->foreign('contact_id')->references('id')->on('users')->onDelete('cascade');
+            $table->enum('status', ContactStatuses::keys())->nullable();
         });
     }
 

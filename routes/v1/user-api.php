@@ -60,7 +60,11 @@ Route::get('/get-contacts', [UserController::class, 'getContactsActive']);
 
 Route::post('/add-block-contacts', [UserController::class, 'addContactsBlock']);
 
-Route::get('/get-block-contacts', [UserController::class, 'getContactsActive']);
+Route::get('/get-block-contacts', [UserController::class, 'getContactsBlock']);
+
+Route::post('/add-ignore-contacts', [UserController::class, 'addContactsIgnore']);
+
+Route::get('/get-ignore-contacts', [UserController::class, 'getContactsIgnore']);
 
 Route::put('/remove-contacts', [UserController::class, 'removeContacts']);
 

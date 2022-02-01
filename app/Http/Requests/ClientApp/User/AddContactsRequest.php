@@ -4,7 +4,7 @@ namespace App\Http\Requests\ClientApp\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddClientsActiveRequest extends FormRequest
+class AddContactsRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
