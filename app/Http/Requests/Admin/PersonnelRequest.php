@@ -16,9 +16,10 @@ class PersonnelRequest extends ApiRequest
     {
         return [
 
-            'name' => 'required|unique:admins|max:255',
+            'name' => 'required|max:255',
             'phone' => 'required|unique:admins|max:20',
             'email' => 'required|unique:admins|max:255',
+            'role_id' => 'required',
         ];
     }
 }

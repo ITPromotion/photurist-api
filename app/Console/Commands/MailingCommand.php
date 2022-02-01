@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\NotificationService;
 use App\Enums\ActionLocKey;
+use App\Jobs\NotificationJob;
 class MailingCommand extends Command
 {
     /**
@@ -76,19 +77,31 @@ class MailingCommand extends Command
 
                         try {
                             if ($postcard->user_id != $user->id) {
-                                (new NotificationService)->send([
-                                    'users' => $user->device->pluck('token')->toArray(),
+                                $notification = [
+                                    'token' => $user->device->pluck('token')->toArray(),
                                     'title' => $postcard->user->login,
-                                    'body' => ActionLocKey::GALLERY_TEXT,
-                                    'img' => $postcard->mediaContents[0]->link,
+                                    'body' => __('notifications.gallery_text'),
+                                    'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                                    'action_loc_key' => ActionLocKey::GALLERY_TEXT,
+                                    'user_id' => $postcard->user_id,
                                     'postcard_id' => $postcard->id,
-                                    'action_loc_key' => ActionLocKey::GALLERY,
-                                    'badge' => DB::table('postcards_mailings')
-                                        ->where('view', 0)
-                                        ->where('user_id',$user->id)
-                                        ->where('status', PostcardStatus::ACTIVE)
-                                        ->count()
-                                ]);
+                                ];
+                                dispatch(new NotificationJob($notification));
+
+
+                                // (new NotificationService)->send([
+                                //     'users' => $user->device->pluck('token')->toArray(),
+                                //     'title' => $postcard->user->login,
+                                //     'body' => ActionLocKey::GALLERY_TEXT,
+                                //     'img' => $postcard->mediaContents[0]->link,
+                                //     'postcard_id' => $postcard->id,
+                                //     'action_loc_key' => ActionLocKey::GALLERY,
+                                //     'badge' => DB::table('postcards_mailings')
+                                //         ->where('view', 0)
+                                //         ->where('user_id',$user->id)
+                                //         ->where('status', PostcardStatus::ACTIVE)
+                                //         ->count()
+                                // ]);
                             }
                         } catch (\Throwable $th) {
                             //throw $th;
@@ -98,28 +111,38 @@ class MailingCommand extends Command
                 }
             }
 
-            $firstMailing = $postcard->firstMailing();
-
-            if(($firstMailing)&&(Carbon::parse($firstMailing->start)<Carbon::now()->subMinutes($postcard->interval_send))){
+            $firstMailing = $postcard->start_mailing;
+            if(($firstMailing)&&(Carbon::parse($firstMailing)<Carbon::now()->subMinutes($postcard->interval_send))){
                 $postcard->status = PostcardStatus::ARCHIVE;
                 $postcard->save();
-
+                \Illuminate\Support\Facades\Log::info('time_is_up_text');
 
                     try {
-                        \Illuminate\Support\Facades\Log::info('time_is_up_text');
-                        (new \App\Services\NotificationService)->send([
-                            'users' => $postcard->user->device->pluck('token')->toArray(),
+                        $notification = [
+                            'token' => $postcard->user->device->pluck('token')->toArray(),
                             'title' => $postcard->user->login,
                             'body' => __('notifications.time_is_up_text'),
                             'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                            'action_loc_key' => ActionLocKey::GALLERY_TEXT,
+                            'user_id' => $postcard->user_id,
                             'postcard_id' => $postcard->id,
-                            'action_loc_key' => ActionLocKey::TIME_IS_UP,
-                            'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
-                                        ->where('view', 0)
-                                        ->where('user_id',$postcard->user->id)
-                                        ->where('status', \App\Enums\PostcardStatus::ACTIVE)
-                                        ->count()
-                        ]);
+                        ];
+                        dispatch(new NotificationJob($notification));
+
+                        \Illuminate\Support\Facades\Log::info('time_is_up_text');
+                        // (new \App\Services\NotificationService)->send([
+                        //     'users' => $postcard->user->device->pluck('token')->toArray(),
+                        //     'title' => $postcard->user->login,
+                        //     'body' => __('notifications.time_is_up_text'),
+                        //     'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                        //     'postcard_id' => $postcard->id,
+                        //     'action_loc_key' => ActionLocKey::TIME_IS_UP,
+                        //     'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
+                        //                 ->where('view', 0)
+                        //                 ->where('user_id',$postcard->user->id)
+                        //                 ->where('status', \App\Enums\PostcardStatus::ACTIVE)
+                        //                 ->count()
+                        // ]);
                     } catch (\Throwable $th) {
                         //throw $th;
                     }

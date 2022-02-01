@@ -15,6 +15,7 @@ use phpDocumentor\Reflection\Types\Boolean;
 use App\Enums\ActionLocKey;
 use Illuminate\Support\Facades\DB;
 use App\Enums\PostcardStatus;
+use App\Jobs\NotificationJob;
 
 class UserService
 {
