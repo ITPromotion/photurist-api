@@ -11,6 +11,7 @@ class UserController extends Controller
 {
     public function getUser(Request $request) {
         $user = new User();
+        return $request->all();
         if ($request->status) {
             $user->where('status', $request->status);
         }
