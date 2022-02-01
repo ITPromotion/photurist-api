@@ -140,7 +140,7 @@ class AdminPanelTest extends TestCase
 
         );
         $response = $this->postJson($url, [
-            'name' => $this->faker->title(),
+            'name' => $this->faker->title().$this->faker->year(),
         ]);
 
         $response->assertStatus(201);
