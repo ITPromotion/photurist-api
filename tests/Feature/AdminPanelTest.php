@@ -59,9 +59,10 @@ class AdminPanelTest extends TestCase
         $url = self::PREFIX.'get-role';
 
         $this->singIn();
-        Passport::actingAs_(
+        Passport::actingAs(
             $this->user,
-            [$url]
+            [$url],
+            'api-admin'
 
         );
         $response = $this->get($url);
@@ -75,9 +76,10 @@ class AdminPanelTest extends TestCase
         $url = self::PREFIX.'get-personnel';
 
         $this->singIn();
-        Passport::actingAs_(
+       Passport::actingAs(
             $this->user,
-            [$url]
+            [$url],
+            'api-admin'
 
         );
         $response = $this->get($url);
@@ -91,9 +93,10 @@ class AdminPanelTest extends TestCase
         $url = self::PREFIX.'get-permissions';
 
         $this->singIn();
-        Passport::actingAs_(
+       Passport::actingAs(
             $this->user,
-            [$url]
+            [$url],
+            'api-admin'
 
         );
         $response = $this->get($url);
@@ -107,9 +110,10 @@ class AdminPanelTest extends TestCase
         $url = self::PREFIX.'create-personnel';
 
         $this->singIn();
-        Passport::actingAs_(
+       Passport::actingAs(
             $this->user,
-            [$url]
+            [$url],
+            'api-admin'
 
         );
         $response = $this->postJson($url, [
@@ -128,9 +132,10 @@ class AdminPanelTest extends TestCase
         $url = self::PREFIX.'create-role';
 
         $this->singIn();
-        Passport::actingAs_(
+       Passport::actingAs(
             $this->user,
-            [$url]
+            [$url],
+            'api-admin'
 
         );
         $response = $this->postJson($url, [
