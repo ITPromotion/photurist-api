@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
+use App\Models\User;
 
 class AdminPanelTest extends TestCase
 {
@@ -143,6 +144,40 @@ class AdminPanelTest extends TestCase
         ]);
 
         $response->assertStatus(201);
+    }
+
+    public function test_getUser () {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'get-user';
+
+        $this->singIn();
+       Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+
+        );
+        $response = $this->get($url);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_getInfoUser () {
+        $this->setUpFaker();
+        $id = User::first()->id;
+        $url = self::PREFIX.'get-info-user/'.$id;
+
+        $this->singIn();
+        Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+
+        );
+        $response = $this->get($url);
+
+        $response->assertStatus(200);
     }
 
 }
