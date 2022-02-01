@@ -19,7 +19,7 @@ Route::put('/add-role-to-personnel', [PermissionController::class, 'addRoleToPer
 
 Route::put('/add-permission-to-role', [PermissionController::class, 'addPermissionToRole']);
 
-Route::get('/get-user', UserController::class, 'getUser');
+Route::get('/get-user', [UserController::class, 'getUser']);
 
-Route::get('/get-info-user', UserController::class, 'getInfoUser');
+Route::get('/get-info-user', [UserController::class, 'getInfoUser']);
 
