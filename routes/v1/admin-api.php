@@ -21,5 +21,5 @@ Route::put('/add-permission-to-role', [PermissionController::class, 'addPermissi
 
 Route::get('/get-user', [UserController::class, 'getUser']);
 
-Route::get('/get-info-user', [UserController::class, 'getInfoUser']);
+Route::get('/get-info-user/{id}', [UserController::class, 'getInfoUser']);
 
