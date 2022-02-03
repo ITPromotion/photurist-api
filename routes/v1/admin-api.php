@@ -36,4 +36,4 @@ Route::post('/create-group', [NotificationController::class, 'createGroup']);
 
 Route::put('/update-group/{id}', [NotificationController::class, 'updateGroup']);
 
-Route::delete('/delete-group/{id}', [NotificationController::class, 'deleteGroup'])
+Route::delete('/delete-group/{id}', [NotificationController::class, 'deleteGroup']);
