@@ -27,7 +27,11 @@ class NotificationService {
 
         $data = [
             "registration_ids" => $FcmToken,
+            "mutable_content" => true,
+            "content_available" => true,
             "notification" => [
+                "mutable_content" => true,
+                "content_available" => true,
                 "title" => $req['title'] ?? null,
                 "body" => $req['body'] ?? null,
                 'image' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
@@ -36,6 +40,8 @@ class NotificationService {
                 // 'postcard_id' => $req['postcard_id'] ?? null,
             ],
             "data" => [
+                "mutable_content" => true,
+                "content_available" => true,
                 'action_loc_key' => $req['action_loc_key'] ?? null,
                 'postcard_id' => $req['postcard_id'] ?? null,
                 'media_type' => $req['media_type'] ?? null,
