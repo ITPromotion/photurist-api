@@ -10,7 +10,7 @@ class NotificationService {
         $link = null;
 
         if (count ($postcard->mediaContents)) {
-            if (MediaContentType::PHOTO == $postcard->mediaContents [0]->media_content_type) {
+            if (MediaContentType::PHOTO == $postcard->mediaContents[0]->media_content_type) {
                 return $link = $postcard->mediaContents[0]->large;
             } else {
                 return $link = $postcard->mediaContents[0]->frame_large;
