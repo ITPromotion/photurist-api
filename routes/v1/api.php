@@ -34,7 +34,6 @@ Route::post('/send', function (Request $request) {
 
     try {
         $postcard =  \App\Models\Postcard::find($request->postcard_id);
-        dd(NotificationService::img($postcard));
             $notification = [
                 'token' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
                 'title' => $postcard->user->login,
