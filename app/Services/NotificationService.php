@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Enums\MediaContentType;
+use App\Models\Device;
 
 class NotificationService {
 
@@ -17,6 +18,10 @@ class NotificationService {
             }
         }
         return $link;
+    }
+
+    public static function getTokenUsers ($user_id) {
+        return Device::where('user_id', $user_id)->pluck('token')->toArray();
     }
 
     public function send ($req = null) {
