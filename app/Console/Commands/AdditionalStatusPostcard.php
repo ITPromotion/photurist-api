@@ -68,7 +68,7 @@ class AdditionalStatusPostcard extends Command
                         'token' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
                         'body' => __('notifications.additional_postcard'),
-                        'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                        'img' => NotificationService::img($postcard),
                         'action_loc_key' =>  ActionLocKey::ADDITIONAL_POSTCARD,
                         'user_id' => $user->id,
                         'postcard_id' => $postcard->id,

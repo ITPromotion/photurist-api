@@ -1,9 +1,23 @@
 <?php
 
 namespace App\Services;
+use App\Enums\MediaContentType;
 
 class NotificationService {
 
+
+    public static function img ($postcard) {
+        $link = null;
+
+        if (count ($postcard->mediaContents)) {
+            if (MediaContentType::PHOTO == $postcard->mediaContents [0]->media_content_type) {
+                return $link = $postcard->mediaContents[0]->large;
+            } else {
+                return $link = $postcard->mediaContents[0]->frame_large;
+            }
+        }
+        return $link;
+    }
 
     public function send ($req = null) {
         $url = 'https://fcm.googleapis.com/fcm/send';

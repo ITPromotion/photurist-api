@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Postcard;
 use App\Enums\ActionLocKey;
 use App\Jobs\NotificationJob;
+use \App\Services\NotificationService;
 
 class StopMailingCommand extends Command
 {
@@ -59,7 +60,7 @@ class StopMailingCommand extends Command
                     'token' => User::find($postcard->user_id)->device->pluck('token')->toArray(),
                     'title' => $postcard_->user->login,
                     'body' => __('notifications.waiting_time_text'),
-                    'img' => count($postcard_->mediaContents) ? $postcard_->mediaContents[0]->link : null,
+                    'img' => NotificationService::img($postcard_),
                     'action_loc_key' => ActionLocKey::WAITING_TIME,
                     'user_id' => $postcard->user_id,
                     'postcard_id' => $postcard->postcard_id,
