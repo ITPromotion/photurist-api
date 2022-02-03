@@ -46,4 +46,13 @@ class NotificationController extends Controller
         dispatch(new NotificationJob($notification));
         return new RoleResource([true]);
     }
+
+    public function addUserToGroup(Request $request) {
+
+    }
+
+    public function getAllGroup () {
+        return new RoleResource(Group::all());
+
+    }
 }
