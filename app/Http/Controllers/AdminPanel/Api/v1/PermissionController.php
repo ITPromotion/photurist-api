@@ -23,6 +23,10 @@ class PermissionController extends Controller
         return new RoleResource(Role::create($request->all()));
     }
 
+    public function updateRole (RoleRequest $request, $id) {
+        return new RoleResource([Role::find($id)->update($request->all())]);
+    }
+
     public function getPermissions () {
         return new RoleResource(Permission::all());
     }
@@ -35,11 +39,18 @@ class PermissionController extends Controller
         return new AdminResource(Admin::create($request->all())->assignRole(Role::find($request->role_id)));
     }
 
+    public function updatePersonnel(PersonnelRequest $request, $id) {
+        Admin::find($id)->update($request->all());
+        $admin = Admin::find($id);
+        $admin->removeRole($admin->getRoleNames()[0]);
+        return new AdminResource([$admin->assignRole(Role::find($request->role_id))]);
+    }
+
     // public function addRoleToPersonnel (RoleToPersonnelRequest $request) {
     //     return new AdminResource(Admin::find($request->admin_id)->assignRole(Role::find($request->role_id)));
     // }
 
-    public function addPermissionToRole (RoleToPersonnelRequest $request) {
-        return new AdminResource(Role::find($request->role_id)->givePermissionTo(Permission::find($request->permission_id)));
+    public function addPermissionToRole (Request $request, $id) {
+        return new AdminResource(Role::find($id)->givePermissionTo($request->permission_name));
     }
 }

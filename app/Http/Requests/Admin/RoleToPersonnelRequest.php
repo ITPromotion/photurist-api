@@ -17,7 +17,7 @@ class RoleToPersonnelRequest extends ApiRequest
         return [
 
             'admin_id' => 'required|exists:admins,id',
-            'role_id' => 'required|exists:roles,id',
+
         ];
     }
 }
