@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\ApiRequest;
 
-class RoleToPersonnelRequest extends ApiRequest
+class GroupRequest extends ApiRequest
 {
 
     /**
@@ -15,9 +15,7 @@ class RoleToPersonnelRequest extends ApiRequest
     public function rules()
     {
         return [
-
-            'admin_id' => 'required|exists:admins,id',
-
+            'name' => 'required|unique:groups|max:255'
         ];
     }
 }

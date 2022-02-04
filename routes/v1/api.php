@@ -30,13 +30,7 @@ use App\Jobs\MediaContentCrop;
 Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
 
 Route::post('/send', function (Request $request) {
-    DB::table('postcards_mailings')->insert([
-        'user_id' => $request->user_id,
-        'postcard_id' => $request->postcard_id,
-        'status' => MailingType::ACTIVE,
-        'start' => Carbon::now(),
-        'stop' => Carbon::now()->addMinutes(30),
-    ]);
+
 
     try {
         $postcard =  \App\Models\Postcard::find($request->postcard_id);
@@ -44,7 +38,7 @@ Route::post('/send', function (Request $request) {
                 'token' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
                 'title' => $postcard->user->login,
                 'body' => ActionLocKey::GALLERY_TEXT,
-                'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                'img' => NotificationService::img($postcard),
                 'action_loc_key' =>  ActionLocKey::GALLERY,
                 'user_id' => $request->user_id,
                 'postcard_id' => $postcard->id,

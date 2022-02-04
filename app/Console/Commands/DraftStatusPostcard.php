@@ -74,7 +74,7 @@ class DraftStatusPostcard extends Command
                         'token' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
                         'body' => __('notifications.postcard_status_draft'),
-                        'img' => count($postcard->mediaContents) ? $postcard->mediaContents[0]->link : null,
+                        'img' => NotificationService::img($postcard),
                         'action_loc_key' => ActionLocKey::GALLERY_DRAFT,
                         'user_id' => $user->id,
                         'postcard_id' => $postcard->id,

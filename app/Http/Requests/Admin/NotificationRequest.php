@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\ApiRequest;
 
-class RoleToPersonnelRequest extends ApiRequest
+class NotificationRequest extends ApiRequest
 {
 
     /**
@@ -15,9 +15,9 @@ class RoleToPersonnelRequest extends ApiRequest
     public function rules()
     {
         return [
-
-            'admin_id' => 'required|exists:admins,id',
-
+            'title' => 'required|max:255',
+            'body' => 'required',
+            'user_id' => 'required|exists:users,id',
         ];
     }
 }

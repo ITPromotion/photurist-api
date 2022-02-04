@@ -1,9 +1,28 @@
 <?php
 
 namespace App\Services;
+use App\Enums\MediaContentType;
+use App\Models\Device;
 
 class NotificationService {
 
+
+    public static function img ($postcard) {
+        $link = null;
+
+        if (count ($postcard->mediaContents)) {
+            if (MediaContentType::PHOTO == $postcard->mediaContents[0]->media_content_type) {
+                return $link = $postcard->mediaContents[0]->large;
+            } else {
+                return $link = $postcard->mediaContents[0]->frame_large;
+            }
+        }
+        return $link;
+    }
+
+    public static function getTokenUsers ($user_id) {
+        return Device::where('user_id', $user_id)->pluck('token')->toArray();
+    }
 
     public function send ($req = null) {
         $url = 'https://fcm.googleapis.com/fcm/send';
@@ -13,7 +32,11 @@ class NotificationService {
 
         $data = [
             "registration_ids" => $FcmToken,
+            "mutable_content" => true,
+            "content_available" => true,
             "notification" => [
+                "mutable_content" => true,
+                "content_available" => true,
                 "title" => $req['title'] ?? null,
                 "body" => $req['body'] ?? null,
                 'image' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
@@ -22,6 +45,8 @@ class NotificationService {
                 // 'postcard_id' => $req['postcard_id'] ?? null,
             ],
             "data" => [
+                "mutable_content" => true,
+                "content_available" => true,
                 'action_loc_key' => $req['action_loc_key'] ?? null,
                 'postcard_id' => $req['postcard_id'] ?? null,
                 'media_type' => $req['media_type'] ?? null,
