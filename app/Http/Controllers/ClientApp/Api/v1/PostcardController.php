@@ -94,7 +94,7 @@ class PostcardController extends Controller
 						`pc1`.`deleted_at` is null
 		UNION DISTINCT
 select pc1.*, null, null,
-                IFNULL(pc1.start_mailing, pc1.created_at) as sort,
+                IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
                 IF(pc1.user_id=?, 1, 0) as author,
                  1
              from `postcards` as pc1 where (`pc1`.`user_id` = ?) 	and
