@@ -39,7 +39,7 @@ class PermissionController extends Controller
         return new AdminResource(Admin::create($request->all())->assignRole(Role::find($request->role_id)));
     }
 
-    public function updatePersonnel(PersonnelRequest $request, $id) {
+    public function updatePersonnel(Request $request, $id) {
         Admin::find($id)->update($request->all());
         $admin = Admin::find($id);
         $admin->removeRole($admin->getRoleNames()[0]);
