@@ -53,4 +53,12 @@ class PermissionController extends Controller
     public function addPermissionToRole (Request $request, $id) {
         return new AdminResource(Role::find($id)->givePermissionTo($request->permission_name));
     }
+
+    public function deletePersonnel ($id) {
+        return new AdminResource([Admin::find($id)->delete()]);
+    }
+
+    public function deleteRole ($id) {
+        return new AdminResource([Role::find($id)->delete()]);
+    }
 }

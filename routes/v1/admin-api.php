@@ -12,6 +12,8 @@ Route::post('/create-role', [PermissionController::class, 'createRole']);
 
 Route::put('/update-role/{id}', [PermissionController::class, 'updateRole']);
 
+Route::delete('/delete-role/{id}', [PermissionController::class, 'deleteRole']);
+
 Route::get('/get-permissions', [PermissionController::class, 'getPermissions']);
 
 Route::get('/get-personnel', [PermissionController::class, 'getPersonnel']);
@@ -19,6 +21,8 @@ Route::get('/get-personnel', [PermissionController::class, 'getPersonnel']);
 Route::post('/create-personnel', [PermissionController::class, 'createPersonnel']);
 
 Route::put('/update-personnel/{id}', [PermissionController::class, 'updatePersonnel']);
+
+Route::delete('/delete-personnel/{id}', [PermissionController::class, 'deletePersonnel']);
 
 
 Route::put('/add-role-to-personnel', [PermissionController::class, 'addRoleToPersonnel']);
