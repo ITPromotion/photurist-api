@@ -4,42 +4,58 @@ use App\Http\Controllers\AdminPanel\Api\v1\PermissionController;
 use App\Http\Controllers\AdminPanel\Api\v1\UserController;
 use App\Http\Controllers\AdminPanel\Api\v1\NotificationController;
 
-Route::get('/get-profile', [ProfileController::class,'getProfile']);
+Route::group(['middleware' => ['role_or_permission:Super Admin|Roles']], function () {
 
-Route::get('/get-role', [PermissionController::class, 'getRole']);
+    Route::get('/get-profile', [ProfileController::class,'getProfile']);
 
-Route::post('/create-role', [PermissionController::class, 'createRole']);
+    Route::get('/get-role', [PermissionController::class, 'getRole']);
 
-Route::put('/update-role/{id}', [PermissionController::class, 'updateRole']);
+    Route::post('/create-role', [PermissionController::class, 'createRole']);
 
-Route::delete('/delete-role/{id}', [PermissionController::class, 'deleteRole']);
+    Route::put('/update-role/{id}', [PermissionController::class, 'updateRole']);
 
-Route::get('/get-permissions', [PermissionController::class, 'getPermissions']);
+    Route::delete('/delete-role/{id}', [PermissionController::class, 'deleteRole']);
 
-Route::get('/get-personnel', [PermissionController::class, 'getPersonnel']);
+    Route::get('/get-permissions', [PermissionController::class, 'getPermissions']);
 
-Route::post('/create-personnel', [PermissionController::class, 'createPersonnel']);
-
-Route::put('/update-personnel/{id}', [PermissionController::class, 'updatePersonnel']);
-
-Route::delete('/delete-personnel/{id}', [PermissionController::class, 'deletePersonnel']);
+    Route::put('/add-permission-to-role/{id}', [PermissionController::class, 'addPermissionToRole']);
 
 
-Route::put('/add-role-to-personnel', [PermissionController::class, 'addRoleToPersonnel']);
+});
+Route::group(['middleware' => ['role_or_permission:Super Admin|Administrators']], function () {
+    Route::get('/get-personnel', [PermissionController::class, 'getPersonnel']);
 
-Route::put('/add-permission-to-role/{id}', [PermissionController::class, 'addPermissionToRole']);
+    Route::post('/create-personnel', [PermissionController::class, 'createPersonnel']);
 
-Route::get('/get-user', [UserController::class, 'getUser']);
+    Route::put('/update-personnel/{id}', [PermissionController::class, 'updatePersonnel']);
 
-Route::get('/get-info-user/{id}', [UserController::class, 'getInfoUser']);
+    Route::delete('/delete-personnel/{id}', [PermissionController::class, 'deletePersonnel']);
+
+    Route::put('/add-role-to-personnel', [PermissionController::class, 'addRoleToPersonnel']);
+
+});
+
+Route::group(['middleware' => ['role_or_permission:Super Admin|Users']], function () {
+    Route::get('/get-user', [UserController::class, 'getUser']);
+
+    Route::get('/get-info-user/{id}', [UserController::class, 'getInfoUser']);
+});
+
+Route::group(['middleware' => ['role_or_permission:Super Admin|Notifications']], function () {
+    Route::post('/send-push-user', [NotificationController::class, 'sendNotificationUser']);
+
+});
 
 
-Route::post('/send-push-user', [NotificationController::class, 'sendNotificationUser']);
 
-Route::post('/create-group', [NotificationController::class, 'createGroup']);
 
-Route::put('/update-group/{id}', [NotificationController::class, 'updateGroup']);
 
-Route::delete('/delete-group/{id}', [NotificationController::class, 'deleteGroup']);
 
-Route::get('/get-all-groups', [NotificationController::class, 'getAllGroup']);
+
+// Route::post('/create-group', [NotificationController::class, 'createGroup']);
+
+// Route::put('/update-group/{id}', [NotificationController::class, 'updateGroup']);
+
+// Route::delete('/delete-group/{id}', [NotificationController::class, 'deleteGroup']);
+
+// Route::get('/get-all-groups', [NotificationController::class, 'getAllGroup']);
