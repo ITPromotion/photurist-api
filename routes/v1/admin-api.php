@@ -20,6 +20,8 @@ Route::group(['middleware' => ['role_or_permission:Super Admin|Roles']], functio
 
     Route::put('/add-permission-to-role/{id}', [PermissionController::class, 'addPermissionToRole']);
 
+    Route::put('/delete-permission-from-role/{id}', [PermissionController::class, 'deletePermissionFromRole']);
+
 
 });
 Route::group(['middleware' => ['role_or_permission:Super Admin|Administrators']], function () {
