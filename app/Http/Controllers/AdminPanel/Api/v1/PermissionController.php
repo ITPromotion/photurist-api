@@ -27,7 +27,7 @@ class PermissionController extends Controller
         $role = Role::find($id);
         $role->update($request->all());
 
-        return new RoleResource($role->permissions);
+        return new RoleResource($role->with('permissions'));
     }
 
     public function getPermissions () {
