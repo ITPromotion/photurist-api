@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class UserBlock
 {
+    const Block = 'block';
     /**
      * Handle an incoming request.
      *
@@ -16,7 +17,9 @@ class UserBlock
      */
     public function handle(Request $request, Closure $next)
     {
-        dd(\Auth::user());
+        if (\Auth::user()->status == self::Block) {
+            return response()->json([ 'errors' => ['user blocked']], 403);
+        }
         return $next($request);
     }
 }
