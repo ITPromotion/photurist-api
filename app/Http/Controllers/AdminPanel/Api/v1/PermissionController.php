@@ -16,7 +16,7 @@ use App\Http\Requests\Admin\RoleToPersonnelRequest;
 class PermissionController extends Controller
 {
     public function getRole () {
-        return new RoleResource(Role::all());
+        return new RoleResource(Role::with('permissions')->get());
     }
 
     public function createRole (RoleRequest $request) {
