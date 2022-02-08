@@ -59,6 +59,9 @@ class PermissionController extends Controller
     }
 
     public function deleteRole ($id) {
+        if (count(Role::find($id)->users)) {
+            return response()->json(['errorCode' => 'FORBDDEN', 'errorMessage' => 'The role cannot be deleted because it belongs to the user.' ], 403);
+        }
         return new AdminResource([Role::find($id)->delete()]);
     }
 }
