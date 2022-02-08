@@ -27,8 +27,8 @@ class NotificationController extends Controller
             'body' => $request->body,
             'img' => $link,
         ];
-        dd(new NotificationJob($notification));
-        dispatch();
+
+        dispatch(new NotificationJob($notification));
         return new RoleResource([true]);
     }
 
