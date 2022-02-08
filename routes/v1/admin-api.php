@@ -41,6 +41,8 @@ Route::group(['middleware' => ['role_or_permission:Super Admin|Users']], functio
     Route::get('/get-user', [UserController::class, 'getUser']);
 
     Route::get('/get-info-user/{id}', [UserController::class, 'getInfoUser']);
+
+    Route::put('/update-user-status/{id}', [UserController::class, 'updateStatusUser']);
 });
 
 Route::group(['middleware' => ['role_or_permission:Super Admin|Notifications']], function () {
