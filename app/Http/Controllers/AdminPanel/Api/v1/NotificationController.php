@@ -10,17 +10,24 @@ use App\Models\Group;
 use App\Http\Resources\RoleResource;
 use App\Services\NotificationService;
 use App\Jobs\NotificationJob;
+use App\Traits\FileTrait;
 
 class NotificationController extends Controller
 {
+    use FileTrait;
+
     public function sendNotificationUser (NotificationRequest $request) {
-        dd($request->all());
+        $link = null;
+        if ($request->hasFile('file')) {
+            $link = $this->saveMediaContent($request->file('file'), 'notification');
+        }
         $notification = [
             'token' => NotificationService::getTokenUsers($request->user_id),
             'title' => $request->title,
             'body' => $request->body,
+            'img' => $link,
         ];
-
+        dd($notification);
         dispatch(new NotificationJob($notification));
         return new RoleResource([true]);
     }

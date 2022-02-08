@@ -21,7 +21,7 @@ class NotificationService {
     }
 
     public static function getTokenUsers ($user_id) {
-        return Device::where('user_id', $user_id)->pluck('token')->toArray();
+        return Device::whereIn('user_id', $user_id)->pluck('token')->toArray();
     }
 
     public function send ($req = null) {
