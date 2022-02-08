@@ -24,10 +24,10 @@ class PermissionController extends Controller
     }
 
     public function updateRole (RoleRequest $request, $id) {
-        $role = Role::find($id);
+        $role = Role::where('id', $id)->with('permissions')->first();
         $role->update($request->all());
 
-        return new RoleResource($role->with('permissions'));
+        return new RoleResource($role);
     }
 
     public function getPermissions () {
