@@ -22,4 +22,8 @@ class UserController extends Controller
 
         return new UserResource($user);
     }
+
+    public function blockUser(Request $request, $id) {
+        return new UserResource(User::find($id)->update($request->all()));
+    }
 }

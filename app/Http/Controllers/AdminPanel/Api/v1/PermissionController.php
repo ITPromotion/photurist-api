@@ -24,7 +24,10 @@ class PermissionController extends Controller
     }
 
     public function updateRole (RoleRequest $request, $id) {
-        return new RoleResource([Role::find($id)->update($request->all())]);
+        $role = Role::find($id);
+        $role->update($request->all());
+
+        return new RoleResource($role->permissions);
     }
 
     public function getPermissions () {
@@ -60,7 +63,7 @@ class PermissionController extends Controller
 
     public function deleteRole ($id) {
         if (count(Role::find($id)->users)) {
-            return response()->json(['errorCode' => 'FORBIDDEN', 'errorMessage' => 'The role cannot be deleted because it belongs to the user.' ], 403);
+            return response()->json([ 'errors' => ['The role cannot be deleted because it belongs to the user.']], 403);
         }
         return new AdminResource([Role::find($id)->delete()]);
     }
