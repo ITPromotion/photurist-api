@@ -16,6 +16,7 @@ class UserBlock
      */
     public function handle(Request $request, Closure $next)
     {
+        dd(\Auth::user());
         return $next($request);
     }
 }
