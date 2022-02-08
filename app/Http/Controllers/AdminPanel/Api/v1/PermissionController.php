@@ -59,7 +59,7 @@ class PermissionController extends Controller
 
     public function deletePermissionFromRole (Request $request, $id) {
         $permission = Permission::whereIn('id', $request->permission_id)->pluck('name')->toArray();
-        return new AdminResource(Role::find($id)->revokePermissionTo($request->permission_name));
+        return new AdminResource(Role::find($id)->revokePermissionTo($permission));
     }
 
     public function deletePersonnel ($id) {
