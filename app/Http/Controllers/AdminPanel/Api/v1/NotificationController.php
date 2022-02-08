@@ -14,6 +14,7 @@ use App\Jobs\NotificationJob;
 class NotificationController extends Controller
 {
     public function sendNotificationUser (NotificationRequest $request) {
+        dd($request->all());
         $notification = [
             'token' => NotificationService::getTokenUsers($request->user_id),
             'title' => $request->title,

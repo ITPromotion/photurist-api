@@ -36,12 +36,12 @@ class NotificationJob implements ShouldQueue
             'users' => $this->notification['token'],
             'title' => $this->notification['title'],
             'body' => $this->notification['body'],
-            'img' => $this->notification['img'],
-            'postcard_id' => $this->notification['postcard_id'],
-            'action_loc_key' => $this->notification['action_loc_key'],
+            'img' => $this->notification['img'] ?? null,
+            'postcard_id' => $this->notification['postcard_id'] ?? null,
+            'action_loc_key' => $this->notification['action_loc_key'] ?? null,
             'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
                                 ->where('view', 0)
-                                ->where('user_id', $this->notification['user_id'])
+                                ->where('user_id', $this->notification['user_id'] ?? null)
                                 ->where('status', \App\Enums\PostcardStatus::ACTIVE)
                                 ->count()
         ]);
