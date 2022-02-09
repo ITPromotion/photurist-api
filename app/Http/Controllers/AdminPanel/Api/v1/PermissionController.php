@@ -35,7 +35,7 @@ class PermissionController extends Controller
     }
 
     public function getPersonnel () {
-        return new RoleResource(Admin::with('roles')->get());
+        return new RoleResource(Admin::with('roles.pernissions')->get());
     }
 
     public function createPersonnel(PersonnelRequest $request) {
@@ -54,7 +54,11 @@ class PermissionController extends Controller
     // }
 
     public function addPermissionToRole (Request $request, $id) {
-        return new AdminResource(Role::find($id)->givePermissionTo($request->permission_name));
+
+
+        return new AdminResource(Role::find($id)->revokePermissionTo(Role::getPermissionNames())
+                ->givePermissionTo(Permission::whereIn('id', $request->permission_name)
+                ->pluck('name')->toArray()));
     }
 
     public function deletePermissionFromRole (Request $request, $id) {
