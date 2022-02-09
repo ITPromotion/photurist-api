@@ -56,6 +56,7 @@ class PermissionController extends Controller
     public function addPermissionToRole (Request $request, $id) {
         $role = Role::find($id);
         $role->revokePermissionTo($role->getPermissionNames());
+        return $role;
         return new AdminResource(
                 $role->givePermissionTo(Permission::whereIn('id', $request->permission_name)
                 ->pluck('name')->toArray()));
