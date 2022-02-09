@@ -23,7 +23,7 @@ class PermissionController extends Controller
         return new RoleResource(Role::create($request->all()));
     }
 
-    public function updateRole (RoleRequest $request, $id) {
+    public function updateRole (Request $request, $id) {
         $role = Role::where('id', $id)->with('permissions')->first();
         $role->update($request->all());
 
