@@ -35,7 +35,7 @@ class PermissionController extends Controller
     }
 
     public function getPersonnel () {
-        return new RoleResource(Admin::with('roles.pernissions')->get());
+        return new RoleResource(Admin::with('roles.permissions')->get());
     }
 
     public function createPersonnel(PersonnelRequest $request) {
