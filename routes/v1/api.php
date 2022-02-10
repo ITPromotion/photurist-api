@@ -58,7 +58,7 @@ Route::prefix('/user')->as('.user.')->group(function (){
     Route::post('/login', [LoginController::class, 'login'])->name('login');
 
     Route::group([
-        'middleware' => 'auth:api',
+        'middleware' => ['auth:api', 'block_user'],
         'namespace' => 'App\Http\Controllers\ClientApp\Api\v1',
     ], function () {
 

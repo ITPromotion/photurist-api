@@ -22,4 +22,10 @@ class UserController extends Controller
 
         return new UserResource($user);
     }
+
+    public function updateStatusUser(Request $request, $id) {
+        $user = User::find($id);
+        $user->update($request->all());
+        return new UserResource($user);
+    }
 }

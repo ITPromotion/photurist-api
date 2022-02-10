@@ -179,7 +179,7 @@ class LoginController extends Controller
 
         if ($otp !== null) {
             $result = $otp->validate($codeOTP);
-            $admin = Admin::where('phone', $phoneNumber)->first();
+            $admin = Admin::where('phone', $phoneNumber)->with('roles.permissions')->first();
 
             if ($result === true) {
                 if(!$admin || !$admin->hasAnyRole(Role::all())) {
@@ -190,7 +190,7 @@ class LoginController extends Controller
 
                 $accessToken = Auth::user()->createToken('authToken')->accessToken;
                 // dd($accessToken);
-                return response(['user' => Auth::user(), 'access_token' => $accessToken]);
+                return response(['user' => $admin, 'access_token' => $accessToken]);
             }
         }
         return response()->json([

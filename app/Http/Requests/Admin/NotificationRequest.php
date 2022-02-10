@@ -17,7 +17,6 @@ class NotificationRequest extends ApiRequest
         return [
             'title' => 'required|max:255',
             'body' => 'required',
-            'user_id' => 'required|exists:users,id',
         ];
     }
 }
