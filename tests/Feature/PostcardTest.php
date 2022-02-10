@@ -87,6 +87,10 @@ class PostcardTest extends TestCase
 
         $directories = Storage::directories('public/bot');
 
+        if(empty($directories)){
+            return;
+        }
+
         $directory = $directories[array_rand($directories)];
 
         $directoryName = basename(dirname($directory.'/index.htm'));
