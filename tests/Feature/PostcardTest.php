@@ -48,7 +48,7 @@ class PostcardTest extends TestCase
 
         $this->user = User::where('login',$logins[$k])->first();
 
-        dump($this->user);
+        dump($this->user->login);
     }
 
     /**
