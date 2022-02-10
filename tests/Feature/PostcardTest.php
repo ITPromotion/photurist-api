@@ -131,7 +131,7 @@ class PostcardTest extends TestCase
                 [$url]
             );
 
-            $stub = storage_path('app\\'.$file);
+            $stub = storage_path('app/'.$file);
             $name = Str::uuid().'.'.$ext;
             $path = sys_get_temp_dir().'/'.$name;
 
