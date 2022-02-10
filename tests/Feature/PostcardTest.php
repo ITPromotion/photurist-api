@@ -47,6 +47,8 @@ class PostcardTest extends TestCase
         $k = array_rand($logins);
 
         $this->user = User::where('login',$logins[$k])->first();
+
+        dump($this->user);
     }
 
     /**
@@ -107,7 +109,7 @@ class PostcardTest extends TestCase
 
         $url = self::PREFIX.'postcard';
 
-        $this->singIn();
+        $this->singInBot();
 
         Passport::actingAs(
             $this->user,
