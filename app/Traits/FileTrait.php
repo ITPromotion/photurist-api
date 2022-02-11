@@ -19,11 +19,9 @@ trait FileTrait
 
     public function saveMediaContent($image, $folder = 'postcard', $type = null): string
     {
-        if ($image->isValid() && $image->getSize() !== 0) {
             $imageName = Storage::disk('public')->putFile($folder, $image);
 
             return $imageName;
-        }
 
         return '';
 
