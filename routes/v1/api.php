@@ -29,6 +29,20 @@ use App\Jobs\MediaContentCrop;
 /* Checking phone number */
 Route::get('/check-mobile', [LoginController::class, 'checkMobile']);
 
+Route::post('/test-push', function (Request $request) {
+    return (new \App\Services\NotificationService)->send(
+        [
+            'users' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
+            'title' => $request->title,
+            'body' =>  $request->title,
+            'img' => null,
+            'action_loc_key' =>  null,
+            'user_id' => null,
+            'postcard_id' => null,
+        ]
+    );
+});
+
 Route::post('/send', function (Request $request) {
 
 
