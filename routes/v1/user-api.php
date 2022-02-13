@@ -11,13 +11,7 @@ Route::post('/active-user', [LoginController::class,'activeUser']);
 /* Get profile */
 Route::get('/get-profile', [ProfileController::class,'getProfile']);
 
-/* Resource Api */
-Route::apiResources([
-    'postcard' => PostcardController::class,
-]);
 
-/* Postcard update */
-Route::put('/postcard-update/{id}', [PostcardControllerAlias::class,'update']);
 
 /* Save media */
 Route::post('/save-media', [PostcardControllerAlias::class,'saveMedia']);
@@ -31,84 +25,92 @@ Route::put('/remove-audio/{id}', [PostcardControllerAlias::class,'removeAudio'])
 /* Get gallery */
 Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);
 
-/* Add postcard to gallery */
-Route::post('/add-postcard-to-gallery', [PostcardControllerAlias::class,'addPostcardToGallery']);
+Route::group(['middleware' => 'block_user'], function () {
+    /* Resource Api */
+    Route::apiResources([
+        'postcard' => PostcardController::class,
+    ]);
 
-/* Save audio */
-Route::post('/save-audio', [PostcardControllerAlias::class,'saveAudio']);
+    /* Postcard update */
+    Route::put('/postcard-update/{id}', [PostcardControllerAlias::class,'update']);
+    /* Add postcard to gallery */
+    Route::post('/add-postcard-to-gallery', [PostcardControllerAlias::class,'addPostcardToGallery']);
 
-/* Set geo data */
-Route::post('/set-geo-data', [UserController::class,'setGeoData']);
+    /* Save audio */
+    Route::post('/save-audio', [PostcardControllerAlias::class,'saveAudio']);
 
-/* Save device */
+    /* Set geo data */
+    Route::post('/set-geo-data', [UserController::class,'setGeoData']);
 
-Route::post('/add-device', [UserController::class, 'saveDevice'])->name('saveDevice');
+    /* Save device */
 
-/* Delete device */
+    Route::post('/add-device', [UserController::class, 'saveDevice'])->name('saveDevice');
 
-Route::delete('/delete-device', [UserController::class, 'deleteDevice'])->name('deleteDevice');
+    /* Delete device */
 
-Route::post('/add-favorites', [PostcardControllerAlias::class, 'addFavorite']);
+    Route::delete('/delete-device', [UserController::class, 'deleteDevice'])->name('deleteDevice');
 
-Route::delete('/delete-favorites', [PostcardControllerAlias::class, 'deleteFavorite']);
+    Route::post('/add-favorites', [PostcardControllerAlias::class, 'addFavorite']);
 
-Route::put('/check-contacts', [UserController::class, 'checkContacts']);
+    Route::delete('/delete-favorites', [PostcardControllerAlias::class, 'deleteFavorite']);
 
-Route::post('/add-contacts', [UserController::class, 'addContactsActive']);
+    Route::put('/check-contacts', [UserController::class, 'checkContacts']);
 
-Route::get('/get-contacts', [UserController::class, 'getContactsActive']);
+    Route::post('/add-contacts', [UserController::class, 'addContactsActive']);
 
-Route::post('/add-block-contacts', [UserController::class, 'addContactsBlock']);
+    Route::get('/get-contacts', [UserController::class, 'getContactsActive']);
 
-Route::get('/get-block-contacts', [UserController::class, 'getContactsBlock']);
+    Route::post('/add-block-contacts', [UserController::class, 'addContactsBlock']);
 
-Route::post('/add-ignore-contacts', [UserController::class, 'addContactsIgnore']);
+    Route::get('/get-block-contacts', [UserController::class, 'getContactsBlock']);
 
-Route::get('/get-ignore-contacts', [UserController::class, 'getContactsIgnore']);
+    Route::post('/add-ignore-contacts', [UserController::class, 'addContactsIgnore']);
 
-Route::put('/remove-contacts', [UserController::class, 'removeContacts']);
+    Route::get('/get-ignore-contacts', [UserController::class, 'getContactsIgnore']);
 
-
-/* Remove postcard from list */
-
-Route::delete('/remove-postcard-from-list/{id}', [PostcardControllerAlias::class, 'removePostcardFromList']);
-
-
-/* set status */
-
-Route::put('/set-status-postcard/{id}', [PostcardControllerAlias::class, 'setStatusPostcard']);
-
-/* get postcards from ids */
-
-Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPostcardFromIds']);
-
-/* stop mailings */
-
-Route::put('/stop-mailings/{id}', [PostcardControllerAlias::class, 'stopMailings']);
-
-/* set view postcard mailings */
-
-Route::put('/set-view/{id}', [PostcardControllerAlias::class, 'setView']);
-
-/* delete postcards */
-
-Route::put('/delete-postcard/{id}', [PostcardControllerAlias::class, 'deletePostcard']);
-
-/* off user postcard notification */
-
-Route::put('/off-user-postcard-notification/{id}', [PostcardControllerAlias::class, 'offUserPostcardNotification']);
-
-/* off user postcard notification */
-
-Route::put('/on-user-postcard-notification/{id}', [PostcardControllerAlias::class, 'onUserPostcardNotification']);
-
-/* not view quantity */
-
-Route::get('/not-view-quantity', [PostcardControllerAlias::class, 'notViewQuantity']);
-
-Route::put('/duplicate-postcard/{id}', [PostcardControllerAlias::class, 'duplicate']);
-
-Route::post('/save-avatar', [PostcardControllerAlias::class, 'saveAvatar']);
+    Route::put('/remove-contacts', [UserController::class, 'removeContacts']);
 
 
+    /* Remove postcard from list */
 
+    Route::delete('/remove-postcard-from-list/{id}', [PostcardControllerAlias::class, 'removePostcardFromList']);
+
+
+    /* set status */
+
+    Route::put('/set-status-postcard/{id}', [PostcardControllerAlias::class, 'setStatusPostcard']);
+
+    /* get postcards from ids */
+
+    Route::post('/get-postcards-from-ids', [PostcardControllerAlias::class, 'getPostcardFromIds']);
+
+    /* stop mailings */
+
+    Route::put('/stop-mailings/{id}', [PostcardControllerAlias::class, 'stopMailings']);
+
+    /* set view postcard mailings */
+
+    Route::put('/set-view/{id}', [PostcardControllerAlias::class, 'setView']);
+
+    /* delete postcards */
+
+    Route::put('/delete-postcard/{id}', [PostcardControllerAlias::class, 'deletePostcard']);
+
+    /* off user postcard notification */
+
+    Route::put('/off-user-postcard-notification/{id}', [PostcardControllerAlias::class, 'offUserPostcardNotification']);
+
+    /* off user postcard notification */
+
+    Route::put('/on-user-postcard-notification/{id}', [PostcardControllerAlias::class, 'onUserPostcardNotification']);
+
+    /* not view quantity */
+
+    Route::get('/not-view-quantity', [PostcardControllerAlias::class, 'notViewQuantity']);
+
+    Route::put('/duplicate-postcard/{id}', [PostcardControllerAlias::class, 'duplicate']);
+
+    Route::post('/save-avatar', [PostcardControllerAlias::class, 'saveAvatar']);
+
+
+}

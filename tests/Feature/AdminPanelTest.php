@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class AdminPanelTest extends TestCase
 {
@@ -111,7 +112,7 @@ class AdminPanelTest extends TestCase
         $url = self::PREFIX.'create-personnel';
 
         $this->singIn();
-       Passport::actingAs(
+        Passport::actingAs(
             $this->user,
             [$url],
             'api-admin'
@@ -126,6 +127,48 @@ class AdminPanelTest extends TestCase
 
         $response->assertStatus(201);
     }
+
+    public function  test_updatePersonnel () {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'update-personnel';
+
+        $this->singIn();
+        Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+
+        );
+        $id = Admin::latest()->first()->id;
+        $response = $this->putJson($url.'/'.$id, [
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->unique()->phoneNumber(),
+            'role_id' => 1,
+        ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function  test_deletePersonnel () {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'delete-personnel';
+
+        $this->singIn();
+        Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+
+        );
+        $id = Admin::latest()->first()->id;
+        $response = $this->delete($url.'/'.$id);
+
+        $response->assertStatus(200);
+    }
+
 
     public function test_createRole () {
         $this->setUpFaker();
@@ -144,6 +187,44 @@ class AdminPanelTest extends TestCase
         ]);
 
         $response->assertStatus(201);
+    }
+
+    public function test_UpdateRole () {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'update-role';
+
+        $this->singIn();
+        Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+
+        );
+        $id = Role::latest()->first()->id;
+        $response = $this->putJson($url.'/'.$id , [
+            'name' => $this->faker->unique()->title(),
+        ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_DeleteRole () {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'delete-role';
+
+        $this->singIn();
+        Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+
+        );
+        $id = Role::latest()->first()->id;
+        $response = $this->delete($url.'/'.$id);
+
+        $response->assertStatus(200);
     }
 
     public function test_getUser () {
@@ -180,4 +261,23 @@ class AdminPanelTest extends TestCase
         $response->assertStatus(200);
     }
 
+
+    public function test_updateUserStatus () {
+        $this->setUpFaker();
+        $id = User::first()->id;
+        $url = self::PREFIX.'update-user-status/'.$id;
+
+        $this->singIn();
+        Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+
+        );
+        $response = $this->putJson($url, [
+            'status' => 'active',
+        ]);
+
+        $response->assertStatus(200);
+    }
 }
