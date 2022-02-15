@@ -113,4 +113,4 @@ Route::group(['middleware' => 'block_user'], function () {
     Route::post('/save-avatar', [PostcardControllerAlias::class, 'saveAvatar']);
 
 
-}
+});
