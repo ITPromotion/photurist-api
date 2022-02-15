@@ -38,7 +38,8 @@ class RunBotCommand extends Command
      */
     public function handle()
     {
-        Artisan::call('test', ['--filter' => 'test_create_postcard tests'.DIRECTORY_SEPARATOR.'Feature'.DIRECTORY_SEPARATOR.'PostcardTest.php']);
+       // Artisan::call('test', ['--filter' => 'test_create_postcard tests'.DIRECTORY_SEPARATOR.'Feature'.DIRECTORY_SEPARATOR.'PostcardTest.php']);
+        shell_exec('php artisan test --filter test_create_postcard tests/Feature/PostcardTest.php');
 
         return 0;
     }
