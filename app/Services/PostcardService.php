@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
 use App\Models\GeoData;
+use App\Models\MediaContent;
 use App\Models\Postcard;
 use App\Models\TagData;
 use App\Models\TextData;
@@ -96,6 +97,13 @@ class PostcardService
         $this->postcard->countries = $request->input('countries');
         $this->postcard->regions = $request->input('regions');
         $this->postcard->cities = $request->input('cities');
+
+        if($request->input('media_content_sort_orders')){
+                    foreach ($request->input('media_content_sort_orders') as $mediaContentSortOrder){
+                        $this->postcard->mediaContents()->where('media_contents.id',$mediaContentSortOrder['id'])->update(['sort_order' => $mediaContentSortOrder['sort_order']]);
+                    }
+        }
+
         $this->postcard->save();
 
     }

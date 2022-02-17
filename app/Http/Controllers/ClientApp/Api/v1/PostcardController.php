@@ -152,6 +152,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                     'userPostcardNotifications',
                 );
 
+                $postcard->mediaContents->sortBy('sort_order');
                 $postcards[] = $postcard;
         }
 

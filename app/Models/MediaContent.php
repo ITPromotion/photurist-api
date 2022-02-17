@@ -23,6 +23,7 @@ class MediaContent extends Model
         'media_content_type',
         'postcard_id',
         'loading',
+        'sort_order',
     ];
 
     protected $appends = ['small', 'midle', 'large', 'frame', 'frame_small', 'frame_large'];
