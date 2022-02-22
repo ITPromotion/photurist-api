@@ -94,7 +94,7 @@ class UserService
     public function getContactsBlock(Request $request):Collection
     {
 
-        $contactsQuery = $this->user->contacts()->wherePivot('status', ContactStatuses::BLOCK);
+        $contactsQuery = $this->user->blockContacts();
 
         if(is_numeric($request->input('offset')))
             $contactsQuery->offset($request->input('offset'));

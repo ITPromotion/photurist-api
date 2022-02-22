@@ -48,7 +48,10 @@ class MailingCommand extends Command
     {
 
         $postcards = Postcard::where('status',PostcardStatus::ACTIVE)->get();
+
         foreach($postcards as $postcard){
+
+            $author = User::findOrFail($postcard->user_id);
 
             $lastMailing = $postcard->lastMailing();
 
@@ -65,7 +68,7 @@ class MailingCommand extends Command
 
                 if($usersOther->isNotEmpty()) {
                     $user = $usersOther->random(1)->first();
-                    if ($user->id != $postcard->user_id) {
+                    if (($user->id != $postcard->user_id)&&!$user->blockContacts()->containts('id', $author->id)) {
 
                         DB::table('postcards_mailings')->insert([
                             'user_id' => $user->id,

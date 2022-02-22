@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContactStatuses;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -101,6 +102,11 @@ class User extends Authenticatable
     public function contacts():BelongsToMany
     {
         return $this->belongsToMany(User::class, 'contacts', 'user_id', 'contact_id')->withPivot('status');
+    }
+
+    public function blockContacts():BelongsToMany
+    {
+        return $this->contacts()->wherePivot('status', ContactStatuses::BLOCK);
     }
 
 }
