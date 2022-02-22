@@ -151,8 +151,6 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                     'additionally.mediaContents.audioData',
                     'userPostcardNotifications',
                 );
-
-                $postcard->mediaContents->sortBy('sort_order');
                 $postcards[] = $postcard;
         }
 

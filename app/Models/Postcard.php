@@ -74,7 +74,7 @@ class Postcard extends Model
 
     public function mediaContents():HasMany
     {
-        return $this->hasMany(MediaContent::class);
+        return $this->hasMany(MediaContent::class)->orderBy('sort_order');
     }
 
     public function delete()

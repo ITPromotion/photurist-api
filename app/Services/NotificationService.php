@@ -7,7 +7,8 @@ use App\Models\Device;
 class NotificationService {
 
 
-    public static function img ($postcard) {
+    public static function img ($postcard)
+    {
         $link = null;
 
         if (count ($postcard->mediaContents)) {
