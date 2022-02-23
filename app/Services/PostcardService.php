@@ -106,6 +106,7 @@ class PostcardService
                 };
             }
         }
+        $this->postcard->load('mediaContents');
 
         if($request->input('media_content_sort_orders')){
                     foreach ($request->input('media_content_sort_orders') as $mediaContentSortOrder){
@@ -115,6 +116,7 @@ class PostcardService
 
         $this->postcard->save();
 
+        return $this->postcard;
     }
 
     public function deletePostcard()

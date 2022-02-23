@@ -239,7 +239,9 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
 
         $postcardService = new PostcardService($postcard);
 
-        $postcardService->updatePostcard($request);
+        $postcard = $postcardService->updatePostcard($request);
+
+
 
         return new PostcardResource($postcard);
 
