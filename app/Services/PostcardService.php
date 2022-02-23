@@ -98,6 +98,15 @@ class PostcardService
         $this->postcard->regions = $request->input('regions');
         $this->postcard->cities = $request->input('cities');
 
+        if($request->input('media_content_ids')){
+            $media_content_ids = $request->input('media_content_ids');
+            foreach ($this->postcard->mediaContents as $mediaContent){
+                if(!in_array($mediaContent->id, $media_content_ids)){
+                    $mediaContent->delete();
+                };
+            }
+        }
+
         if($request->input('media_content_sort_orders')){
                     foreach ($request->input('media_content_sort_orders') as $mediaContentSortOrder){
                         $this->postcard->mediaContents()->where('media_contents.id',$mediaContentSortOrder['id'])->update(['sort_order' => $mediaContentSortOrder['sort_order']]);
