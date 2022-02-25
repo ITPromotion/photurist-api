@@ -38,7 +38,7 @@ Route::group(['middleware' => ['role_or_permission:Super Admin|Administrators']]
 });
 
 Route::group(['middleware' => ['role_or_permission:Super Admin|Users']], function () {
-    Route::get('/get-user', [UserController::class, 'getUser']);
+    Route::get('/get-users', [UserController::class, 'getUsers']);
 
     Route::get('/get-info-user/{id}', [UserController::class, 'getInfoUser']);
 

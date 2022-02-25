@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\AdminPanel\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AdmpnPanel\UserCollection;
+use App\Services\AdminPanel\AdminPanelUsersService;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
-    public function getUser(Request $request) {
-        $user = new User();
-        if ($request->status) {
-            $user = $user->where('status', $request->status);
-        }
-        return new UserResource($user->paginate());
+    public function getUsers(Request $request) {
+
+        $adminPanelUsersService = new AdminPanelUsersService();
+
+        return new UserCollection($adminPanelUsersService->getUsers($request));
     }
 
     public function getInfoUser($id) {
