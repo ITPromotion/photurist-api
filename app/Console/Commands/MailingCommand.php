@@ -69,7 +69,7 @@ class MailingCommand extends Command
 
                 if($usersOther->isNotEmpty()) {
                     $user = $usersOther->random(1)->first();
-                    if (($user->id != $postcard->user_id)&&!$user->blockContacts()->containts('id', $author->id)) {
+                    if (($user->id != $postcard->user_id)&&!$user->blockContacts()->contains('id', $author->id)) {
 
                         $postcardService = new PostcardService($postcard);
 
