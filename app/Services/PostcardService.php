@@ -4,16 +4,20 @@
 namespace App\Services;
 
 
+use App\Enums\ActionLocKey;
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
+use App\Jobs\NotificationJob;
 use App\Models\GeoData;
 use App\Models\MediaContent;
 use App\Models\Postcard;
 use App\Models\TagData;
 use App\Models\TextData;
 use App\Models\Device;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class PostcardService
@@ -122,5 +126,34 @@ class PostcardService
     public function deletePostcard()
     {
         $this->postcard->delete();
+    }
+
+    public function sendPostcard(User $user)
+    {
+        DB::table('postcards_mailings')->insert([
+            'user_id' => $user->id,
+            'postcard_id' => $this->postcard->id,
+            'status' => MailingType::ACTIVE,
+            'start' => Carbon::now(),
+            'stop' => Carbon::now()->addMinutes($this->postcard->interval_wait),
+        ]);
+
+        try {
+            if ($this->postcard->user_id != $user->id) {
+                $notification = [
+                    'token' => $user->device->pluck('token')->toArray(),
+                    'title' => $this->postcard->user->login,
+                    'body' => __('notifications.gallery_text'),
+                    'img' => NotificationService::img($this->postcard),
+                    'action_loc_key' => ActionLocKey::GALLERY_TEXT,
+                    'user_id' => $this->postcard->user_id,
+                    'postcard_id' => $this->postcard->id,
+                ];
+                dispatch(new NotificationJob($notification));
+
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

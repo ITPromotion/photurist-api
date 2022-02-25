@@ -6,6 +6,7 @@ use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
 use App\Models\Postcard;
 use App\Models\User;
+use App\Services\PostcardService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
@@ -70,45 +71,10 @@ class MailingCommand extends Command
                     $user = $usersOther->random(1)->first();
                     if (($user->id != $postcard->user_id)&&!$user->blockContacts()->containts('id', $author->id)) {
 
-                        DB::table('postcards_mailings')->insert([
-                            'user_id' => $user->id,
-                            'postcard_id' => $postcard->id,
-                            'status' => MailingType::ACTIVE,
-                            'start' => Carbon::now(),
-                            'stop' => Carbon::now()->addMinutes($postcard->interval_wait),
-                        ]);
+                        $postcardService = new PostcardService($postcard);
 
-                        try {
-                            if ($postcard->user_id != $user->id) {
-                                $notification = [
-                                    'token' => $user->device->pluck('token')->toArray(),
-                                    'title' => $postcard->user->login,
-                                    'body' => __('notifications.gallery_text'),
-                                    'img' => NotificationService::img($postcard),
-                                    'action_loc_key' => ActionLocKey::GALLERY_TEXT,
-                                    'user_id' => $postcard->user_id,
-                                    'postcard_id' => $postcard->id,
-                                ];
-                                dispatch(new NotificationJob($notification));
+                        $postcardService->sendPostcard($user);
 
-
-                                // (new NotificationService)->send([
-                                //     'users' => $user->device->pluck('token')->toArray(),
-                                //     'title' => $postcard->user->login,
-                                //     'body' => ActionLocKey::GALLERY_TEXT,
-                                //     'img' => $postcard->mediaContents[0]->link,
-                                //     'postcard_id' => $postcard->id,
-                                //     'action_loc_key' => ActionLocKey::GALLERY,
-                                //     'badge' => DB::table('postcards_mailings')
-                                //         ->where('view', 0)
-                                //         ->where('user_id',$user->id)
-                                //         ->where('status', PostcardStatus::ACTIVE)
-                                //         ->count()
-                                // ]);
-                            }
-                        } catch (\Throwable $th) {
-                            //throw $th;
-                        }
                     }
 
                 }
