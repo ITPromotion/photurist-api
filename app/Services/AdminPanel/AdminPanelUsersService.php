@@ -13,9 +13,10 @@ class AdminPanelUsersService
     public function getUsers(Request $request){
 
         $request->validate([
-            'search' => 'nullable|string',
-            'sort' => 'in:ask,desc|nullable',
-            'sort_field' => 'in:login,id|nullable',
+            'search'    => 'nullable|string',
+            'sort'      => 'in:ask,desc|nullable',
+            'sort_field'=> 'in:login,id|nullable',
+            'status'    => 'in:created,active,blocked'
         ]);
 
         $userQuery = User::query();
@@ -37,6 +38,6 @@ class AdminPanelUsersService
             $userQuery->orderBy($request->input('sort_field'), $request->input('sort'));
         }
 
-       return $userQuery->paginate();
+       return $userQuery->paginate(30);
     }
 }
