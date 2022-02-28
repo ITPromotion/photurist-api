@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientApp\Postcard\AddPostcardToGalleryRequest;
 use App\Http\Requests\ClientApp\Postcard\GetGalleryRequest;
 use App\Http\Requests\ClientApp\Postcard\GetPostcardsFromIdsRequest;
+use App\Http\Requests\ClientApp\Postcard\SendPostcardToContactRequest;
 use App\Http\Requests\ClientApp\Postcard\SetStatusPostcardRequest;
 use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
@@ -17,6 +18,7 @@ use App\Models\AudioData;
 use App\Models\MediaContent;
 use App\Models\Postcard;
 use App\Models\TextData;
+use App\Models\User;
 use App\Services\PostcardService;
 use App\Traits\FileTrait;
 use Carbon\Carbon;
@@ -149,6 +151,7 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
                     'additionally.mediaContents.textData',
                     'additionally.mediaContents.geoData',
                     'additionally.mediaContents.audioData',
+                    'additionally.user:id,login',
                     'userPostcardNotifications',
                 );
                 $postcards[] = $postcard;
@@ -561,6 +564,19 @@ WHERE res.user_id <> ? or (user_id = ? and start is NULL)
             //throw $th;
         }
         return new PostcardResource($clone);
+    }
+
+    public function sendPostcardToContact(SendPostcardToContactRequest $request)
+    {
+        $user = Auth::user();
+
+        $contact = $user->contacts()->where('users.status', PostcardStatus::ACTIVE)->findOrFail($request->input('contact_id'));
+
+        $postcard = Postcard::findOrFail($request->input('postcard_id'));
+
+        $postcardService = new PostcardService($postcard);
+
+        $postcardService->sendPostcard($contact);
     }
 
 }

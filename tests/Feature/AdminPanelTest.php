@@ -230,7 +230,7 @@ class AdminPanelTest extends TestCase
     public function test_getUser () {
         $this->setUpFaker();
 
-        $url = self::PREFIX.'get-user';
+        $url = self::PREFIX.'get-users';
 
         $this->singIn();
        Passport::actingAs(

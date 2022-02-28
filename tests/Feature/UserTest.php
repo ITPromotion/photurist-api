@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Enums\PostcardStatus;
+use App\Models\Postcard;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -16,9 +18,10 @@ class UserTest extends TestCase
 
     use WithFaker;
 
-    public function singIn()
+    public function singIn($login = null)
     {
-        $this->user = User::where('login','unittest1')->first();
+        if(!$login) $login='unittest1';
+        $this->user = User::where('login',$login)->first();
     }
     /**
      * A basic feature test example.
@@ -222,6 +225,39 @@ class UserTest extends TestCase
         $response = $this->putJson(
             $url, ['ids' =>[$client->id]
         ]);
+
+        $response
+            ->assertStatus(200);
+    }
+
+    public function test_send_postcard_to_contact()
+    {
+        $this->setUpFaker();
+
+        $url = self::PREFIX.'send-postcard-to-contact';
+
+        $this->singIn('Miki');
+
+        Passport::actingAs(
+            $this->user,
+            [$url]
+        );
+
+        $contact = User::where('login','Piter')->select('phone','id')->first();
+
+        //if(!$contact) return 0;
+
+        $postcard = $this->user->postcards()->first();
+
+        dump($this->user);
+
+
+
+        $response = $this->putJson(
+            $url, [
+                    'contact_id'    => $contact->id,
+                    'postcard_id'   => $postcard->id,
+                    ]);
 
         $response
             ->assertStatus(200);
