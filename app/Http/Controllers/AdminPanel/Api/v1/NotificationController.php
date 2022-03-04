@@ -16,7 +16,8 @@ class NotificationController extends Controller
 {
     use FileTrait;
 
-    public function sendNotificationUser (NotificationRequest $request) {
+    public function sendNotificationUser (NotificationRequest $request)
+    {
         $link = null;
         if ($request->hasFile('file')) {
             $link = $this->saveMediaContent($request->file('file'), 'notification');
