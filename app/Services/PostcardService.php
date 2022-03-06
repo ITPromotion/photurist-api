@@ -131,7 +131,9 @@ class PostcardService
     public function sendPostcard(User $user)
     {
         $postcardsMailing = DB::table('postcards_mailings')->where('postcard_id',$this->postcard->id)->where('user_id',$user->id)->first();
+
         if ($postcardsMailing) return;
+
         DB::table('postcards_mailings')->insert([
             'user_id' => $user->id,
             'postcard_id' => $this->postcard->id,
