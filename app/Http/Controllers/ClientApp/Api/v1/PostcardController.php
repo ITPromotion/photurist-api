@@ -104,7 +104,7 @@ select pc1.*, null, null,
 
 			ORDER BY `sort` desc) as res
 
-WHERE res.user_id <> ? or (user_id = ? and start is NULL)
+WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postcard_id is null
     LIMIT ?, ?'
                 ,[
                     $user->id, Carbon::now(), Carbon::now(), $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $user->id, $request->input('offset'), $request->input('limit')
