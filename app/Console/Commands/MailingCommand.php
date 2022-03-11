@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
+use App\Enums\UserStatus;
 use App\Models\Postcard;
 use App\Models\User;
 use App\Services\PostcardService;
@@ -69,7 +70,9 @@ class MailingCommand extends Command
 
                 if($usersOther->isNotEmpty()) {
                     $user = $usersOther->random(1)->first();
-                    if (($user->id != $postcard->user_id)&&!$user->blockContacts->contains('id', $author->id)) {
+                    if (($user->id != $postcard->user_id)&&
+                        !$user->blockContacts->contains('id', $author->id)&&
+                        ($user->status!=UserStatus::BLOCKED)) {
 
                         $postcardService = new PostcardService($postcard);
 

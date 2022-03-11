@@ -116,4 +116,8 @@ Route::group(['middleware' => 'block_user'], function () {
 
     Route::put('/send-postcard-to-contact', [PostcardControllerAlias::class, 'sendPostcardToContact']);
 
+    /* Postcard info */
+
+    Route::get('/postcard-info/{id}', [PostcardControllerAlias::class, 'postcardInfo']);
+
 });

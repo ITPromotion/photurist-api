@@ -579,4 +579,11 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
         $postcardService->sendPostcard($contact);
     }
 
+    public function postcardInfo($id)
+    {
+        $postcard = Auth::user()->postcards()->findOrFail($id);
+        $postcardService = new PostcardService($postcard);
+        return $postcardService->postcardInfo();
+    }
+
 }
