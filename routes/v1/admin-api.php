@@ -48,6 +48,8 @@ Route::group(['middleware' => ['role_or_permission:Super Admin|Users']], functio
 
     Route::get('/get-postcards', [PostcardController::class, 'getPostcards']);
 
+    Route::get('/get-postcard/{id}', [PostcardController::class, 'getPostcard']);
+
 });
 
 Route::group(['middleware' => ['role_or_permission:Super Admin|Notifications']], function () {

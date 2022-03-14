@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Admin;
+use App\Models\Postcard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Passport\Passport;
@@ -25,6 +26,25 @@ class AdminPanelPostcardTest extends TestCase
         $this->singIn();
 
         $url = self::PREFIX.'get-postcards';
+
+        Passport::actingAs(
+            $this->user,
+            [$url],
+            'api-admin'
+        );
+
+        $response = $this->get($url);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_get_postcard()
+    {
+        $this->singIn();
+
+        $postcard =Postcard::firstOrfail();
+
+        $url = self::PREFIX.'get-postcard/'.$postcard->id;
 
         Passport::actingAs(
             $this->user,
