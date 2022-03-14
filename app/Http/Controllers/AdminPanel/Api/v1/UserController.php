@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\AdminPanel\Api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AdmpnPanel\UserCollection;
-use App\Services\AdminPanel\AdminPanelUsersService;
+use App\Http\Resources\AdminPanel\UserCollection;
+use App\Services\AdminPanel\AdminPanelUserService;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Resources\UserResource;
@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function getUsers(Request $request) {
 
-        $adminPanelUsersService = new AdminPanelUsersService();
+        $adminPanelUsersService = new AdminPanelUserService();
 
         return new UserCollection($adminPanelUsersService->getUsers($request));
     }

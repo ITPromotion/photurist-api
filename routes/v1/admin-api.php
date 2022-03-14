@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\AdminPanel\Api\v1\PostcardController;
 use App\Http\Controllers\AdminPanel\Api\v1\ProfileController;
 use App\Http\Controllers\AdminPanel\Api\v1\PermissionController;
 use App\Http\Controllers\AdminPanel\Api\v1\UserController;
@@ -43,6 +45,9 @@ Route::group(['middleware' => ['role_or_permission:Super Admin|Users']], functio
     Route::get('/get-info-user/{id}', [UserController::class, 'getInfoUser']);
 
     Route::put('/update-user-status/{id}', [UserController::class, 'updateStatusUser']);
+
+    Route::get('/get-postcards', [PostcardController::class, 'getPostcards']);
+
 });
 
 Route::group(['middleware' => ['role_or_permission:Super Admin|Notifications']], function () {

@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 
-class AdminPanelUsersService
+class AdminPanelUserService
 {
     public function getUsers(Request $request){
 

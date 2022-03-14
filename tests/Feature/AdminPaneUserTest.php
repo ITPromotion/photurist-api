@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\AdminPanel;
 
 use App\Models\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,7 +10,7 @@ use Tests\TestCase;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 
-class AdminPanelTest extends TestCase
+class AdminPaneUserTest extends TestCase
 {
     CONST PREFIX = '/api/v1/admin/';
 

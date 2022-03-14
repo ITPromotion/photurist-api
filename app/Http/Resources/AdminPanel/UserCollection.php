@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\AdmpnPanel;
+namespace App\Http\Resources\AdminPanel;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

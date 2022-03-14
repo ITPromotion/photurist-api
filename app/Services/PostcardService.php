@@ -161,27 +161,5 @@ class PostcardService
         }
     }
 
-    public function postcardInfo()
-    {
-        $data = [];
 
-        $data['author'] = $this->postcard->user->login;
-
-        $data['user_send_count'] = DB::table('postcards_mailings')->where('postcard_id', $this->postcard->id)->count();
-
-        $data['users_save_count'] = $this->postcard->users()->count();
-
-        $data['users_not_save_count'] = $data['user_send_count'] - $data['users_save_count'];
-
-        $data['created_at'] = $this->postcard->created_at;
-
-        $data['interval_send'] = $this->postcard->interval_send;
-
-        $data['interval_wait'] = $this->postcard->interval_wait;
-
-        $data['additionally_postcards_count'] = $this->postcard->additionally()->count();
-
-        return $data;
-
-    }
 }
