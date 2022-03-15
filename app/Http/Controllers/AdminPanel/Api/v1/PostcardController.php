@@ -21,6 +21,7 @@ class PostcardController extends Controller
             $adminPanelPostcardService = new AdminPanelPostcardService($postcard);
 
             $postcard = $adminPanelPostcardService->postcardInfo();
+
         }
 
         return new PostcardCollection($postcards);

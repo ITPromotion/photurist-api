@@ -29,6 +29,25 @@ class AdminPanelPostcardService
 
         $this->postcard->additionally_postcards_count = $this->postcard->additionally()->count();
 
+        $this->postcard->load('user:id,login',
+            'textData',
+            'geoData',
+            'tagData',
+            'audioData',
+            'mediaContents.textData',
+            'mediaContents.geoData',
+            'mediaContents.audioData',
+            'additionally.textData',
+            'additionally.geoData',
+            'additionally.tagData',
+            'additionally.audioData',
+            'additionally.mediaContents.textData',
+            'additionally.mediaContents.geoData',
+            'additionally.mediaContents.audioData',
+            'additionally.user:id,login',
+            'userPostcardNotifications',
+        );
+
         return $this->postcard;
 
     }

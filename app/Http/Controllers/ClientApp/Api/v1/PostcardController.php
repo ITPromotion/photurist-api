@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ClientApp\Api\v1;
 
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
+use App\Enums\UserStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientApp\Postcard\AddPostcardToGalleryRequest;
 use App\Http\Requests\ClientApp\Postcard\GetGalleryRequest;
@@ -238,6 +239,15 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
      */
     public function update($id, Request $request)
     {
+        $user = Auth::user();
+
+        if(
+            ($user->status == UserStatus::BLOCKED)&&
+            ($request->input('status')==PostcardStatus::ACTIVE)
+        ){
+            return abort('403');
+        }
+
         $postcard = Postcard::withTrashed()->findOrFail($id);
 
         $postcardService = new PostcardService($postcard);
@@ -428,6 +438,15 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
 
     public function setStatusPostcard($id, SetStatusPostcardRequest $request)
     {
+        $user = Auth::user();
+
+        if(
+            ($user->status == UserStatus::BLOCKED)&&
+            ($request->input('status')==PostcardStatus::ACTIVE)
+        ){
+            return abort('403');
+        }
+
         $postcard = Postcard::FindOrFail($id);
 
         $postcard->status = $request->input('status');
@@ -569,6 +588,10 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
     public function sendPostcardToContact(SendPostcardToContactRequest $request)
     {
         $user = Auth::user();
+
+        if($user->status == UserStatus::BLOCKED) {
+            return abort('403');
+        }
 
         $contact = $user->contacts()->where('users.status', PostcardStatus::ACTIVE)->findOrFail($request->input('contact_id'));
 
