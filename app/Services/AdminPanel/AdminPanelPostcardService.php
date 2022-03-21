@@ -52,4 +52,9 @@ class AdminPanelPostcardService
 
     }
 
+    public function postcardDelete()
+    {
+        $this->postcard->delete();
+    }
+
 }

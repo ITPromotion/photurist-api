@@ -155,6 +155,19 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                     'additionally.user:id,login',
                     'userPostcardNotifications',
                 );
+                foreach ($postcard->additionally as $additionalPostcard){
+                    if($additionalPostcard->user_id==Auth::id()){
+                        $additionalPostcard->author = true;
+                    } else {
+                        $additionalPostcard->author = false;
+                    }
+
+                    if($postcard->user_id==Auth::id()){
+                        $additionalPostcard->moderator = true;
+                    } else {
+                        $additionalPostcard->moderator = false;
+                    }
+                }
                 $postcards[] = $postcard;
         }
 

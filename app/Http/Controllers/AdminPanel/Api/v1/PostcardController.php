@@ -38,5 +38,15 @@ class PostcardController extends Controller
         return new PostcardResource($postcard);
     }
 
+    public function postcardDelete($id)
+    {
+        $postcard = Postcard::findOrFail($id);
+
+        $adminPanelPostcardService = new AdminPanelPostcardService($postcard);
+
+        $adminPanelPostcardService->postcardDelete($postcard);
+
+    }
+
 
 }
