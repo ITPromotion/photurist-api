@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminPanel\Api\v1;
 
+use App\Enums\PostcardStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AdminPanel\PostcardCollection;
 use App\Http\Resources\AdminPanel\PostcardResource;
@@ -15,12 +16,15 @@ class PostcardController extends Controller
     {
         $postcardQuery = Postcard::query();
 
+        $postcardQuery->where('draft', '!=', true)
+                        ->where('additional_postcard_id', null);
+
         $postcards = $postcardQuery->paginate(config('admin_panel.postcard_count_paginate'));
 
         foreach ($postcards as $postcard){
             $adminPanelPostcardService = new AdminPanelPostcardService($postcard);
 
-            $postcard = $adminPanelPostcardService->postcardInfo();
+            $postcard = $adminPanelPostcardService->postcardInfoList();
 
         }
 

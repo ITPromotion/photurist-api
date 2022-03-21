@@ -52,6 +52,28 @@ class AdminPanelPostcardService
 
     }
 
+    public function postcardInfoList()
+    {
+
+        $this->postcard->author = $this->postcard->user->login;
+
+        $this->postcard->user_send_count = DB::table('postcards_mailings')->where('postcard_id', $this->postcard->id)->count();
+
+        $this->postcard->users_save_count = $this->postcard->users()->count();
+
+        $this->postcard->users_not_save_count = $this->postcard->user_send_count - $this->postcard->users_save_count;
+
+        $this->postcard->additionally_postcards_count = $this->postcard->additionally()->count();
+
+        $this->postcard->load('user:id,login',
+            'tagData',
+        );
+        $this->postcard->mediaContentsFirst();
+
+        return $this->postcard;
+
+    }
+
     public function postcardDelete()
     {
         $this->postcard->delete();
