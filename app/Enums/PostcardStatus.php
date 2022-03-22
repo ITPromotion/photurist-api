@@ -26,4 +26,6 @@ class PostcardStatus extends Enum
     const LOADING = 'loading';
 
     const ADDITIONAL = 'additional';
+
+    const BLOCKED = 'blocked';
 }

@@ -52,5 +52,23 @@ class PostcardController extends Controller
 
     }
 
+    public function postcardBlock($id){
+
+        $postcard = Postcard::findOrFail($id);
+
+        $postcard->status = PostcardStatus::BLOCKED;
+
+        $postcard->save();
+    }
+
+    public function postcardUnblock($id){
+
+        $postcard = Postcard::findOrFail($id);
+
+        $postcard->status = PostcardStatus::ACTIVE;
+
+        $postcard->save();
+    }
+
 
 }

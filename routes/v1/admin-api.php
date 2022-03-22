@@ -42,6 +42,10 @@ Route::group(['middleware' => ['role_or_permission:Super Admin|Administrators']]
 Route::group(['middleware' => ['role_or_permission:Super Admin|Users']], function () {
     Route::get('/get-users', [UserController::class, 'getUsers']);
 
+    Route::put('/postcard-block/{id}', [PostcardController::class, 'postcardBlock']);
+
+    Route::put('/postcard-unblock/{id}', [PostcardController::class, 'postcardUnblock']);
+
     Route::get('/get-info-user/{id}', [UserController::class, 'getInfoUser']);
 
     Route::put('/update-user-status/{id}', [UserController::class, 'updateStatusUser']);
@@ -49,6 +53,8 @@ Route::group(['middleware' => ['role_or_permission:Super Admin|Users']], functio
     Route::get('/get-postcards', [PostcardController::class, 'getPostcards']);
 
     Route::get('/get-postcard/{id}', [PostcardController::class, 'getPostcard']);
+
+    Route::delete('/postcard-delete/{id}', [PostcardController::class, 'postcardDelete']);
 
 });
 
