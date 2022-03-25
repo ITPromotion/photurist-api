@@ -589,6 +589,9 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
         $clone = Postcard::find($id)->duplicate();
         $clone->update([
             'status' => PostcardStatus::DRAFT,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+            'additional_postcard_id' => null,
         ]);
         try {
             $this->copyMediaContent($clone);
