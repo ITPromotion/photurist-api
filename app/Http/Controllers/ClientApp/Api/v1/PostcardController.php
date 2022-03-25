@@ -588,7 +588,7 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
     public function duplicate (Request $request, $id) {
         $clone = Postcard::find($id)->duplicate();
         $clone->update([
-            'status' => PostcardStatus::CREATED,
+            'status' => PostcardStatus::DRAFT,
         ]);
         try {
             $this->copyMediaContent($clone);
