@@ -19,7 +19,7 @@ class PostcardController extends Controller
         $postcardQuery->where('draft', '!=', true)
                         ->where('additional_postcard_id', null);
 
-        $postcards = $postcardQuery->paginate(config('admin_panel.postcard_count_paginate'));
+        $postcards = $postcardQuery->orderBy('id','desc')->paginate(config('admin_panel.postcard_count_paginate'));
 
         foreach ($postcards as $postcard){
             $adminPanelPostcardService = new AdminPanelPostcardService($postcard);
