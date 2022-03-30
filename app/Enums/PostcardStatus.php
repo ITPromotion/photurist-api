@@ -16,4 +16,16 @@ use Rexlabs\Enum\Enum;
 class PostcardStatus extends Enum
 {
     const ACTIVE = 'active';
+
+    const CREATED = 'created';
+
+    const DRAFT = 'draft';
+
+    const ARCHIVE = 'archive';
+
+    const LOADING = 'loading';
+
+    const ADDITIONAL = 'additional';
+
+    const BLOCKED = 'blocked';
 }

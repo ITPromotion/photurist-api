@@ -15,5 +15,5 @@ class MediaContentType extends Enum
 {
     const VIDEO = 'video';
 
-    const PHOTO = 'video';
+    const PHOTO = 'photo';
 }

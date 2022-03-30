@@ -11,7 +11,9 @@ use App\Models\Sto\Sto;
 use App\Models\TempNumber;
 use App\Models\User;
 use App\Models\User\UserNotificationToken;
-use App\Services\Notification\Sms\RegisterSms;
+// use App\Services\Notification\Sms\RegisterSms;
+use Spatie\Permission\Models\Role;
+use App\Models\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,11 +49,18 @@ class LoginController extends Controller
 
         }
 
-        if(env('APP_DEBUG')!='true') {
-            $result = (new RegisterSms())->send($phoneNumber, $otp->otp);
-        }else{
-            $result =true;
+        if ($request->input('admin_panel')) {
+            $admin = Admin::where('phone', $request->input('phone'))->first();
+            if (!$admin || !$admin->hasAnyRole(Role::all())) {
+                return response()->json(['errorCode' => 'permission denied'], 403);
+            }
         }
+        $result =true;
+        // if(env('APP_DEBUG')!='true') {
+        //     $result = (new RegisterSms())->send($phoneNumber, $otp->otp);
+        // }else{
+        //     $result =true;
+        // }
 
 
 
@@ -66,9 +75,9 @@ class LoginController extends Controller
             ['phone' => $phoneNumber],
             ['otp_id' => $otp->id]
         );
-        if(env('APP_DEBUG')!='true'){
-            return  response()->json([],201);
-        }
+        // if(env('APP_DEBUG')!='true'){
+        //     return  response()->json([],201);
+        // }
         return response()->json([
             'codeOTP'   => $otp->otp,
         ], 201);
@@ -99,8 +108,11 @@ class LoginController extends Controller
         if ($otp !== null) {
             $result = $otp->validate($codeOTP);
 
+            $user = User::where('phone', $phoneNumber)->where('status','=',UserStatus::ACTIVE)->first();
+
             if ($result === true) {
 
+                if(!$user)
                     $user = User::updateOrCreate(
                         [
                             'phone' => $phoneNumber
@@ -156,5 +168,34 @@ class LoginController extends Controller
 
         return response()->json($user);
 
+    }
+
+    public function checkOTPAdmin (CheckOtpRequest $request) {
+        $codeOTP = $request->input('code_otp');
+        $phoneNumber = $request->input('phone_number');
+
+        $tempNumber = TempNumber::where('phone', $phoneNumber)->first();
+        $otp = OTP::find($tempNumber->otp_id);
+
+        if ($otp !== null) {
+            $result = $otp->validate($codeOTP);
+            $admin = Admin::where('phone', $phoneNumber)->with('roles.permissions')->first();
+
+            if ($result === true) {
+                if(!$admin || !$admin->hasAnyRole(Role::all())) {
+                    return response()->json(['errorCode' => 'permission denied'], 403);
+                }
+
+                Auth::login($admin);
+
+                $accessToken = Auth::user()->createToken('authToken')->accessToken;
+                // dd($accessToken);
+                return response(['user' => $admin, 'access_token' => $accessToken]);
+            }
+        }
+        return response()->json([
+            'errorCode' => $result['short_desc'],
+            'description' => $result['long_desc']
+        ], 203);
     }
 }

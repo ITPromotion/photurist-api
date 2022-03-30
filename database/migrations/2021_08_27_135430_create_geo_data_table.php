@@ -15,9 +15,9 @@ class CreateGeoDataTable extends Migration
     {
         Schema::create('geo_data', function (Blueprint $table) {
             $table->id();
-            $table->integer('lat')->nullable();
-            $table->integer('lng')->nullable();
-            $table->integer('address')->nullable();
+            $table->float('lat')->nullable();
+            $table->float('lng')->nullable();
+            $table->string('address')->nullable();
             $table->unsignedBigInteger('postcard_id')->nullable();
             $table->foreign('postcard_id')->references('id')->on('postcards')->onDelete('cascade');
             $table->unsignedBigInteger('media_content_id')->nullable();

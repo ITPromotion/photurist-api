@@ -15,7 +15,7 @@ class OTP extends Model
     {
         parent::__construct($attributes);
 
-        $this->otp = random_int(1000, 9999);
+        $this->otp = random_int(100000, 999999);
 
     }
 

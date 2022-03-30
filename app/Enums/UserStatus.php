@@ -14,4 +14,6 @@ class UserStatus extends Enum
     const CREATED = 'created';
 
     const ACTIVE = 'active';
+
+    const BLOCKED = 'blocked';
 }
