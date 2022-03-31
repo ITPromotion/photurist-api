@@ -91,6 +91,8 @@ class PostcardService
 
         $this->postcard->draft = $request->input('status')==PostcardStatus::ACTIVE?false:true;
 
+        $this->postcard->finally_status = $request->input('status');
+
         if($this->postcard->status == MailingType::ACTIVE)
                  $this->postcard->start_mailing = Carbon::now();
         $this->postcard->interval_send = $request->input('interval_send');

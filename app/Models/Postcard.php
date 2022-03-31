@@ -16,6 +16,7 @@ use \Bkwld\Cloner\Cloneable;
 class Postcard extends Model
 {
     use HasFactory, SoftDeletes, Cloneable;
+
     protected $cloneable_relations = [
         'textData',
         'audioData',
@@ -37,8 +38,10 @@ class Postcard extends Model
             'cities',
             'loading',
             'draft',
+            'finally_status',
         ];
     protected $appends = ['favorite'];
+
 
     public function getFavoriteAttribute() {
         $favorite = $this->favorites()->wherePivot('user_id', \Auth::user()->id ?? null)->first();
