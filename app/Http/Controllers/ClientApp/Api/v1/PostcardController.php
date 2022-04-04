@@ -502,6 +502,12 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
 
         foreach ($postcards as $postcard) {
 
+            if ($postcard->user_id == Auth::id()) {
+                $postcard->author = true;
+            }else{
+                $postcard->author = false;
+            }
+
             foreach ($postcard->additionally as $additionalPostcard) {
                 if ($additionalPostcard->user_id == Auth::id()) {
                     $additionalPostcard->author = true;
@@ -515,7 +521,6 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                     $additionalPostcard->moderator = false;
                 }
             }
-            $postcards[] = $postcard;
         }
 
         return new PostcardCollection($postcards);
