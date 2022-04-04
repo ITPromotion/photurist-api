@@ -490,7 +490,33 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                     'mediaContents.textData',
                     'mediaContents.geoData',
                     'mediaContents.audioData',
+                    'additionally.textData',
+                    'additionally.geoData',
+                    'additionally.tagData',
+                    'additionally.audioData',
+                    'additionally.mediaContents.textData',
+                    'additionally.mediaContents.geoData',
+                    'additionally.mediaContents.audioData',
+                    'additionally.user:id,login',
                 )->get();
+
+        foreach ($postcards as $postcard) {
+
+            foreach ($postcard->additionally as $additionalPostcard) {
+                if ($additionalPostcard->user_id == Auth::id()) {
+                    $additionalPostcard->author = true;
+                } else {
+                    $additionalPostcard->author = false;
+                }
+
+                if ($postcard->user_id == Auth::id()) {
+                    $additionalPostcard->moderator = true;
+                } else {
+                    $additionalPostcard->moderator = false;
+                }
+            }
+            $postcards[] = $postcard;
+        }
 
         return new PostcardCollection($postcards);
     }
