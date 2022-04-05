@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\ContactStatuses;
 use App\Enums\MailingType;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -52,8 +53,11 @@ class StopMailingCommand extends Command
         foreach ($postcards->get() as $postcard) {
             \Illuminate\Support\Facades\Log::info('waiting_time_text');
 
+            $user = User::find($postcard->user_id);
+
             $postcard_ = Postcard::find($postcard->postcard_id);
-            if (!$postcard_->userPostcardNotifications()->where('user_id', $postcard->user_id)->first() && $postcard->user_id != $postcard_->user_id)
+            if ((!$postcard_->userPostcardNotifications()->where('user_id', $postcard->user_id)->first() && $postcard->user_id != $postcard_->user_id)&&
+                ($user->contacts()->where('contact_id', $postcard_->user_id)->wherePivot('status', ContactStatuses::ACTIVE))->get()->isNotEmpty())
 
             try {
                 $notification = [
