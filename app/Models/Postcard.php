@@ -38,6 +38,7 @@ class Postcard extends Model
             'cities',
             'loading',
             'draft',
+            'additional_postcard_id',
             'finally_status',
         ];
     protected $appends = ['favorite'];
