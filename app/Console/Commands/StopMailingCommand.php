@@ -44,6 +44,7 @@ class StopMailingCommand extends Command
      *
      * @return int
      */
+
     public function handle()
     {
         $postcards = DB::table('postcards_mailings')
@@ -71,21 +72,9 @@ class StopMailingCommand extends Command
                 ];
                 dispatch(new NotificationJob($notification));
 
-            // (new \App\Services\NotificationService)->send([
-            //     'users' =>  User::find($postcard->user_id)->device->pluck('token')->toArray(),
-            //     'title' => $postcard_->user->login,
-            //     'body' => __('notifications.waiting_time_text'),
-            //     'img' => count($postcard_->mediaContents) ? $postcard_->mediaContents[0]->link : null,
-            //     'postcard_id' => $postcard->postcard_id,
-            //     'action_loc_key' => ActionLocKey::WAITING_TIME,
-            //     'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
-            //                         ->where('view', 0)
-            //                         ->where('user_id',$postcard->user_id)
-            //                         ->where('status', \App\Enums\PostcardStatus::ACTIVE)
-            //                         ->count()
-            // ]);
+
             } catch (\Throwable $th) {
-                //throw $th;
+
             }
         }
         $postcards->update(['status' => MailingType::CLOSED]);
