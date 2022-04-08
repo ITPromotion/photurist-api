@@ -131,6 +131,9 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                 $postcard->save = 1;
                 $usersIds = $postcard->users()->pluck('user_id');
 
+                $postcard->save = 1;
+                $usersIds = $postcard->users()->pluck('user_id');
+
                 if($usersIds->search($user->id)!==false){
                     $postcard->save = 1;
                 } else {
@@ -501,6 +504,12 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                 )->get();
 
         foreach ($postcards as $postcard) {
+
+            if($usersIds->search($user->id)!==false){
+                $postcard->save = 1;
+            } else {
+                $postcard->save = 0;
+            };
 
             if ($postcard->user_id == Auth::id()) {
                 $postcard->author = true;
