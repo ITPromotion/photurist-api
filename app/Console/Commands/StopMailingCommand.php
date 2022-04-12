@@ -58,7 +58,8 @@ class StopMailingCommand extends Command
 
             $postcard_ = Postcard::find($postcard->postcard_id);
             if ((!$postcard_->userPostcardNotifications()->where('user_id', $postcard->user_id)->first() && $postcard->user_id != $postcard_->user_id)&&
-                ($user->contacts()->where('contact_id', $postcard_->user_id)->wherePivot('status', ContactStatuses::ACTIVE))->get()->isNotEmpty())
+                //($user->contacts()->where('contact_id', $postcard_->user_id)->wherePivot('status', ContactStatuses::ACTIVE))->get()->isNotEmpty())
+                (!is_null($postcard_->additional_postcard_id)))
 
             try {
                 $notification = [
