@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientApp\Postcard\AddPostcardToGalleryRequest;
 use App\Http\Requests\ClientApp\Postcard\GetGalleryRequest;
 use App\Http\Requests\ClientApp\Postcard\GetPostcardsFromIdsRequest;
+use App\Http\Requests\ClientApp\Postcard\PostcardResendRequest;
 use App\Http\Requests\ClientApp\Postcard\SendPostcardToContactRequest;
 use App\Http\Requests\ClientApp\Postcard\SetStatusPostcardRequest;
 use App\Http\Resources\MediaContentResource;
@@ -316,6 +317,7 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                     'action_loc_key' => ActionLocKey::POSTCARD_DELETE,
                     'user_id' => $id,
                     'postcard_id' => $postcard->id,
+                    'main_postcard_id' => $postcard->additional_postcard_id,
                 ];
                 dispatch(new NotificationJob($notification));
             }
@@ -648,7 +650,8 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
     }
 
     public function duplicate (Request $request, $id) {
-        $clone = Postcard::find($id)->duplicate();
+        $postcard = Postcard::find($id);
+        $clone = $postcard->duplicate();
         $clone->update([
             'status' => PostcardStatus::DRAFT,
             'created_at' => Carbon::now(),
@@ -657,6 +660,7 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
         ]);
         try {
             $this->copyMediaContent($clone);
+
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -685,6 +689,23 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
         $postcard = Auth::user()->postcards()->findOrFail($id);
         $postcardService = new PostcardService($postcard);
         return $postcardService->postcardInfo();
+    }
+
+    public function postcardResend(PostcardResendRequest $request)
+    {
+        $user = Auth::user();
+
+        $receiver = $user->find($request->input('receiver_id'));
+
+        if(($user->status == UserStatus::BLOCKED)&&
+            (!$receiver->blockContacts->contains('id', $user->id))) {
+            return abort('403');
+        }
+
+        $postcard = Postcard::find($request->input('postcard_id'));
+        $postcardService = new PostcardService($postcard);
+
+        $postcardService->postcardResend($request->input('receiver_id'));
     }
 
 }

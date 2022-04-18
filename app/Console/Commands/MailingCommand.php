@@ -72,7 +72,8 @@ class MailingCommand extends Command
                     $user = $usersOther->random(1)->first();
                     if (($user->id != $postcard->user_id)&&
                         !$user->blockContacts->contains('id', $author->id)&&
-                        ($user->status!=UserStatus::BLOCKED)) {
+                        ($user->status!=UserStatus::BLOCKED)&&
+                        (!$postcard->sender_id)){
 
                         $postcardService = new PostcardService($postcard);
 
@@ -90,16 +91,20 @@ class MailingCommand extends Command
                 \Illuminate\Support\Facades\Log::info('time_is_up_text');
 
                     try {
+                        if(!$postcard->additional_postcard_id){
+
                         $notification = [
                             'token' => $postcard->user->device->pluck('token')->toArray(),
                             'title' => $postcard->user->login,
                             'body' => __('notifications.time_is_up_text'),
                             'img' => NotificationService::img($postcard),
-                            'action_loc_key' => ActionLocKey::GALLERY_TEXT,
+                            'action_loc_key' => ActionLocKey::GALLERY,
                             'user_id' => $postcard->user_id,
                             'postcard_id' => $postcard->id,
+                            'main_postcard_id' => $postcard->additional_postcard_id,
                         ];
                         dispatch(new NotificationJob($notification));
+                        }
 
                         \Illuminate\Support\Facades\Log::info('time_is_up_text');
                         // (new \App\Services\NotificationService)->send([

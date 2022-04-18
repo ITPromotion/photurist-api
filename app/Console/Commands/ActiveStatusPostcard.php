@@ -66,16 +66,18 @@ class ActiveStatusPostcard extends Command
                 $postcard->save();
 
                 try {
-
+                    $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY_TEXT;
                     $user = $postcard->user;
                     $notification = [
                         'token' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
                         'body' => __('notifications.postcard_status_active'),
                         'img' => NotificationService::img($postcard),
-                        'action_loc_key' =>  ActionLocKey::GALLERY,
+                        'action_loc_key' =>  $actionLocKey,
                         'user_id' => $user->id,
                         'postcard_id' => $postcard->id,
+                        'main_postcard_id' => $postcard->additional_postcard_id,
+
                     ];
                     dispatch(new NotificationJob($notification));
 

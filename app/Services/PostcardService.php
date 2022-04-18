@@ -17,6 +17,7 @@ use App\Models\Device;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
@@ -161,6 +162,34 @@ class PostcardService
         } catch (\Throwable $th) {
             //throw $th;
         }
+    }
+
+    public function postcardResend($receiverId)
+    {
+        $clonePostcard = $this->postcard->duplicate();
+        $clonePostcard->update([
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+            'sender_id'  => Auth::id(),
+        ]);
+        try {
+            $this->copyMediaContent($clonePostcard);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        $postcardsMailing = DB::table('postcards_mailings')->where('postcard_id',$clonePostcard->id)->where('user_id',$receiverId)->first();
+
+        if ($postcardsMailing) return;
+
+        DB::table('postcards_mailings')->insert([
+            'user_id' => $receiverId,
+            'postcard_id' => $clonePostcard->id,
+            'status' => MailingType::ACTIVE,
+            'start' => Carbon::now(),
+            'stop' => Carbon::now()->addMinutes($this->postcard->interval_wait),
+        ]);
     }
 
 

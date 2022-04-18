@@ -23,6 +23,7 @@ class Postcard extends Model
         'geoData',
         'tagData',
         'mediaContents',
+        'additionally',
     ];
     protected  $fillable = [
             'user_id',
