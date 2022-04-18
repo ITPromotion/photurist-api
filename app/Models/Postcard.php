@@ -41,6 +41,7 @@ class Postcard extends Model
             'draft',
             'additional_postcard_id',
             'finally_status',
+            'sender_id',
         ];
     protected $appends = ['favorite'];
 

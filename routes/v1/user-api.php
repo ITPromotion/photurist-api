@@ -28,6 +28,9 @@ Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);
 /* Get gallery */
 Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);
 
+/* Resend postcard */
+Route::post('/postcard-resend', [PostcardControllerAlias::class,'postcardResend']);
+
 Route::group(['middleware' => 'block_user'], function () {
     /* Resource Api */
     Route::apiResources([
