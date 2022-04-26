@@ -310,7 +310,7 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                 //                     ->count()
                 // ]);
                 $notification = [
-                    'token' => Device::getTokenUsers([$id]),
+                    'tokens' => Device::getTokenUsers([$id]),
                     'title' => $postcard->user->login,
                     'body' => __('notifications.delete_postcard_text'),
                     'img' => NotificationService::img($postcard),
@@ -598,7 +598,7 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                 // ]);
 
                 $notification = [
-                    'token' => Device::getTokenUsers([$id]),
+                    'tokens' => Device::getTokenUsers([$id]),
                     'title' => $postcard->user->login,
                     'body' => __('notifications.delete_postcard_text'),
                     'img' => NotificationService::img($postcard),

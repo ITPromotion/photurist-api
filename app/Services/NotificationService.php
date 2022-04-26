@@ -27,7 +27,7 @@ class NotificationService {
 
     public function send ($req = null) {
         $url = 'https://fcm.googleapis.com/fcm/send';
-        $FcmToken = $req['users'];
+        $FcmToken = $req['tokens'];
 
         $serverKey = env('FIREBASE_SERVER_KEY','AAAAaaY_6k4:APA91bFE0tcfDXkfgeaawi6AtxsjIJj9t-iRCWOPYPglpZHvfWy4VhhMZ0x4lxVB5APqBaKkeQldDplXdUj825lmZFlHvO6qBsFEcfx3MGDONVP2bR7BEHct5xSl35EJ6J4UekzkEqBw');
 
@@ -43,7 +43,6 @@ class NotificationService {
                 'image' => 'https://dev.photurist.com/storage/'.$req['img'] ?? null,
                 'sound' => 'default',
                 'badge' => $req['badge'] ?? null,
-                // 'postcard_id' => $req['postcard_id'] ?? null,
             ],
             "data" => [
                 "mutable_content" => true,

@@ -23,7 +23,7 @@ class NotificationController extends Controller
             $link = $this->saveMediaContent($request->file('file'), 'notification');
         }
         $notification = [
-            'token' => NotificationService::getTokenUsers($request->user_id),
+            'tokens' => NotificationService::getTokenUsers($request->user_id),
             'title' => $request->title,
             'body' => $request->body,
             'img' => $link,
@@ -47,7 +47,7 @@ class NotificationController extends Controller
 
     public function sendNotificationGroup (NotificationRequest $request) {
         $notification = [
-            'token' => NotificationService::getTokenUsers($request->user_id),
+            'tokens' => NotificationService::getTokenUsers($request->user_id),
             'title' => $request->title,
             'body' => $request->body,
         ];

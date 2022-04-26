@@ -33,7 +33,7 @@ class NotificationJob implements ShouldQueue
     {
         \Illuminate\Support\Facades\Log::info($this->notification);
         (new \App\Services\NotificationService)->send([
-            'users' => $this->notification['token'],
+            'tokens' => $this->notification['tokens'],
             'title' => $this->notification['title'],
             'body' => $this->notification['body'],
             'img' => $this->notification['img'] ?? null,

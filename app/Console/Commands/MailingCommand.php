@@ -94,7 +94,7 @@ class MailingCommand extends Command
                         if(!$postcard->additional_postcard_id){
 
                         $notification = [
-                            'token' => $postcard->user->device->pluck('token')->toArray(),
+                            'tokens' => $postcard->user->device->pluck('token')->toArray(),
                             'title' => $postcard->user->login,
                             'body' => __('notifications.time_is_up_text'),
                             'img' => NotificationService::img($postcard),

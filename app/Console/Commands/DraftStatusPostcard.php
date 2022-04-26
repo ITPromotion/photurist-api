@@ -71,7 +71,7 @@ class DraftStatusPostcard extends Command
                     $user = $postcard->user;
 
                     $notification = [
-                        'token' => $user->device->pluck('token')->toArray(),
+                        'tokens' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
                         'body' => __('notifications.postcard_status_draft'),
                         'img' => NotificationService::img($postcard),
