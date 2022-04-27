@@ -48,7 +48,7 @@ class UserService
 
         foreach ($ids as  $key => $value) {
             (new NotificationService)->send([
-                'users' => User::find($key)->device()->pluck('token')->toArray(),
+                'tokens' => User::find($key)->device()->pluck('token')->toArray(),
                 'title' => $this->user->login,
                 'body' => __('notifications.add_contacts'),
                 'img' => $this->user->avatar,
