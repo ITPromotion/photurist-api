@@ -2,14 +2,10 @@
 
 use App\Http\Controllers\ClientApp\Api\v1\LoginController;
 use App\Http\Controllers\ClientApp\Api\v1\PostcardController as PostcardControllerAlias;
-use App\Http\Controllers\ClientApp\Api\v1\ProfileController;
 use App\Http\Controllers\ClientApp\Api\v1\UserController;
 use Illuminate\Http\Request;
 /* Checking OTP code */
 Route::post('/active-user', [LoginController::class,'activeUser']);
-
-/* Get profile */
-Route::get('/get-profile', [ProfileController::class,'getProfile']);
 
 
 
@@ -25,11 +21,11 @@ Route::put('/remove-audio/{id}', [PostcardControllerAlias::class,'removeAudio'])
 /* Get gallery */
 Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);
 
-/* Get gallery */
-Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);
 
 /* Resend postcard */
 Route::post('/postcard-resend', [PostcardControllerAlias::class,'postcardResend']);
+
+
 
 Route::group(['middleware' => 'block_user'], function () {
     /* Resource Api */
@@ -127,3 +123,5 @@ Route::group(['middleware' => 'block_user'], function () {
     Route::get('/postcard-info/{id}', [PostcardControllerAlias::class, 'postcardInfo']);
 
 });
+
+require "profile.php";

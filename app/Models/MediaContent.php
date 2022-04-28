@@ -19,6 +19,7 @@ class MediaContent extends Model
      * @var array
      */
     protected $fillable = [
+        'user_id',
         'link',
         'media_content_type',
         'postcard_id',

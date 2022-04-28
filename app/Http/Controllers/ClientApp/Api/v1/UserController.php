@@ -9,15 +9,21 @@ use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Http\Requests\ClientApp\User\SetGeoDataRequest;
 use App\Http\Requests\ClientApp\User\SaveDeviceRequest;
 use App\Http\Requests\ClientApp\User\DeleteDeviceRequest;
+use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\UserPhoneResource;
+use App\Jobs\MediaContentCrop;
+use App\Models\AudioData;
+use App\Models\MediaContent;
 use App\Models\User;
 use App\Services\UserService;
+use App\Traits\FileTrait;
 use Illuminate\Http\Request;
 use App\Models\Device;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+
     public function setGeoData(SetGeoDataRequest $request)
     {
         Auth::user()->update($request->all());
