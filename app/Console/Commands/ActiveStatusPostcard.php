@@ -100,7 +100,7 @@ class ActiveStatusPostcard extends Command
                     $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY_TEXT;
 
                     $notification = [
-                        'token' => $userTokens,
+                        'tokens' => $userTokens,
                         'title' => $postcard->user->login,
                         'body' => __('notifications.postcard_status_active'),
                         'img' => NotificationService::img($postcard),
