@@ -65,7 +65,7 @@ class AdditionalStatusPostcard extends Command
 
                     $user = $postcard->user;
                     $notification = [
-                        'token' => $user->device->pluck('token')->toArray(),
+                        'tokens' => $user->device->pluck('token')->toArray(),
                         'title' => $postcard->user->login,
                         'body' => __('notifications.additional_postcard'),
                         'img' => NotificationService::img($postcard),

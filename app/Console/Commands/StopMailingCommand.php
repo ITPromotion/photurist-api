@@ -63,7 +63,7 @@ class StopMailingCommand extends Command
 
             try {
                 $notification = [
-                    'token' => User::find($postcard->user_id)->device->pluck('token')->toArray(),
+                    'tokens' => User::find($postcard->user_id)->device->pluck('token')->toArray(),
                     'title' => $postcard_->user->login,
                     'body' => __('notifications.waiting_time_text'),
                     'img' => NotificationService::img($postcard_),

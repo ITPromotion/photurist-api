@@ -148,7 +148,7 @@ class PostcardService
         try {
             if ($this->postcard->user_id != $user->id) {
                 $notification = [
-                    'token' => $user->device->pluck('token')->toArray(),
+                    'tokens' => $user->device->pluck('token')->toArray(),
                     'title' => $this->postcard->user->login,
                     'body' => __('notifications.gallery_text'),
                     'img' => NotificationService::img($this->postcard),
