@@ -30,7 +30,7 @@ class UserService
     {
         $users = User::where('status', UserStatus::ACTIVE)
             ->whereIn('phone', $request->phones)
-            ->select('id','phone', 'avatar')
+            ->select('id','phone', 'login', 'avatar')
             ->get();
 
         return $users;
