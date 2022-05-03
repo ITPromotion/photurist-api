@@ -51,7 +51,7 @@ Route::post('/send', function (Request $request) {
             $notification = [
                 'tokens' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
                 'title' => $postcard->user->login,
-                'body' => ActionLocKey::GALLERY_TEXT,
+                'body' => ActionLocKey::GALLERY,
                 'img' => NotificationService::img($postcard),
                 'action_loc_key' =>  ActionLocKey::GALLERY,
                 'user_id' => $request->user_id,

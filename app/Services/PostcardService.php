@@ -152,7 +152,7 @@ class PostcardService
                     'title' => $this->postcard->user->login,
                     'body' => __('notifications.gallery_text'),
                     'img' => NotificationService::img($this->postcard),
-                    'action_loc_key' => ActionLocKey::GALLERY_TEXT,
+                    'action_loc_key' => ActionLocKey::GALLERY,
                     'user_id' => $this->postcard->user_id,
                     'postcard_id' => $this->postcard->id,
                 ];

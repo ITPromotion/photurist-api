@@ -24,10 +24,4 @@ class ActionLocKey extends Enum
     const ADD_CONTACTS = 'add_contacts';
     const REMOV_CONTACTS = 'removed_contacts';
 
-
-    const GALLERY_TEXT = 'Новая открытка';
-    const TIME_IS_UP_TEXT = 'Время рассылки открытки истекло';
-    const DELETE_POSTCARD_TEXT = 'Открытка удалена';
-    const WAITING_TIME_TEXT = 'Время ожидания открытки истекло';
-
 }
