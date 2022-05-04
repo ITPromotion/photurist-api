@@ -61,7 +61,12 @@ class UserController extends Controller
 
         $users = $userService->getContactsActive($request);
 
-        return new UserPhoneResource(['users' => $users]);
+        $contactCount = $userService->getContactsCount();
+
+        return new UserPhoneResource([
+            'users' => $users,
+            'contacts_count' => $contactCount,
+        ]);
     }
 
     public function addContactsBlock(AddContactsRequest $request):UserPhoneResource

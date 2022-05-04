@@ -180,6 +180,12 @@ class UserService
         return true;
     }
 
+    public function getContactsCount()
+    {
+        return $this->user->contacts()->wherePivot('status','active')->count();
+    }
+
+
     public function getContactsBlockedCount()
     {
         return $this->user->contacts()->wherePivot('blocked', true)->count();
