@@ -19,7 +19,7 @@ class AdditionalStatusPostcard extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'command:additional_status_postcard';
 
     /**
      * The console command description.
