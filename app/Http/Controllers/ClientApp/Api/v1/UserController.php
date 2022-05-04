@@ -79,7 +79,12 @@ class UserController extends Controller
 
         $users = $userService->getContactsBlock($request);
 
-        return new UserPhoneResource(['users' => $users]);
+        $contactsBlockedCount = $userService->getContactsBlockedCount();
+
+        return new UserPhoneResource([
+            'users' => $users,
+            'contact_blocked_count' =>  $contactsBlockedCount,
+        ]);
     }
 
     public function addContactsIgnore(AddContactsRequest $request):UserPhoneResource
@@ -97,7 +102,12 @@ class UserController extends Controller
 
         $users = $userService->getContactsIgnore($request);
 
-        return new UserPhoneResource(['users' => $users]);
+        $contactsIgnoredCount = $userService->getContactsIgnoredCount();
+
+        return new UserPhoneResource([
+            'users' => $users,
+            'contacts_ignored_count' => $contactsIgnoredCount,
+        ]);
     }
 
     public function removeContacts(AddContactsRequest $request):UserPhoneResource
@@ -107,5 +117,10 @@ class UserController extends Controller
         $users = $userService->removeContacts($request);
 
         return new UserPhoneResource(['result' => $users]);
+    }
+
+    public function removeBlockContacts()
+    {
+
     }
 }

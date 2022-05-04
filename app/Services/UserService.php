@@ -67,13 +67,22 @@ class UserService
     public function getContactsActive(Request $request):Collection
     {
 
-        $contactsQuery = $this->user->contacts()->wherePivot('status', ContactStatuses::ACTIVE);
+        $contactsQuery = $this->user->contacts();
 
         if(is_numeric($request->input('offset')))
             $contactsQuery->offset($request->input('offset'));
 
         if(is_numeric($request->input('limit')))
             $contactsQuery->limit($request->input('limit'));
+
+        if($request->input('search')){
+
+            $search = $request->input('search');
+
+            $contactsQuery
+                ->where('phone', 'LIKE', "%{$search}%")
+                ->orWhere('login', 'LIKE', "%{$search}%");
+        }
 
         return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
@@ -83,7 +92,7 @@ class UserService
 
         foreach($request->input('ids') as $id){
             $ids[$id]=  [
-                'status' => ContactStatuses::BLOCK,
+                'blocked' => true,
             ];
         }
         $this->user->contacts()->sync($ids,false );
@@ -102,6 +111,15 @@ class UserService
         if(is_numeric($request->input('limit')))
             $contactsQuery->limit($request->input('limit'));
 
+        if($request->input('search')){
+
+            $search = $request->input('search');
+
+            $contactsQuery
+                ->where('phone', 'LIKE', "%{$search}%")
+                ->orWhere('login', 'LIKE', "%{$search}%");
+        }
+
         return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
@@ -110,7 +128,7 @@ class UserService
 
         foreach($request->input('ids') as $id){
             $ids[$id]=  [
-                'status' => ContactStatuses::IGNORE,
+                'ignored' => true,
             ];
         }
         $this->user->contacts()->sync($ids,false );
@@ -121,13 +139,22 @@ class UserService
     public function getContactsIgnore(Request $request):Collection
     {
 
-        $contactsQuery = $this->user->contacts()->wherePivot('status', ContactStatuses::IGNORE);
+        $contactsQuery = $this->user->contacts()->wherePivot('ignored', true);
 
         if(is_numeric($request->input('offset')))
             $contactsQuery->offset($request->input('offset'));
 
         if(is_numeric($request->input('limit')))
             $contactsQuery->limit($request->input('limit'));
+
+        if($request->input('search')){
+
+            $search = $request->input('search');
+
+            $contactsQuery
+                ->where('phone', 'LIKE', "%{$search}%")
+                ->orWhere('login', 'LIKE', "%{$search}%");
+        }
 
         return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
@@ -151,5 +178,15 @@ class UserService
             ]);
         }
         return true;
+    }
+
+    public function getContactsBlockedCount()
+    {
+        return $this->user->contacts()->wherePivot('blocked', true)->count();
+    }
+
+    public function getContactsIgnoredCount()
+    {
+        return $this->user->contacts()->wherePivot('ignored', true)->count();
     }
 }

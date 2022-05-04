@@ -17,7 +17,4 @@ class ContactStatuses extends Enum
 {
     const ACTIVE = 'active';
 
-    const BLOCK = 'block';
-
-    const IGNORE = 'ignore';
 }
