@@ -16,7 +16,7 @@ class PostcardController extends Controller
     {
         $postcardQuery = Postcard::query();
 
-        $postcardQuery->where('draft', '!=', true)
+        $postcardQuery->where('status', PostcardStatus::ACTIVE)
                         ->where('additional_postcard_id', null);
 
         $postcards = $postcardQuery->orderBy('id','desc')->paginate(config('admin_panel.postcard_count_paginate'));

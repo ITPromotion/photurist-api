@@ -47,7 +47,7 @@ class DraftStatusPostcard extends Command
      */
     public function handle()
     {
-        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('draft',true)->get();
+        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('finally_status',PostcardStatus::DRAFT)->get();
 
         Log::info($postcards);
 

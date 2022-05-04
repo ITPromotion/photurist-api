@@ -48,7 +48,7 @@ class ActiveStatusPostcard extends Command
      */
     public function handle()
     {
-        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('draft',false)->get();
+        $postcards = Postcard::where('status', PostcardStatus::LOADING)->where('finally_status', PostcardStatus::ACTIVE)->get();
 
         Log::info($postcards);
 
@@ -56,8 +56,6 @@ class ActiveStatusPostcard extends Command
             if($postcard->mediaContents()->where('loading', false)->get()->isEmpty()){
 
                 $postcard->status = $postcard->finally_status;
-
-                $postcard->draft = false;
 
                 if($postcard->status == MailingType::ACTIVE)
                     $postcard->start_mailing = Carbon::now();

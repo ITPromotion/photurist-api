@@ -90,8 +90,6 @@ class PostcardService
 
         $this->postcard->status = PostcardStatus::LOADING;
 
-        $this->postcard->draft = $request->input('status')==PostcardStatus::ACTIVE?false:true;
-
         $this->postcard->finally_status = $request->input('status');
 
         if($this->postcard->status == MailingType::ACTIVE)
