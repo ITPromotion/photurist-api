@@ -101,12 +101,12 @@ class User extends Authenticatable
 
     public function contacts():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'contacts', 'user_id', 'contact_id')->withPivot('status','ignored', 'blocked');
+        return $this->belongsToMany(User::class, 'contacts', 'user_id', 'contact_id')->withPivot('status','ignored', 'blocked', 'phone_book', 'new');
     }
 
     public function blockContacts():BelongsToMany
     {
-        return $this->contacts()->wherePivot('blocked', true)->withPivot('status','ignored', 'blocked');;
+        return $this->contacts()->wherePivot('blocked', true)->withPivot('status','ignored', 'blocked', 'phone_book', 'new');
     }
 
 }

@@ -33,6 +33,19 @@ class UserService
             ->select('id','phone', 'login', 'avatar')
             ->get();
 
+        if($users->isNotEmpty()) {
+
+            foreach ($users as $user) {
+                $ids[$user->id] = [
+                    'phone_book' => true,
+                ];
+            }
+
+            $this->user->contacts()->update([
+                'new' => false
+            ]);
+        }
+
         return $users;
     }
 
@@ -159,7 +172,7 @@ class UserService
         return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
-    public function removeContacts(AddContactsRequest $request)
+    public function removeContacts(AddContactsRequest $request):bool
     {
         $this->user->contacts()->detach($request->input('ids'));
         foreach ($request->input('ids') as  $id) {
@@ -180,19 +193,27 @@ class UserService
         return true;
     }
 
-    public function getContactsCount()
+    public function removeIgnoreContacts(AddContactsRequest $request):bool
+    {
+       /* $this->user->contacts()->whereIn('id', $request->input('ids'))->wherePivot('')
+        }*/
+        return true;
+    }
+
+    public function getContactsCount():int
     {
         return $this->user->contacts()->wherePivot('status','active')->count();
     }
 
 
-    public function getContactsBlockedCount()
+    public function getContactsBlockedCount():int
     {
         return $this->user->contacts()->wherePivot('blocked', true)->count();
     }
 
-    public function getContactsIgnoredCount()
+    public function getContactsIgnoredCount():int
     {
         return $this->user->contacts()->wherePivot('ignored', true)->count();
     }
+
 }

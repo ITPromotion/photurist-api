@@ -124,8 +124,12 @@ class UserController extends Controller
         return new UserPhoneResource(['result' => $users]);
     }
 
-    public function removeBlockContacts()
+    public function removeIgnoredContacts(AddContactsRequest $request)
     {
+        $userService = new UserService(Auth::user());
 
+        $users = $userService->removeIgnoreContacts($request);
+
+        return new UserPhoneResource(['result' => $users]);
     }
 }
