@@ -42,7 +42,7 @@ class UserService
             }
 
             $this->user->contacts()->update([
-                'new' => false
+                'new' => false,
             ]);
         }
 
@@ -214,6 +214,29 @@ class UserService
     public function getContactsIgnoredCount():int
     {
         return $this->user->contacts()->wherePivot('ignored', true)->count();
+    }
+
+    public function getUsers(Request $request):Collection
+    {
+
+        $UsersQuery = User::query();
+
+        if(is_numeric($request->input('offset')))
+            $UsersQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $UsersQuery->limit($request->input('limit'));
+
+        if($request->input('search')){
+
+            $search = $request->input('search');
+
+            $UsersQuery
+                ->where('phone', 'LIKE', "%{$search}%")
+                ->orWhere('login', 'LIKE', "%{$search}%");
+        }
+
+        return $UsersQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
 }

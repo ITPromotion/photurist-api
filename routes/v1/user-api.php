@@ -62,6 +62,8 @@ Route::group(['middleware' => 'block_user'], function () {
 
     Route::get('/get-contacts', [UserController::class, 'getContactsActive']);
 
+    Route::get('/get-users', [UserController::class, 'getUsers']);
+
     Route::post('/add-block-contacts', [UserController::class, 'addContactsBlock']);
 
     Route::get('/get-block-contacts', [UserController::class, 'getContactsBlock']);
