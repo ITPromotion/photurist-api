@@ -46,7 +46,7 @@ Route::post('/test-push', function (Request $request) {
 Route::post('/send', function (Request $request) {
 
 
-    try {
+   // try {
         $postcard =  \App\Models\Postcard::find($request->postcard_id);
 
         $tokens = \App\Models\User::find($request->user_id)->device->pluck('token')->toArray();
@@ -61,9 +61,9 @@ Route::post('/send', function (Request $request) {
                 'postcard_id' => $postcard->id,
             ];
             dispatch(new App\Jobs\NotificationJob($notification));
-    } catch (\Throwable $th) {
+  //  } catch (\Throwable $th) {
         //throw $th;
-    }
+    //}
 });
 
 /* Checking OTP code */
