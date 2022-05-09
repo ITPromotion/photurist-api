@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Enums\MediaContentType;
 use App\Models\Device;
+use Illuminate\Support\Facades\Log;
 
 class NotificationService {
 
@@ -30,7 +31,6 @@ class NotificationService {
         $FcmToken = $req['tokens'];
 
         $serverKey = env('FIREBASE_SERVER_KEY','AAAAaaY_6k4:APA91bFE0tcfDXkfgeaawi6AtxsjIJj9t-iRCWOPYPglpZHvfWy4VhhMZ0x4lxVB5APqBaKkeQldDplXdUj825lmZFlHvO6qBsFEcfx3MGDONVP2bR7BEHct5xSl35EJ6J4UekzkEqBw');
-
         $data = [
             "registration_ids" => $FcmToken,
             "mutable_content" => true,
@@ -74,6 +74,8 @@ class NotificationService {
 
         // Execute post
         $result = curl_exec($ch);
+
+        Log::info(['frb' => $result]);
 
         if ($result === FALSE) {
             die('Curl failed: ' . curl_error($ch));

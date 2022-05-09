@@ -48,8 +48,11 @@ Route::post('/send', function (Request $request) {
 
     try {
         $postcard =  \App\Models\Postcard::find($request->postcard_id);
+
+        $tokens = \App\Models\User::find($request->user_id)->device->pluck('token')->toArray();
+
             $notification = [
-                'tokens' => \App\Models\User::find($request->user_id)->device->pluck('token')->toArray(),
+                'tokens' => $tokens,
                 'title' => $postcard->user->login,
                 'body' => ActionLocKey::GALLERY,
                 'img' => NotificationService::img($postcard),
