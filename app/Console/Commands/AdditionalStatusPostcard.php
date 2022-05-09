@@ -92,6 +92,8 @@ class AdditionalStatusPostcard extends Command
 
                     $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY;
 
+                    Log::info($userTokens);
+
                     $notification = [
                         'tokens' => $userTokens,
                         'title' => $postcard->user->login,
