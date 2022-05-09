@@ -65,6 +65,8 @@ class AdditionalStatusPostcard extends Command
 
                 $user = $postcard->user;
 
+                $userTokens = [];
+
                // try {
 
                     if($postcard->additional_postcard_id){
