@@ -65,7 +65,7 @@ class AdditionalStatusPostcard extends Command
 
                 $user = $postcard->user;
 
-                try {
+               // try {
 
                     if($postcard->additional_postcard_id){
                         $mainPostcard = Postcard::find($postcard->additional_postcard_id);
@@ -73,6 +73,9 @@ class AdditionalStatusPostcard extends Command
                             ->where('postcard_id', $mainPostcard->id)
                             ->where('status', PostcardStatus::ACTIVE)->pluck('user_id')
                             ->get();
+
+                        Log::info(['mailingUserIds' => $mailingUserIds]);
+
                         if($mailingUserIds->isNotEmpty()) {
                             $mailingUserIds = $mailingUserIds->toArray();
 
@@ -92,7 +95,7 @@ class AdditionalStatusPostcard extends Command
 
                     $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY;
 
-                    Log::info($userTokens);
+                    Log::info(['token' => $userTokens]);
 
                     $notification = [
                         'tokens' => $userTokens,
@@ -120,9 +123,9 @@ class AdditionalStatusPostcard extends Command
                     // ]);
                     dispatch(new NotificationJob($notification));
 
-                } catch (\Throwable $th) {
+ //               } catch (\Throwable $th) {
                     //throw $th;
-                }
+  //              }
 
             };
         }
