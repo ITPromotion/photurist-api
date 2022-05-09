@@ -116,6 +116,8 @@ class AdditionalStatusPostcard extends Command
                     //         ->where('status', \App\Enums\PostcardStatus::ACTIVE)
                     //         ->count()
                     // ]);
+                    dispatch(new NotificationJob($notification));
+
                 } catch (\Throwable $th) {
                     //throw $th;
                 }
