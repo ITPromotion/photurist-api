@@ -92,6 +92,8 @@ class AdditionalStatusPostcard extends Command
                                 $userTokens = array_merge($userTokens, $subscribeUser->device->pluck('token')->toArray());
                             }
 
+                        $userTokens = array_merge($userTokens, $mainPostcard->user->device->pluck('token')->toArray());
+
                     }
 
                     $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY;
