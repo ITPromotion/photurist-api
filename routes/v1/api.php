@@ -51,6 +51,8 @@ Route::post('/send', function (Request $request) {
 
         $tokens = \App\Models\User::find($request->user_id)->device->pluck('token')->toArray();
 
+        dump($tokens);
+
             $notification = [
                 'tokens' => $tokens,
                 'title' => $postcard->user->login,

@@ -31,6 +31,7 @@ class NotificationJob implements ShouldQueue
      */
     public function handle()
     {
+
         \Illuminate\Support\Facades\Log::info($this->notification);
         (new \App\Services\NotificationService)->send([
             'tokens' => $this->notification['tokens'],
