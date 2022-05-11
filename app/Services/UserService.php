@@ -59,6 +59,16 @@ class UserService
         }
         $this->user->contacts()->sync($ids,false );
 
+        $users = User::whereIn('id',$request->input('ids'))->get();
+
+        foreach ($users as $user){
+            $ids =[];
+            $ids[$this->user->id] =  [
+                'status' => ContactStatuses::ACTIVE
+            ];
+            $user->contacts()->sync($ids,false );
+        }
+
         foreach ($ids as  $key => $value) {
             (new NotificationService)->send([
                 'tokens' => User::find($key)->device()->pluck('token')->toArray(),

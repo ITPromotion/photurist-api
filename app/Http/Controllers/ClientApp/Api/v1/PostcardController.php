@@ -16,6 +16,7 @@ use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
 use App\Jobs\MediaContentCrop;
+use App\Models\AdditionallyView;
 use App\Models\AudioData;
 use App\Models\MediaContent;
 use App\Models\Postcard;
@@ -156,7 +157,20 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                     'additionally.user:id,login',
                     'userPostcardNotifications',
                 );
+
+            if($postcard->additionally){
+                $newAdditionallyCount = $postcard->additionally()->count();
+            } else {
+                $newAdditionallyCount = 0;
+            }
+
                 foreach ($postcard->additionally as $additionalPostcard){
+
+                    if(AdditionallyView::where('postcard_id', $additionalPostcard->id)
+                        ->where('user_id', Auth::id())->first()){
+                        $newAdditionallyCount--;
+                    }
+
                     if($additionalPostcard->user_id==Auth::id()){
                         $additionalPostcard->author = true;
                     } else {
@@ -178,6 +192,8 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                     };
 
                 }
+                $postcard->new_additionally_count = $newAdditionallyCount;
+
                 $postcards[] = $postcard;
         }
 
@@ -532,8 +548,18 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
             }else{
                 $postcard->author = false;
             }
-
+            if($postcard->additionally){
+                $newAdditionallyCount = $postcard->additionally()->count();
+            } else {
+                $newAdditionallyCount = 0;
+            }
             foreach ($postcard->additionally as $additionalPostcard) {
+
+                if(AdditionallyView::where('postcard_id', $additionalPostcard->id)
+                        ->where('user_id', Auth::id())->first()){
+                    $newAdditionallyCount --;
+                }
+
                 if ($additionalPostcard->user_id == Auth::id()) {
                     $additionalPostcard->author = true;
                 } else {
@@ -554,6 +580,7 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                         $additionalPostcard->save = 0;
                     };
             }
+            $postcard->new_additionally_count = $newAdditionallyCount;
         }
 
         return new PostcardCollection($postcards);
@@ -622,6 +649,15 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
             ->update([
                 'view' => true,
             ]);
+    }
+
+    public function setViewAdditionally($id)
+    {
+        AdditionallyView::updateOrCreate(
+            ['postcard_id'=> $id, 'user_id' => Auth::id()],
+            ['view' => true]
+        );
+
     }
 
     public function notViewQuantity()

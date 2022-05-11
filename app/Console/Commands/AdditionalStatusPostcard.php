@@ -98,7 +98,7 @@ class AdditionalStatusPostcard extends Command
 
                     $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY;
 
-                    Log::info(['token' => $userTokens]);
+                    Log::info(['tokens' => $userTokens]);
 
                     $notification = [
                         'tokens' => $userTokens,
@@ -109,7 +109,7 @@ class AdditionalStatusPostcard extends Command
                         'user_id' => $user->id,
                         'postcard_id' => $postcard->id,
                         'main_postcard_id' => $postcard->additional_postcard_id,
-
+                        'additionally_count' => null,
                     ];
                     // (new NotificationService)->send([
                     //     'users' => $user->device->pluck('token')->toArray(),

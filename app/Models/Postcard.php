@@ -52,6 +52,15 @@ class Postcard extends Model
         }
         return false;
     }
+
+    public function getViewAttribute() {
+        $favorite = $this->additionalyViewUsers()->wherePivot('user_id', \Auth::user()->id ?? null)->first();
+        if ($favorite) {
+            return true;
+        }
+        return false;
+    }
+
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -131,6 +140,11 @@ class Postcard extends Model
 
     public function favorites() {
         return $this->BelongsToMany(User::class, 'favorites')->withPivot('user_id', 'postcard_id');
+    }
+
+    public function additionalyViewUsers()
+    {
+        return $this->belongsToMany(User::class, 'additionally_views')->withPivot('user_id', 'postcard_id');
     }
 
     public function users()
