@@ -15,7 +15,7 @@ class AdminPanelUserService
         $request->validate([
             'search'    => 'nullable|string',
             'sort'      => 'in:asc,desc|nullable',
-            'sort_field'=> 'in:login,id, created_at|nullable',
+            'sort_field'=> 'in:login,id,created_at|nullable',
             'status'    => 'in:created,active,blocked'
         ]);
 

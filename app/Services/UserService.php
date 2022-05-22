@@ -11,6 +11,7 @@ use App\Http\Requests\ClientApp\User\CheckContactsRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use phpDocumentor\Reflection\Types\Boolean;
 use App\Enums\ActionLocKey;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,8 @@ class UserService
 
         foreach($request->input('ids') as $id){
             $ids[$id]=  [
-                    'status' => ContactStatuses::ACTIVE
+                    'status' => ContactStatuses::ACTIVE,
+                    'contact' => true,
             ];
         }
         $this->user->contacts()->sync($ids,false );
@@ -64,7 +66,8 @@ class UserService
         foreach ($users as $user){
             $ids =[];
             $ids[$this->user->id] =  [
-                'status' => ContactStatuses::ACTIVE
+                'status' => ContactStatuses::ACTIVE,
+                'contact' => true,
             ];
             $user->contacts()->sync($ids,false );
         }
@@ -90,7 +93,13 @@ class UserService
     public function getContactsActive(Request $request):Collection
     {
 
-        $contactsQuery = $this->user->contacts();
+        $request->validate([
+            'search'    => 'nullable|string',
+            'sort'      => 'nullable|in:asc,desc|nullable',
+            'sort_field'=> 'in:login,id,created_at|nullable',
+        ]);
+
+        $contactsQuery = $this->user->contacts()->withPivot('contact', 'blocked', 'ignored', 'phone_book', 'new', 'status', 'created_at');
 
         if(is_numeric($request->input('offset')))
             $contactsQuery->offset($request->input('offset'));
@@ -107,7 +116,20 @@ class UserService
                 ->orWhere('login', 'LIKE', "%{$search}%");
         }
 
-        return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
+        $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar');
+
+        if($request->input('sort')&&$request->input('sort_field')== 'created_at'){
+            $contactsQuery->orderBy('contacts_users.'.$request->input('sort_field'), $request->input('sort'));
+        }
+
+        if($request->input('sort')&&$request->input('sort_field')){
+            if($request->input('sort_field') == 'login'){
+                $contactsQuery->orderBy($request->input('sort_field'), $request->input('sort'));
+            }
+        }
+
+
+        return $contactsQuery->get();
     }
 
     public function addContactsBlock(AddContactsRequest $request):bool
@@ -185,9 +207,16 @@ class UserService
     public function removeContacts(AddContactsRequest $request):bool
     {
         $this->user->contacts()->detach($request->input('ids'));
+
+        $userId = Auth::id();
+        foreach ($request->input('ids') as $id){
+            $contact = User::findOrFail($id);
+            $contact->contacts()->detach($userId);
+        }
+
         foreach ($request->input('ids') as  $id) {
             (new NotificationService)->send([
-                'users' => User::find($id)->device()->pluck('token')->toArray(),
+                'tokens' => User::find($id)->device()->pluck('token')->toArray(),
                 'title' => $this->user->login,
                 'body' => __('notifications.remov_contacts'),
                 'img' => $this->user->avatar,
@@ -205,8 +234,20 @@ class UserService
 
     public function removeIgnoreContacts(AddContactsRequest $request):bool
     {
-       /* $this->user->contacts()->whereIn('id', $request->input('ids'))->wherePivot('')
-        }*/
+        $contacts = User::whereIn('id', $request->input('ids'))->get();
+
+        $this->user->contacts()->updateExistingPivot($contacts, array('ignored' => false), false);
+        return true;
+    }
+
+    public function removeBlockedContacts(AddContactsRequest $request):bool
+    {
+        foreach ($request->input('ids') as $id){
+            $contact = User::findOrfail($id);
+            $contact->contacts()->detach($this->user);
+        }
+
+        $this->user->contacts()->detach($request->input('ids'));
         return true;
     }
 

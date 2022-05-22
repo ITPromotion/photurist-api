@@ -78,6 +78,10 @@ Route::group(['middleware' => 'block_user'], function () {
 
     Route::put('/remove-contacts', [UserController::class, 'removeContacts']);
 
+    Route::put('/remove-ignore-contacts', [UserController::class, 'removeIgnoredContacts']);
+
+    Route::put('/remove-blocked-contacts', [UserController::class, 'removeBlockedContacts']);
+
 
     /* Remove postcard from list */
 
