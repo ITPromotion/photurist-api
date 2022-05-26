@@ -316,10 +316,12 @@ class UserService
         }
 
         });
-        $UsersQuery->select('users.id','users.phone', 'users.login', 'users.avatar', 'contacts_users.user_id', 'contacts_users.user_id');
+        $UsersQuery->select('users.id','users.phone', 'users.login', 'users.avatar', 'contacts_users.user_id')
+                    ->selectRaw('IF(contacts_users.user_id=?, 1, 0) as sort',[$user->id]);
                   // ->groupBy('users.id');
 
-        $UsersQuery->orderBy('contacts_users.updated_at', 'desc')
+        $UsersQuery->orderBy('sort', 'desc')
+                    ->orderBy('contacts_users.updated_at', 'desc')
                     ->groupBy('users.id');
 
         return $UsersQuery->get();
