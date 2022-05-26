@@ -12,6 +12,7 @@ use App\Http\Requests\ClientApp\Postcard\GetPostcardsFromIdsRequest;
 use App\Http\Requests\ClientApp\Postcard\PostcardResendRequest;
 use App\Http\Requests\ClientApp\Postcard\SendPostcardToContactRequest;
 use App\Http\Requests\ClientApp\Postcard\SetStatusPostcardRequest;
+use App\Http\Requests\ClientApp\Postcard\SetViewAdditionallyFromIdsRequest;
 use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
@@ -658,6 +659,17 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
             ['view' => true]
         );
 
+    }
+
+    public function setViewAdditionallyFromIds(SetViewAdditionallyFromIdsRequest $request)
+    {
+        foreach($request->input('postcard_ids') as $id){
+
+        AdditionallyView::updateOrCreate(
+            ['postcard_id' => $id, 'user_id' => Auth::id()],
+            ['view' => true]
+        );
+    }
     }
 
     public function notViewQuantity()

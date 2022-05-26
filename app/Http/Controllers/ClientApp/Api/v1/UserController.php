@@ -159,11 +159,8 @@ class UserController extends Controller
 
         $users = $userService->getUsersForSearch($request);
 
-        $contactsIgnoredCount = $userService->getContactsIgnoredCount();
-
         return new UserPhoneResource([
             'users' => $users,
-            'contacts_ignored_count' => $contactsIgnoredCount,
         ]);
     }
 }

@@ -29,7 +29,8 @@ Route::post('/postcard-resend', [PostcardControllerAlias::class,'postcardResend'
 /* set view additionally postcard */
 Route::put('/set-view-additionally/{id}', [PostcardControllerAlias::class,'setViewAdditionally']);
 
-
+/* set view additionally postcard */
+Route::put('/set-view-additionally-from-ids', [PostcardControllerAlias::class,'setViewAdditionallyFromIds']);
 
 Route::group(['middleware' => 'block_user'], function () {
     /* Resource Api */
