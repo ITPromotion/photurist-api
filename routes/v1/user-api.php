@@ -76,6 +76,8 @@ Route::group(['middleware' => 'block_user'], function () {
 
     Route::get('/get-ignore-contacts', [UserController::class, 'getContactsIgnore']);
 
+    Route::get('/get-contacts-search', [UserController::class, 'getContactsSearch']);
+
     Route::put('/remove-contacts', [UserController::class, 'removeContacts']);
 
     Route::put('/remove-ignore-contacts', [UserController::class, 'removeIgnoredContacts']);

@@ -290,4 +290,39 @@ class UserService
         return $UsersQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
+    public function getUsersForSearch(Request $request)
+    {
+        $user = Auth::user();
+
+        $UsersQuery = User::where('users.status', UserStatus::ACTIVE)
+            ->leftJoin('contacts_users', 'users.id', '=', 'contacts_users.user_id')
+            ->where(function ($query) use ($request){
+                $query->where('contacts_users.contact',false)
+                    ->orWhereNull('contacts_users.contact');
+
+        if(is_numeric($request->input('offset')))
+            $query->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $query->limit($request->input('limit'));
+
+        if($request->input('search')){
+
+            $search = $request->input('search');
+
+            $query
+                ->where('phone', 'LIKE', "%{$search}%")
+                ->orWhere('login', 'LIKE', "%{$search}%");
+        }
+
+        });
+        $UsersQuery->select('users.id','users.phone', 'users.login', 'users.avatar', 'contacts_users.user_id', 'contacts_users.user_id');
+                  // ->groupBy('users.id');
+
+        $UsersQuery->orderBy('contacts_users.updated_at', 'desc')
+                    ->groupBy('users.id');
+
+        return $UsersQuery->get();
+    }
+
 }

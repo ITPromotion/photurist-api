@@ -152,4 +152,18 @@ class UserController extends Controller
             'users' => $users,
         ]);
     }
+
+    public function getContactsSearch(Request $request):UserPhoneResource
+    {
+        $userService = new UserService(Auth::user());
+
+        $users = $userService->getUsersForSearch($request);
+
+        $contactsIgnoredCount = $userService->getContactsIgnoredCount();
+
+        return new UserPhoneResource([
+            'users' => $users,
+            'contacts_ignored_count' => $contactsIgnoredCount,
+        ]);
+    }
 }
