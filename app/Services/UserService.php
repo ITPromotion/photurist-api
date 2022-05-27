@@ -41,8 +41,9 @@ class UserService
                     'phone_book' => true,
                 ];
             }
-
-            $this->user->contacts()->update([
+            $this->user->contactsUsers()
+                 ->sync($ids,false );
+            $this->user->contactsUsers()->update([
                 'new' => false,
             ]);
         }
@@ -138,6 +139,7 @@ class UserService
         foreach($request->input('ids') as $id){
             $ids[$id]=  [
                 'blocked' => true,
+                'status' => PostcardStatus::ACTIVE,
             ];
         }
         $this->user->contacts()->sync($ids,false );
@@ -184,7 +186,7 @@ class UserService
     public function getContactsIgnore(Request $request):Collection
     {
 
-        $contactsQuery = $this->user->contacts()->wherePivot('ignored', true);
+        $contactsQuery = $this->user->ignoreContacts();
 
         if(is_numeric($request->input('offset')))
             $contactsQuery->offset($request->input('offset'));
@@ -236,7 +238,8 @@ class UserService
     {
         $contacts = User::whereIn('id', $request->input('ids'))->get();
 
-        $this->user->contacts()->updateExistingPivot($contacts, array('ignored' => false), false);
+        $this->user->ignoreContacts()->updateExistingPivot($contacts, array('ignored' => false), false);
+
         return true;
     }
 
@@ -244,7 +247,7 @@ class UserService
     {
         foreach ($request->input('ids') as $id){
             $contact = User::findOrfail($id);
-            $contact->contacts()->detach($this->user);
+            $contact->blockContacts()->detach($this->user);
         }
 
         $this->user->contacts()->detach($request->input('ids'));
@@ -259,33 +262,34 @@ class UserService
 
     public function getContactsBlockedCount():int
     {
-        return $this->user->contacts()->wherePivot('blocked', true)->count();
+        return $this->user->blockContacts()->count();
     }
 
     public function getContactsIgnoredCount():int
     {
-        return $this->user->contacts()->wherePivot('ignored', true)->count();
+        return $this->user->ignoreContacts()->count();
     }
 
     public function getUsers(Request $request):Collection
     {
+        $UsersQuery = User::where('status',UserStatus::ACTIVE)->where('users.id','!=', Auth::id() )->with('contactsUsers');
 
-        $UsersQuery = User::query();
 
-        if(is_numeric($request->input('offset')))
-            $UsersQuery->offset($request->input('offset'));
+                if (is_numeric($request->input('offset')))
+                    $UsersQuery->offset($request->input('offset'));
 
-        if(is_numeric($request->input('limit')))
-            $UsersQuery->limit($request->input('limit'));
+                if (is_numeric($request->input('limit')))
+                    $UsersQuery->limit($request->input('limit'));
 
-        if($request->input('search')){
+                if ($request->input('search')) {
 
-            $search = $request->input('search');
+                    $search = $request->input('search');
 
-            $UsersQuery
-                ->where('phone', 'LIKE', "%{$search}%")
-                ->orWhere('login', 'LIKE', "%{$search}%");
-        }
+                    $UsersQuery
+                        ->where('phone', 'LIKE', "%{$search}%")
+                        ->orWhere('login', 'LIKE', "%{$search}%");
+                }
+        $UsersQuery->orderBy('login');
 
         return $UsersQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
@@ -293,6 +297,8 @@ class UserService
     public function getUsersForSearch(Request $request)
     {
         $user = Auth::user();
+
+
 
         $UsersQuery = User::where('users.status', UserStatus::ACTIVE)
             ->leftJoin('contacts_users', 'users.id', '=', 'contacts_users.user_id')

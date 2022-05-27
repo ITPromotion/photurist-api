@@ -14,6 +14,8 @@ class PostcardCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $objects = parent::toArray($request);
+
+        return $objects;
     }
 }

@@ -128,7 +128,8 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
                     $postcard->start = $postcardCollection->start;
                     $postcard->stop = $postcardCollection->stop;
                 }
-                $postcard->view = $postcardCollection->view;
+                $postcard->view = 'asdasdasdasdd';
+                $postcard->postcard_view = $postcardCollection->view;
                 $postcard->author = $postcardCollection->author;
                 $postcard->sort = $postcardCollection->sort;
 
