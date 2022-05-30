@@ -7,7 +7,9 @@ namespace App\Services;
 use App\Enums\ActionLocKey;
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
+use App\Http\Requests\ClientApp\Postcard\SetViewAdditionallyFromIdsRequest;
 use App\Jobs\NotificationJob;
+use App\Models\AdditionallyView;
 use App\Models\GeoData;
 use App\Models\MediaContent;
 use App\Models\Postcard;
@@ -25,7 +27,7 @@ class PostcardService
 {
     private $postcard;
 
-    public function __construct(Postcard $postcard)
+    public function __construct(Postcard $postcard = null)
     {
         $this->postcard = $postcard;
     }
@@ -85,8 +87,10 @@ class PostcardService
         }
         $this->postcard->restore();
 
-        if($request->input('additional_postcard_id'))
+        if($request->input('additional_postcard_id')){
             $this->postcard->additional_postcard_id = $request->input('additional_postcard_id');
+            $this->setViewAdditionallyFromIds($request->input('additional_postcard_id'));
+        }
 
         $this->postcard->status = PostcardStatus::LOADING;
 
@@ -188,6 +192,17 @@ class PostcardService
             'start' => Carbon::now(),
             'stop' => Carbon::now()->addMinutes($this->postcard->interval_wait),
         ]);
+    }
+
+    public function setViewAdditionallyFromIds(SetViewAdditionallyFromIdsRequest $request)
+    {
+        foreach($request->input('postcard_ids') as $id){
+
+            AdditionallyView::updateOrCreate(
+                ['postcard_id' => $id, 'user_id' => Auth::id()],
+                ['view' => true]
+            );
+        }
     }
 
 

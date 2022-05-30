@@ -664,13 +664,9 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
 
     public function setViewAdditionallyFromIds(SetViewAdditionallyFromIdsRequest $request)
     {
-        foreach($request->input('postcard_ids') as $id){
+        $postcardService = new PostcardService();
 
-        AdditionallyView::updateOrCreate(
-            ['postcard_id' => $id, 'user_id' => Auth::id()],
-            ['view' => true]
-        );
-    }
+        return $postcardService->setViewAdditionallyFromIds($request);
     }
 
     public function notViewQuantity()

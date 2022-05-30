@@ -67,6 +67,8 @@ class AdditionalStatusPostcard extends Command
 
                 $userTokens = [];
 
+                $additionallyTokens = [];
+
                 try {
 
                     if($postcard->additional_postcard_id){
@@ -89,10 +91,10 @@ class AdditionalStatusPostcard extends Command
 
                         if($mainPostcard->users)
                             foreach ($mainPostcard->users as $subscribeUser){
-                                $userTokens = array_merge($userTokens, $subscribeUser->device->pluck('token')->toArray());
+                                $additionallyTokens = array_merge($additionallyTokens, $subscribeUser->device->pluck('token')->toArray());
                             }
 
-                        $userTokens = array_merge($userTokens, $mainPostcard->user->device->pluck('token')->toArray());
+                        $additionallyTokens = array_merge($additionallyTokens, $mainPostcard->user->device->pluck('token')->toArray());
 
                     }
 
@@ -111,20 +113,22 @@ class AdditionalStatusPostcard extends Command
                         'main_postcard_id' => $postcard->additional_postcard_id,
                         'additionally_count' => null,
                     ];
-                    // (new NotificationService)->send([
-                    //     'users' => $user->device->pluck('token')->toArray(),
-                    //     'title' => $postcard->user->login,
-                    //     'body' => __('notifications.additional_postcard'),
-                    //     'img' => $postcard->mediaContents[0]->link,
-                    //     'postcard_id' => $postcard->id,
-                    //     'action_loc_key' => ActionLocKey::ADDITIONAL_POSTCARD,
-                    //     'badge' => \Illuminate\Support\Facades\DB::table('postcards_mailings')
-                    //         ->where('view', 0)
-                    //         ->where('user_id',$user->id)
-                    //         ->where('status', \App\Enums\PostcardStatus::ACTIVE)
-                    //         ->count()
-                    // ]);
                     dispatch(new NotificationJob($notification));
+
+                    if($postcard->additional_postcard_id) {
+                        $notification = [
+                            'tokens' => $additionallyTokens,
+                            'title' => $postcard->user->login,
+                            'body' => __('notifications.postcard_additionally_status_active'),
+                            'img' => NotificationService::img($postcard),
+                            'action_loc_key' => $actionLocKey,
+                            'user_id' => $user->id,
+                            'postcard_id' => $postcard->id,
+                            'main_postcard_id' => $postcard->additional_postcard_id,
+                            'additionally_count' => null,
+                        ];
+                        dispatch(new NotificationJob($notification));
+                    }
 
                } catch (\Throwable $th) {
                     //throw $th;

@@ -42,7 +42,7 @@ class UserService
                 ];
             }
             $this->user->contactsUsers()
-                 ->sync($ids,false );
+                 ->syncWithoutDetaching($ids);
             $this->user->contactsUsers()->update([
                 'new' => false,
             ]);
@@ -60,7 +60,7 @@ class UserService
                     'contact' => true,
             ];
         }
-        $this->user->contacts()->sync($ids,false );
+        $this->user->contacts()->syncWithoutDetaching($ids );
 
         $users = User::whereIn('id',$request->input('ids'))->get();
 
@@ -70,7 +70,7 @@ class UserService
                 'status' => ContactStatuses::ACTIVE,
                 'contact' => true,
             ];
-            $user->contacts()->sync($ids,false );
+            $user->contacts()->syncWithoutDetaching($ids );
         }
 
         foreach ($ids as  $key => $value) {
@@ -142,7 +142,7 @@ class UserService
                 'status' => PostcardStatus::ACTIVE,
             ];
         }
-        $this->user->contacts()->sync($ids,false );
+        $this->user->contacts()->syncWithoutDetaching($ids);
 
         return true;
     }
@@ -178,7 +178,7 @@ class UserService
                 'ignored' => true,
             ];
         }
-        $this->user->contacts()->sync($ids,false );
+        $this->user->contacts()->syncWithoutDetaching($ids,false );
 
         return true;
     }
