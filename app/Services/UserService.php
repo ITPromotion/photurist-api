@@ -176,6 +176,16 @@ class UserService
                 ->orWhere('login', 'LIKE', "%{$search}%");
         }
 
+        if($request->input('sort')&&$request->input('sort_field')== 'created_at'){
+            $contactsQuery->orderBy('contacts_users.'.$request->input('sort_field'), $request->input('sort'));
+        }
+
+        if($request->input('sort')&&$request->input('sort_field')){
+            if($request->input('sort_field') == 'login'){
+                $contactsQuery->orderBy($request->input('sort_field'), $request->input('sort'));
+            }
+        }
+
         return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
     }
 
@@ -210,6 +220,16 @@ class UserService
             $contactsQuery
                 ->where('phone', 'LIKE', "%{$search}%")
                 ->orWhere('login', 'LIKE', "%{$search}%");
+        }
+
+        if($request->input('sort')&&$request->input('sort_field')== 'created_at'){
+            $contactsQuery->orderBy('contacts_users.'.$request->input('sort_field'), $request->input('sort'));
+        }
+
+        if($request->input('sort')&&$request->input('sort_field')){
+            if($request->input('sort_field') == 'login'){
+                $contactsQuery->orderBy($request->input('sort_field'), $request->input('sort'));
+            }
         }
 
         return $contactsQuery->select('users.id','users.phone', 'users.login', 'users.avatar')->get();
