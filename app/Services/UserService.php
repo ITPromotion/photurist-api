@@ -39,10 +39,11 @@ class UserService
             foreach ($users as $user) {
                 $ids[$user->id] = [
                     'phone_book' => true,
+                    'status' => UserStatus::ACTIVE,
                 ];
             }
             $this->user->contactsUsers()
-                 ->syncWithoutDetaching($ids);
+                 ->sync($ids, false);
             $this->user->contactsUsers()->update([
                 'new' => false,
             ]);
@@ -60,7 +61,7 @@ class UserService
                     'contact' => true,
             ];
         }
-        $this->user->contacts()->syncWithoutDetaching($ids );
+        $this->user->contactsUsers()->sync($ids, false );
 
         $users = User::whereIn('id',$request->input('ids'))->get();
 
