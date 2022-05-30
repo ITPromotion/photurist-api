@@ -90,7 +90,7 @@ class PostcardController extends Controller
              and `postcards`.`deleted_at` is null)
 					UNION DISTINCT
          select pc1.*, postcards_mailings.start, postcards_mailings.stop,
-                IFNULL(postcards_mailings.start, pc1.created_at) as sort,
+                IFNULL(postcards_mailings.start, pc1.updated_at) as sort,
                 IF(pc1.user_id=?, 1, 0) as author,
                 postcards_mailings.view
              from `postcards` as pc1

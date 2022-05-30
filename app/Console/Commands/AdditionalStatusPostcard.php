@@ -7,6 +7,7 @@ use App\Enums\PostcardStatus;
 use App\Models\Postcard;
 use App\Models\User;
 use App\Services\NotificationService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -99,6 +100,13 @@ class AdditionalStatusPostcard extends Command
                     }
 
                     $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY;
+
+                    DB::table('postcards_mailings')
+                        ->where('postcard_id', $mainPostcard->id)
+                        ->where('status', PostcardStatus::ACTIVE)
+                        ->update(['start_mailing' => Carbon::now()]);
+
+                    $mainPostcard->save();
 
                     Log::info(['tokens' => $userTokens]);
 
