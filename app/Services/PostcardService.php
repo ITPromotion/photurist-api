@@ -89,7 +89,7 @@ class PostcardService
 
         if($request->input('additional_postcard_id')){
             $this->postcard->additional_postcard_id = $request->input('additional_postcard_id');
-            $this->setViewAdditionallyFromIds([$request->input('additional_postcard_id')]);
+           // $this->setViewAdditionallyFromIds([$request->input('additional_postcard_id')]);
         }
 
         $this->postcard->status = PostcardStatus::LOADING;
