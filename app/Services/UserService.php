@@ -29,14 +29,16 @@ class UserService
 
     public function checkContacts(CheckContactsRequest $request):Collection
     {
+
         $users = User::where('status', UserStatus::ACTIVE)
             ->whereIn('phone', $request->phones)
             ->select('id','phone', 'login', 'avatar')
             ->get();
 
         if($users->isNotEmpty()) {
-
+            $userIds = [];
             foreach ($users as $user) {
+                $userIds[] = $user->id;
                 $ids[$user->id] = [
                     'phone_book' => true,
                     'status' => UserStatus::ACTIVE,
@@ -49,7 +51,13 @@ class UserService
             ]);
         }
 
-        return $users;
+        $usersContacts = $this->user->contactsUsers()
+                        ->whereIn('users.id', $userIds)
+                        ->select('users.id','users.phone', 'users.login', 'users.avatar')
+                        ->withPivot('contact', 'blocked', 'ignored', 'phone_book', 'new', 'status', 'created_at')
+                        ->get();
+
+        return $usersContacts;
     }
 
     public function addContactsActive(AddContactsRequest $request):bool
