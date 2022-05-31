@@ -21,6 +21,12 @@ Route::put('/remove-audio/{id}', [PostcardControllerAlias::class,'removeAudio'])
 /* Get gallery */
 Route::get('/get-gallery', [PostcardControllerAlias::class,'getGallery']);
 
+/* Get tags */
+Route::get('/get-tags', [PostcardControllerAlias::class,'getTagData']);
+
+/* Get tags */
+Route::get('/get-postcards-by-tag', [PostcardControllerAlias::class,'getPostcardByTag']);
+
 
 /* Resend postcard */
 Route::post('/postcard-resend', [PostcardControllerAlias::class,'postcardResend']);

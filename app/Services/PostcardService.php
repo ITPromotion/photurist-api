@@ -7,7 +7,9 @@ namespace App\Services;
 use App\Enums\ActionLocKey;
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
+use App\Http\Requests\ClientApp\Postcard\GetPostcardsFromIdsRequest;
 use App\Http\Requests\ClientApp\Postcard\SetViewAdditionallyFromIdsRequest;
+use App\Http\Resources\PostcardCollection;
 use App\Jobs\NotificationJob;
 use App\Models\AdditionallyView;
 use App\Models\GeoData;
@@ -211,6 +213,123 @@ class PostcardService
                 ['view' => true]
             );
         }
+    }
+
+    public function getTagData(Request $request)
+    {
+        $tagDataQuery = TagData::query()
+                            ->select('tag', DB::raw('count(*) as total'))
+                            ->where('tag', 'LIKE', "%{$request->input('search')}%")
+                            ->groupBy('tag');
+                   if(is_numeric($request->input('offset')))
+                       $tagDataQuery->offset($request->input('offset'));
+
+                    if(is_numeric($request->input('limit')))
+                        $tagDataQuery->limit($request->input('limit'));
+
+        return $tagDataQuery->get();
+
+    }
+
+    public function getPostcardByTag(Request $request)
+    {
+        $tagData = TagData::where('tag', $request->input('search'))->get();
+
+
+        $ids = [];
+
+        if($tagData->isNotEmpty()){
+            foreach ($tagData->pluck('postcard_id') as $id){
+                $ids[] = $id;
+            };
+        }
+
+        $getPostcardsFromIdsRequest = new GetPostcardsFromIdsRequest();
+
+        $getPostcardsFromIdsRequest->replace(['postcard_ids' => $ids]);
+
+        return $this->getPostcardFromIds($getPostcardsFromIdsRequest);
+    }
+
+    public function getPostcardFromIds(GetPostcardsFromIdsRequest $request)
+    {
+        $user = Auth::user();
+        $postcards = Postcard::whereIn('id', $request->input('postcard_ids'))
+            ->with(
+                'user:id,login',
+                'textData',
+                'geoData',
+                'tagData',
+                'audioData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+                'additionally.textData',
+                'additionally.geoData',
+                'additionally.tagData',
+                'additionally.audioData',
+                'additionally.mediaContents.textData',
+                'additionally.mediaContents.geoData',
+                'additionally.mediaContents.audioData',
+                'additionally.user:id,login',
+            )->get();
+
+        foreach ($postcards as $postcard) {
+            $usersIds = $postcard->users()->pluck('user_id');
+
+            if($usersIds->search($user->id)!==false){
+                $postcard->save = 1;
+            } else {
+                $postcard->save = 0;
+            };
+
+            if($usersIds->search($user->id)!==false){
+                $postcard->save = 1;
+            } else {
+                $postcard->save = 0;
+            };
+
+            if ($postcard->user_id == Auth::id()) {
+                $postcard->author = true;
+            }else{
+                $postcard->author = false;
+            }
+            if($postcard->additionally){
+                $newAdditionallyCount = $postcard->additionally()->count();
+            } else {
+                $newAdditionallyCount = 0;
+            }
+            foreach ($postcard->additionally as $additionalPostcard) {
+
+                if(AdditionallyView::where('postcard_id', $additionalPostcard->id)
+                    ->where('user_id', Auth::id())->first()){
+                    $newAdditionallyCount --;
+                }
+
+                if ($additionalPostcard->user_id == Auth::id()) {
+                    $additionalPostcard->author = true;
+                } else {
+                    $additionalPostcard->author = false;
+                }
+
+                if ($postcard->user_id == Auth::id()) {
+                    $additionalPostcard->moderator = true;
+                } else {
+                    $additionalPostcard->moderator = false;
+                }
+
+                $usersIds = $additionalPostcard->users()->pluck('user_id');
+
+                if($usersIds->search($user->id)!==false){
+                    $additionalPostcard->save = 1;
+                } else {
+                    $additionalPostcard->save = 0;
+                };
+            }
+            $postcard->new_additionally_count = $newAdditionallyCount;
+        }
+
+        return $postcards;
     }
 
 

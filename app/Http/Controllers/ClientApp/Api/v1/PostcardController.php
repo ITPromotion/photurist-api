@@ -16,11 +16,13 @@ use App\Http\Requests\ClientApp\Postcard\SetViewAdditionallyFromIdsRequest;
 use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
+use App\Http\Resources\TagDataCollection;
 use App\Jobs\MediaContentCrop;
 use App\Models\AdditionallyView;
 use App\Models\AudioData;
 use App\Models\MediaContent;
 use App\Models\Postcard;
+use App\Models\TagData;
 use App\Models\TextData;
 use App\Models\User;
 use App\Services\PostcardService;
@@ -509,81 +511,9 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
 
     public function getPostcardFromIds(GetPostcardsFromIdsRequest $request)
     {
-        $user = Auth::user();
-        $postcards = Postcard::whereIn('id', $request->input('postcard_ids'))
-            ->with(
-                    'user:id,login',
-                    'textData',
-                    'geoData',
-                    'tagData',
-                    'audioData',
-                    'mediaContents.textData',
-                    'mediaContents.geoData',
-                    'mediaContents.audioData',
-                    'additionally.textData',
-                    'additionally.geoData',
-                    'additionally.tagData',
-                    'additionally.audioData',
-                    'additionally.mediaContents.textData',
-                    'additionally.mediaContents.geoData',
-                    'additionally.mediaContents.audioData',
-                    'additionally.user:id,login',
-                )->get();
+        $postcardService = new PostcardService();
 
-        foreach ($postcards as $postcard) {
-            $usersIds = $postcard->users()->pluck('user_id');
-
-            if($usersIds->search($user->id)!==false){
-                $postcard->save = 1;
-            } else {
-                $postcard->save = 0;
-            };
-
-            if($usersIds->search($user->id)!==false){
-                $postcard->save = 1;
-            } else {
-                $postcard->save = 0;
-            };
-
-            if ($postcard->user_id == Auth::id()) {
-                $postcard->author = true;
-            }else{
-                $postcard->author = false;
-            }
-            if($postcard->additionally){
-                $newAdditionallyCount = $postcard->additionally()->count();
-            } else {
-                $newAdditionallyCount = 0;
-            }
-            foreach ($postcard->additionally as $additionalPostcard) {
-
-                if(AdditionallyView::where('postcard_id', $additionalPostcard->id)
-                        ->where('user_id', Auth::id())->first()){
-                    $newAdditionallyCount --;
-                }
-
-                if ($additionalPostcard->user_id == Auth::id()) {
-                    $additionalPostcard->author = true;
-                } else {
-                    $additionalPostcard->author = false;
-                }
-
-                if ($postcard->user_id == Auth::id()) {
-                    $additionalPostcard->moderator = true;
-                } else {
-                    $additionalPostcard->moderator = false;
-                }
-
-                    $usersIds = $additionalPostcard->users()->pluck('user_id');
-
-                    if($usersIds->search($user->id)!==false){
-                        $additionalPostcard->save = 1;
-                    } else {
-                        $additionalPostcard->save = 0;
-                    };
-            }
-            $postcard->new_additionally_count = $newAdditionallyCount;
-        }
+        $postcards = $postcardService->getPostcardFromIds($request);
 
         return new PostcardCollection($postcards);
     }
@@ -752,5 +682,21 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
 
         $postcardService->postcardResend($request->input('receiver_id'));
     }
+
+    public function getTagData(Request $request)
+    {
+        $postcardService = new PostcardService();
+
+        return new TagDataCollection($postcardService->getTagData($request));
+    }
+
+    public function getPostcardByTag(Request $request)
+    {
+        $postcardService = new PostcardService();
+
+        return new TagDataCollection($postcardService->getPostcardByTag($request));
+    }
+
+
 
 }
