@@ -91,7 +91,7 @@ class PostcardService
         if($request->input('additional_postcard_id')){
             $this->postcard->additional_postcard_id = $request->input('additional_postcard_id');
             $setViewAdditionalyFromIdsRequest = new SetViewAdditionallyFromIdsRequest();
-            $setViewAdditionalyFromIdsRequest->replace(['postcard_ids' => [$request->input('additional_postcard_id')]]);
+            $setViewAdditionalyFromIdsRequest->replace(['postcard_ids' => [$this->postcard->id]]);
             $this->setViewAdditionallyFromIds($setViewAdditionalyFromIdsRequest);
         }
 
