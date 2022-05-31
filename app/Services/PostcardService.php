@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class PostcardService
@@ -89,7 +90,8 @@ class PostcardService
 
         if($request->input('additional_postcard_id')){
             $this->postcard->additional_postcard_id = $request->input('additional_postcard_id');
-            $this->setViewAdditionallyFromIds(['postcard_ids' => [$request->input('additional_postcard_id')]]);
+            Log::info(['postcard_ids' => [$request->input('additional_postcard_id')]]);
+            //$this->setViewAdditionallyFromIds(['postcard_ids' => [$request->input('additional_postcard_id')]]);
         }
 
         $this->postcard->status = PostcardStatus::LOADING;
