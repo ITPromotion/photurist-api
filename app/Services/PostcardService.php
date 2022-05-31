@@ -97,7 +97,7 @@ class PostcardService
 
             Log::info($setViewAdditionallyFromIdsRequest->all());
 
-            //$this->setViewAdditionallyFromIds($setViewAdditionallyFromIdsRequest);
+            $this->setViewAdditionallyFromIds($setViewAdditionallyFromIdsRequest);
         }
 
         $this->postcard->status = PostcardStatus::LOADING;
