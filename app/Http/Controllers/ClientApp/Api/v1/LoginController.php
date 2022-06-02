@@ -78,8 +78,10 @@ class LoginController extends Controller
         // if(env('APP_DEBUG')!='true'){
         //     return  response()->json([],201);
         // }
+        $user = User::where('phone', $phoneNumber)->first();
         return response()->json([
             'codeOTP'   => $otp->otp,
+            'user' => $user?true:false,
         ], 201);
 
     }
