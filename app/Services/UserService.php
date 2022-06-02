@@ -31,6 +31,7 @@ class UserService
     {
 
         $users = User::where('status', UserStatus::ACTIVE)
+            ->where('users.id','!=', Auth::id() )
             ->whereIn('phone', $request->phones)
             ->select('id','phone', 'login', 'avatar')
             ->get();
