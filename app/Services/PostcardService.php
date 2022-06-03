@@ -254,7 +254,7 @@ class PostcardService
     public function getUsersForPostcard(Request $request)
     {
         $tagDataQuery = User::query()
-            ->select('login', DB::raw('count(*) as total'))
+            ->select('id','login', DB::raw('count(*) as total'))
             ->where('login', 'LIKE', "%{$request->input('search')}%")
             ->groupBy('login');
         if(is_numeric($request->input('offset')))
