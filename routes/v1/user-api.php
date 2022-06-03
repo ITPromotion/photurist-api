@@ -27,6 +27,12 @@ Route::get('/get-tags', [PostcardControllerAlias::class,'getTagData']);
 /* Get tags */
 Route::get('/get-postcards-by-tag', [PostcardControllerAlias::class,'getPostcardByTag']);
 
+/* Get user for postcard */
+Route::get('/get-users-for-postcard', [PostcardControllerAlias::class,'getUsersForPostcard']);
+
+/* Get tags */
+Route::get('/get-postcards-by-user/', [PostcardControllerAlias::class,'getPostcardByUser']);
+
 
 /* Resend postcard */
 Route::post('/postcard-resend', [PostcardControllerAlias::class,'postcardResend']);

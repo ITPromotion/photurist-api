@@ -17,6 +17,7 @@ use App\Http\Resources\MediaContentResource;
 use App\Http\Resources\PostcardCollection;
 use App\Http\Resources\PostcardResource;
 use App\Http\Resources\TagDataCollection;
+use App\Http\Resources\UserSearchCollection;
 use App\Jobs\MediaContentCrop;
 use App\Models\AdditionallyView;
 use App\Models\AudioData;
@@ -701,11 +702,18 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
 
         return new TagDataCollection($postcardService->getPostcardByTag($request));
     }
-    public function get(Request $request)
+    public function getUsersForPostcard(Request $request)
     {
         $postcardService = new PostcardService();
 
-        return new TagDataCollection($postcardService->getPostcardByTag($request));
+        return new UserSearchCollection($postcardService->getUsersForPostcard($request));
+    }
+
+    public function getPostcardByUser(Request $request)
+    {
+        $postcardService = new PostcardService();
+
+        return new UserSearchCollection($postcardService->getPostcardByUser($request));
     }
 
 

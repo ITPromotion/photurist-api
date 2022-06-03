@@ -233,7 +233,7 @@ class PostcardService
 
     public function getPostcardByTag(Request $request)
     {
-        $tagData = TagData::where('tag', $request->input('search'))->with('postcards')->where('postcards.status', PostcardStatus::ACTIVE)->get();
+        $tagData = TagData::where('tag', $request->input('search'))->get();
 
 
         $ids = [];
@@ -251,12 +251,12 @@ class PostcardService
         return $this->getPostcardFromIds($getPostcardsFromIdsRequest);
     }
 
-    public function getUsers(Request $request)
+    public function getUsersForPostcard(Request $request)
     {
         $tagDataQuery = User::query()
             ->select('login', DB::raw('count(*) as total'))
-            ->where('tag', 'LIKE', "%{$request->input('search')}%")
-            ->groupBy('tag');
+            ->where('login', 'LIKE', "%{$request->input('search')}%")
+            ->groupBy('login');
         if(is_numeric($request->input('offset')))
             $tagDataQuery->offset($request->input('offset'));
 
@@ -265,6 +265,25 @@ class PostcardService
 
         return $tagDataQuery->get();
 
+    }
+
+    public function getPostcardByUser(Request $request)
+    {
+
+        $user = User::where('id', $request->input('user_id'))->first();
+
+        if($user){
+            foreach ($user->postcards as $postcard){
+
+                $ids[] = $postcard->id;
+            };
+        }
+
+        $getPostcardsFromIdsRequest = new GetPostcardsFromIdsRequest();
+
+        $getPostcardsFromIdsRequest->replace(['postcard_ids' => $ids]);
+
+        return $this->getPostcardFromIds($getPostcardsFromIdsRequest);
     }
 
     public function getPostcardFromIds(GetPostcardsFromIdsRequest $request)
