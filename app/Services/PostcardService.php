@@ -224,7 +224,7 @@ class PostcardService
                    if(is_numeric($request->input('offset')))
                        $tagDataQuery->offset($request->input('offset'));
 
-                    if(is_numeric($request->input('limit')))
+                   if(is_numeric($request->input('limit')))
                         $tagDataQuery->limit($request->input('limit'));
 
         return $tagDataQuery->get();
@@ -233,7 +233,7 @@ class PostcardService
 
     public function getPostcardByTag(Request $request)
     {
-        $tagData = TagData::where('tag', $request->input('search'))->get();
+        $tagData = TagData::where('tag', $request->input('search'))->with('postcards')->where('postcards.status', PostcardStatus::ACTIVE)->get();
 
 
         $ids = [];
@@ -249,6 +249,22 @@ class PostcardService
         $getPostcardsFromIdsRequest->replace(['postcard_ids' => $ids]);
 
         return $this->getPostcardFromIds($getPostcardsFromIdsRequest);
+    }
+
+    public function getUsers(Request $request)
+    {
+        $tagDataQuery = User::query()
+            ->select('login', DB::raw('count(*) as total'))
+            ->where('tag', 'LIKE', "%{$request->input('search')}%")
+            ->groupBy('tag');
+        if(is_numeric($request->input('offset')))
+            $tagDataQuery->offset($request->input('offset'));
+
+        if(is_numeric($request->input('limit')))
+            $tagDataQuery->limit($request->input('limit'));
+
+        return $tagDataQuery->get();
+
     }
 
     public function getPostcardFromIds(GetPostcardsFromIdsRequest $request)

@@ -80,6 +80,11 @@ class PostcardController extends Controller
     public function getGallery(Request $request)
     {
         $user = Auth::user();
+        if($request->input('sort')) {
+            $sort = $request->input('sort');
+        }else{
+            $sort = 'desc';
+        }
 
         $postcardsQuery = DB::query()
             ->selectRaw('
@@ -108,7 +113,7 @@ select pc1.*, null, null,
              from `postcards` as pc1 where (`pc1`.`user_id` = ?) 	and
 						`pc1`.`deleted_at` is null
 
-			ORDER BY `sort` desc) as res
+			ORDER BY `sort` '.$sort.') as res
 
 WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postcard_id is null
     LIMIT ?, ?'
@@ -696,7 +701,12 @@ WHERE (res.user_id <> ? or (user_id = ? and start is NULL)) and additional_postc
 
         return new TagDataCollection($postcardService->getPostcardByTag($request));
     }
+    public function get(Request $request)
+    {
+        $postcardService = new PostcardService();
 
+        return new TagDataCollection($postcardService->getPostcardByTag($request));
+    }
 
 
 }
