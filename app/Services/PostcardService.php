@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Enums\ActionLocKey;
 use App\Enums\MailingType;
 use App\Enums\PostcardStatus;
+use App\Enums\UserStatus;
 use App\Http\Requests\ClientApp\Postcard\GetPostcardsFromIdsRequest;
 use App\Http\Requests\ClientApp\Postcard\SetViewAdditionallyFromIdsRequest;
 use App\Http\Resources\PostcardCollection;
@@ -255,6 +256,7 @@ class PostcardService
     {
         $tagDataQuery = User::query()
             ->select('id','login', DB::raw('count(*) as total'))
+            ->where('status', UserStatus::ACTIVE)
             ->where('login', 'LIKE', "%{$request->input('search')}%")
             ->groupBy('login');
         if(is_numeric($request->input('offset')))
