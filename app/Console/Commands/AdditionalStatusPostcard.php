@@ -101,10 +101,10 @@ class AdditionalStatusPostcard extends Command
 
                     $actionLocKey = $postcard->additional_postcard_id?ActionLocKey::ADDITIONAL_POSTCARD:ActionLocKey::GALLERY;
 
-                    DB::table('postcards_mailings')
+/*                    DB::table('postcards_mailings')
                         ->where('postcard_id', $mainPostcard->id)
                         ->where('status', PostcardStatus::ACTIVE)
-                        ->update(['start_mailing' => Carbon::now()]);
+                        ->update(['start' => Carbon::now()]);*/
 
                     $mainPostcard->save();
 
