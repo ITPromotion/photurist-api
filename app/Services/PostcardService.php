@@ -36,6 +36,143 @@ class PostcardService
         $this->postcard = $postcard;
     }
 
+    public function getGallery(Request $request)
+    {
+        $user = Auth::user();
+        if($request->input('sort')) {
+            $sort = $request->input('sort');
+        }else{
+            $sort = 'desc';
+        }
+
+
+        $queryString = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, postcards.created_at) as sort,
+                IF(postcards.user_id='.$user->id.', 1, 0) as author,
+                postcards_mailings.view
+             from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
+             where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards_mailings`.`user_id` = '.$user->id.') )
+             and `postcards`.`deleted_at` is null)
+					UNION DISTINCT
+         select pc1.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, pc1.updated_at) as sort,
+                IF(pc1.user_id='.$user->id.', 1, 0) as author,
+                postcards_mailings.view
+             from `postcards` as pc1
+						 LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
+						 left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
+						 where (`postcards_users`.`user_id` = '.$user->id.' ) and postcards_mailings.user_id = '.$user->id.' 	and
+						`pc1`.`deleted_at` is null
+		       UNION DISTINCT
+                select pc1.*, null, null,
+                IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
+                IF(pc1.user_id='.$user->id.', 1, 0) as author,
+                 1
+             from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') 	and
+						`pc1`.`deleted_at` is null
+
+			ORDER BY `sort` '.$sort.') as res
+
+WHERE (res.user_id <> '.$user->id.' or (user_id = '.$user->id.' and start is NULL)';
+
+        $postcardsQuery = DB::query()
+
+            ->selectRaw('
+           DISTINCT  *  from ('.$queryString.') and additional_postcard_id is null'
+
+            )
+            ->orderBy('sort', $sort)
+            ->offset($request->input('offset'))->limit($request->input('limit'));
+
+
+        $postcards = array();
+
+        $postcardCollections = $postcardsQuery->get();
+
+        foreach ($postcardCollections as $postcardCollection){
+
+            $postcard = Postcard::find($postcardCollection->id);
+            if(($postcard->user_id==$user->id)&&($postcard->status==PostcardStatus::ACTIVE)){
+                $postcard->start = Carbon::parse($postcard->start_mailing)->format('Y-m-d h:i:s');
+                $postcard->stop = Carbon::parse($postcard->start_mailing)->addMinutes($postcard->interval_send)->format('Y-m-d h:i:s');
+            }else {
+                $postcard->start = $postcardCollection->start;
+                $postcard->stop = $postcardCollection->stop;
+            }
+            $postcard->view = 'asdasdasdasdd';
+            $postcard->postcard_view = $postcardCollection->view;
+            $postcard->author = $postcardCollection->author;
+            $postcard->sort = $postcardCollection->sort;
+
+            $usersIds = $postcard->users()->pluck('user_id');
+
+            if($usersIds->search($user->id)!==false){
+                $postcard->save = 1;
+            } else {
+                $postcard->save = 0;
+            };
+
+            $postcard->load('user:id,login',
+                'textData',
+                'geoData',
+                'tagData',
+                'audioData',
+                'mediaContents.textData',
+                'mediaContents.geoData',
+                'mediaContents.audioData',
+                'additionally.textData',
+                'additionally.geoData',
+                'additionally.tagData',
+                'additionally.audioData',
+                'additionally.mediaContents.textData',
+                'additionally.mediaContents.geoData',
+                'additionally.mediaContents.audioData',
+                'additionally.user:id,login',
+                'userPostcardNotifications',
+            );
+
+            if($postcard->additionally){
+                $newAdditionallyCount = $postcard->additionally()->count();
+            } else {
+                $newAdditionallyCount = 0;
+            }
+
+            foreach ($postcard->additionally as $additionalPostcard){
+
+                if(AdditionallyView::where('postcard_id', $additionalPostcard->id)
+                    ->where('user_id', Auth::id())->first()){
+                    $newAdditionallyCount--;
+                }
+
+                if($additionalPostcard->user_id==Auth::id()){
+                    $additionalPostcard->author = true;
+                } else {
+                    $additionalPostcard->author = false;
+                }
+
+                if($postcard->user_id==Auth::id()){
+                    $additionalPostcard->moderator = true;
+                } else {
+                    $additionalPostcard->moderator = false;
+                }
+
+                $usersIds = $additionalPostcard->users()->pluck('user_id');
+
+                if($usersIds->search($user->id)!==false){
+                    $additionalPostcard->save = 1;
+                } else {
+                    $additionalPostcard->save = 0;
+                };
+
+            }
+            $postcard->new_additionally_count = $newAdditionallyCount;
+
+            $postcards[] = $postcard;
+        }
+
+        return $postcards;
+    }
+
     public function updatePostcard(Request $request)
     {
 
