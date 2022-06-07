@@ -70,7 +70,7 @@ class AdditionalStatusPostcard extends Command
 
                 $additionallyTokens = [];
 
-               // try {
+                try {
 
                     if($postcard->additional_postcard_id){
                         $mainPostcard = Postcard::find($postcard->additional_postcard_id);
@@ -138,9 +138,9 @@ class AdditionalStatusPostcard extends Command
                         dispatch(new NotificationJob($notification));
                     }
 
-/*               } catch (\Throwable $th) {
+               } catch (\Throwable $th) {
                     //throw $th;
-                    }*/
+                    }
 
             };
         }
