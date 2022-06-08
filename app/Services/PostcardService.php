@@ -45,16 +45,17 @@ class PostcardService
             $sort = 'desc';
         }
 
+        $queryStringUnionDistinct = ' UNION DISTINCT ';
 
-        $queryString = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
+        $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
                 IF(postcards.user_id='.$user->id.', 1, 0) as author,
                 postcards_mailings.view
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
              where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards_mailings`.`user_id` = '.$user->id.') )
-             and `postcards`.`deleted_at` is null)
-					UNION DISTINCT
-         select pc1.*, postcards_mailings.start, postcards_mailings.stop,
+             and `postcards`.`deleted_at` is null)';
+
+         $queryStringSaved = 'select pc1.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, pc1.updated_at) as sort,
                 IF(pc1.user_id='.$user->id.', 1, 0) as author,
                 postcards_mailings.view
@@ -62,23 +63,27 @@ class PostcardService
 						 LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
 						 left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
 						 where (`postcards_users`.`user_id` = '.$user->id.' ) and postcards_mailings.user_id = '.$user->id.' 	and
-						`pc1`.`deleted_at` is null
-		       UNION DISTINCT
-                select pc1.*, null, null,
+						`pc1`.`deleted_at` is null';
+
+         $queryStringMyPostcards = 'select pc1.*, null, null,
                 IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
                 IF(pc1.user_id='.$user->id.', 1, 0) as author,
                  1
-             from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') 	and
-						`pc1`.`deleted_at` is null
+             from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') and
+						`pc1`.`deleted_at` is null';
 
-			ORDER BY `sort` '.$sort.') as res
+         if($request->input('state')=='all'){
+             $queryString = $queryStringInMailing.$queryStringUnionDistinct.$queryStringSaved.$queryStringUnionDistinct.$queryStringMyPostcards;
+         }
 
-WHERE (res.user_id <> '.$user->id.' or (user_id = '.$user->id.' and start is NULL)';
+
 
         $postcardsQuery = DB::query()
 
             ->selectRaw('
-           DISTINCT  *  from ('.$queryString.') and additional_postcard_id is null'
+           DISTINCT  *  from ('.$queryString.' ORDER BY `sort` '.$sort.') as res
+
+WHERE (res.user_id <> '.$user->id.' or (user_id = '.$user->id.' and start is NULL)) and additional_postcard_id is null'
 
             )
             ->orderBy('sort', $sort)
