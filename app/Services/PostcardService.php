@@ -112,7 +112,7 @@ class PostcardService
             ->selectRaw('
            DISTINCT  *  from ('.$queryString.' ORDER BY `sort` '.$sort.') as res')
             ->where(function ($query) use ($user){
-                $query->where('res.user_id', $user->id)
+                $query->where('res.user_id','!=', $user->id)
                         ->orWhere(function ($query) use ($user){
                             $query->where('res.user_id','=', $user->id)
                                   ->whereNull('start');
