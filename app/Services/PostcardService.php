@@ -72,8 +72,12 @@ class PostcardService
              from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') and
 						`pc1`.`deleted_at` is null';
 
-         if($request->input('state')=='all'){
+         if(($request->input('state')=='all')||(!$request->input('state'))){
              $queryString = $queryStringInMailing.$queryStringUnionDistinct.$queryStringSaved.$queryStringUnionDistinct.$queryStringMyPostcards;
+         }elseif($request->input('state')=='in_mailing'){
+             $queryString = $queryStringInMailing;
+         }elseif($request->input('state')=='saved'){
+             $queryString = $queryStringSaved;
          }
 
 
