@@ -47,23 +47,35 @@ class PostcardService
 
         $queryStringUnionDistinct = ' UNION DISTINCT ';
 
+        $queryStringFavoritesLeftJoin = '';
+        $queryStringFavoritesWhere = '';
+
+
+        if($request->input('status')=='marked') {
+            $queryStringFavoritesLeftJoin = ' left join `favorites` on `pc1`.`id` = `favorites`.`postcard_id` ';
+            $queryStringFavoritesWhere =  ' and (favorites.user_id = ' . $user->id . ') ';
+        }
+        $queryStringNew = ' where postcards_mailings.view = 0';
+
         $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
                 IF(postcards.user_id='.$user->id.', 1, 0) as author,
                 postcards_mailings.view
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
              where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards_mailings`.`user_id` = '.$user->id.') )
-             and `postcards`.`deleted_at` is null)';
+             and `postcards`.`deleted_at` is null) ';
+
 
          $queryStringSaved = 'select pc1.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, pc1.updated_at) as sort,
                 IF(pc1.user_id='.$user->id.', 1, 0) as author,
                 postcards_mailings.view
-             from `postcards` as pc1
-						 LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
-						 left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
-						 where (`postcards_users`.`user_id` = '.$user->id.' ) and postcards_mailings.user_id = '.$user->id.' 	and
-						`pc1`.`deleted_at` is null';
+                 from `postcards` as pc1
+                             LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
+                             left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
+                             where (`postcards_users`.`user_id` = '.$user->id.' ) and postcards_mailings.user_id = '.$user->id.' 	and
+                            `pc1`.`deleted_at` is null';
+
 
          $queryStringMyPostcards = 'select pc1.*, null, null,
                 IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
@@ -74,22 +86,46 @@ class PostcardService
 
          if(($request->input('state')=='all')||(!$request->input('state'))){
              $queryString = $queryStringInMailing.$queryStringUnionDistinct.$queryStringSaved.$queryStringUnionDistinct.$queryStringMyPostcards;
+
+             if($request->input('state')=='new'){
+                 $queryString.= $queryStringNew;
+             }
          }elseif($request->input('state')=='in_mailing'){
              $queryString = $queryStringInMailing;
+
+             if($request->input('state')=='new'){
+                 $queryString.= $queryStringNew;
+             }
          }elseif($request->input('state')=='saved'){
              $queryString = $queryStringSaved;
+
+             if($request->input('state')=='new') {
+                 $queryString .= $queryStringNew;
+             }
          }
+
 
 
 
         $postcardsQuery = DB::query()
 
             ->selectRaw('
-           DISTINCT  *  from ('.$queryString.' ORDER BY `sort` '.$sort.') as res
+           DISTINCT  *  from ('.$queryString.' ORDER BY `sort` '.$sort.') as res')
+            ->where(function ($query) use ($user){
+                $query->where('res.user_id', $user->id)
+                        ->orWhere(function ($query) use ($user){
+                            $query->where('res.user_id','=', $user->id)
+                                  ->whereNull('start');
+                        })
+                        ->whereNull('additional_postcard_id');
+            });
 
-WHERE (res.user_id <> '.$user->id.' or (user_id = '.$user->id.' and start is NULL)) and additional_postcard_id is null'
-
-            )
+        if($request->input('status')=='marked') {
+            $postcardsQuery
+            ->leftJoin('favorites', 'res.id', '=', 'favorites.postcard_id')
+            ->where('favorites.user_id','=', $user->id);
+        };
+        $postcardsQuery
             ->orderBy('sort', $sort)
             ->offset($request->input('offset'))->limit($request->input('limit'));
 
@@ -97,6 +133,7 @@ WHERE (res.user_id <> '.$user->id.' or (user_id = '.$user->id.' and start is NUL
         $postcards = array();
 
         $postcardCollections = $postcardsQuery->get();
+
 
         foreach ($postcardCollections as $postcardCollection){
 
