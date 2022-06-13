@@ -394,9 +394,12 @@ class PostcardService
 
     public function getTagData(Request $request)
     {
+        $postcardArrayIds = $this->getGalleryPostcardsIds();
+
         $tagDataQuery = TagData::query()
                             ->select('tag', DB::raw('count(*) as total'))
                             ->where('tag', 'LIKE', "%{$request->input('search')}%")
+                            ->whereIn('postcard_id', $postcardArrayIds)
                             ->groupBy('tag');
                    if(is_numeric($request->input('offset')))
                        $tagDataQuery->offset($request->input('offset'));
@@ -410,8 +413,12 @@ class PostcardService
 
     public function getPostcardByTag(Request $request)
     {
-        $tagData = TagData::where('tag', $request->input('search'))->get();
+        $postcardArrayIds = $this->getGalleryPostcardsIds();
 
+
+
+        $tagData = TagData::where('tag', $request->input('search'))
+                            ->whereIn('postcard_id', $postcardArrayIds)->get();
 
         $ids = [];
 
