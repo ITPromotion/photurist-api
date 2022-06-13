@@ -457,10 +457,16 @@ class PostcardService
     public function getPostcardByUser(Request $request)
     {
 
+        $postcardArrayIds = $this->getGalleryPostcardsIds();
+
         $user = User::where('id', $request->input('user_id'))->first();
 
         if($user){
-            foreach ($user->postcards as $postcard){
+
+           $postcards = $user->postcards()->whereIn('id', $postcardArrayIds)->get();
+
+
+            foreach ($postcards as $postcard){
 
                 $ids[] = $postcard->id;
             };
