@@ -47,14 +47,7 @@ class PostcardService
 
         $queryStringUnionDistinct = ' UNION DISTINCT ';
 
-        $queryStringFavoritesLeftJoin = '';
-        $queryStringFavoritesWhere = '';
 
-
-        if($request->input('status')=='marked') {
-            $queryStringFavoritesLeftJoin = ' left join `favorites` on `pc1`.`id` = `favorites`.`postcard_id` ';
-            $queryStringFavoritesWhere =  ' and (favorites.user_id = ' . $user->id . ') ';
-        }
         $queryStringNew = ' where postcards_mailings.view = 0';
 
         $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
@@ -437,11 +430,20 @@ class PostcardService
 
     public function getUsersForPostcard(Request $request)
     {
+       $postcardArrayIds = $this->getGalleryPostcardsIds();
+        $userCollectionIds = Postcard::whereIn('id', $postcardArrayIds)->groupBy('user_id')->get();
+        $userArrayIds = [];
+        if($userCollectionIds->isNotEmpty()){
+            $userArrayIds = $userCollectionIds->pluck('user_id')->toArray();
+        }
+
         $tagDataQuery = User::query()
             ->select('id','login', DB::raw('count(*) as total'))
+            ->whereIn('id', $userArrayIds)
             ->where('status', UserStatus::ACTIVE)
             ->where('login', 'LIKE', "%{$request->input('search')}%")
             ->groupBy('login');
+
         if(is_numeric($request->input('offset')))
             $tagDataQuery->offset($request->input('offset'));
 
@@ -550,6 +552,73 @@ class PostcardService
         }
 
         return $postcards;
+    }
+
+    public function getGalleryPostcardsIds()
+    {
+
+        $user = Auth::user();
+
+
+        $queryStringUnionDistinct = ' UNION DISTINCT ';
+
+
+        $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, postcards.created_at) as sort,
+                IF(postcards.user_id='.$user->id.', 1, 0) as author,
+                postcards_mailings.view
+             from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
+             where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards_mailings`.`user_id` = '.$user->id.') )
+             and `postcards`.`deleted_at` is null) ';
+
+
+        $queryStringSaved = 'select pc1.*, postcards_mailings.start, postcards_mailings.stop,
+                IFNULL(postcards_mailings.start, pc1.updated_at) as sort,
+                IF(pc1.user_id='.$user->id.', 1, 0) as author,
+                postcards_mailings.view
+                 from `postcards` as pc1
+                             LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
+                             left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
+                             where (`postcards_users`.`user_id` = '.$user->id.' ) and postcards_mailings.user_id = '.$user->id.' 	and
+                            `pc1`.`deleted_at` is null';
+
+
+        $queryStringMyPostcards = 'select pc1.*, null, null,
+                IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
+                IF(pc1.user_id='.$user->id.', 1, 0) as author,
+                 1
+             from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') and
+						`pc1`.`deleted_at` is null';
+
+
+            $queryString = $queryStringInMailing.$queryStringUnionDistinct.$queryStringSaved.$queryStringUnionDistinct.$queryStringMyPostcards;
+
+
+
+
+
+        $postcardsQuery = DB::query()
+
+            ->selectRaw('
+           DISTINCT  *  from ('.$queryString.' ) as res')
+            ->where(function ($query) use ($user){
+                $query->where('res.user_id','!=', $user->id)
+                    ->orWhere(function ($query) use ($user){
+                        $query->where('res.user_id','=', $user->id)
+                            ->whereNull('start');
+                    })
+                    ->whereNull('additional_postcard_id');
+            });
+
+        $postcardCollectionsIds = $postcardsQuery->pluck('id');
+
+        $postcardArrayIds = [];
+
+        if($postcardCollectionsIds->isNotEmpty()){
+            $postcardArrayIds = $postcardCollectionsIds->toArray();
+        };
+
+        return $postcardArrayIds;
     }
 
 
