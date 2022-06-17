@@ -66,7 +66,7 @@ class MailingCommand extends Command
 
 
 
-                $usersOther = User::whereNotIn('id', $userIds)->get();
+                $usersOther = User::whereNotIn('id', $userIds)->where('status', PostcardStatus::ACTIVE)->get();
 
                 if($usersOther->isNotEmpty()) {
                     $user = $usersOther->random(1)->first();
