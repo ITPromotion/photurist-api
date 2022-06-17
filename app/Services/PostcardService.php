@@ -56,6 +56,7 @@ class PostcardService
                 postcards_mailings.view
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
              where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards_mailings`.`user_id` = '.$user->id.') )
+             or (`postcards`.`user_id` ='.$user->id.' and `postcards`.`start_mailing` < "'.Carbon::now().'" and date_add(`postcards`.`start_mailing`,interval `postcards`.`interval_send` minute) > "'.Carbon::now().'")
              and `postcards`.`deleted_at` is null) ';
 
 
@@ -83,6 +84,9 @@ class PostcardService
              if($request->input('state')=='new'){
                  $queryString.= $queryStringNew;
              }
+
+
+
          }elseif($request->input('state')=='in_mailing'){
              $queryString = $queryStringInMailing;
 
@@ -95,6 +99,7 @@ class PostcardService
              if($request->input('state')=='new') {
                  $queryString .= $queryStringNew;
              }
+
          }
 
 
@@ -118,6 +123,15 @@ class PostcardService
             ->leftJoin('favorites', 'res.id', '=', 'favorites.postcard_id')
             ->where('favorites.user_id','=', $user->id);
         };
+
+        if($request->input('author')=='my'){
+            $postcardsQuery->where('res.user_id', $user->id);
+        }
+
+        if($request->input('author')=='other'){
+            $postcardsQuery->where('res.user_id','!=', $user->id);
+        }
+
         $postcardsQuery
             ->orderBy('sort', $sort)
             ->offset($request->input('offset'))->limit($request->input('limit'));
