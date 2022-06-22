@@ -81,7 +81,7 @@ class PostcardService
          if(($request->input('state')=='all')||(!$request->input('state'))){
              $queryString = $queryStringInMailing.$queryStringUnionDistinct.$queryStringSaved.$queryStringUnionDistinct.$queryStringMyPostcards;
 
-             if($request->input('state')=='new'){
+             if($request->input('status')=='new'){
                  $queryString.= $queryStringNew;
              }
 
@@ -90,20 +90,21 @@ class PostcardService
          }elseif($request->input('state')=='in_mailing'){
              $queryString = $queryStringInMailing;
 
-             if($request->input('state')=='new'){
+             if($request->input('status')=='new'){
                  $queryString.= $queryStringNew;
              }
          }elseif($request->input('state')=='saved'){
              $queryString = $queryStringSaved;
 
-             if($request->input('state')=='new') {
+             if($request->input('status')=='new') {
                  $queryString .= $queryStringNew;
              }
 
          }
 
 
-
+        echo $queryString;
+         die(350);
 
         $postcardsQuery = DB::query()
 
