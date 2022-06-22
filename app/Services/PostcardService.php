@@ -47,9 +47,6 @@ class PostcardService
 
         $queryStringUnionDistinct = ' UNION DISTINCT ';
 
-
-        $queryStringNew = ' where postcards_mailings.view = 0';
-
         $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
                 IF(postcards.user_id='.$user->id.', 1, 0) as author,
@@ -81,30 +78,16 @@ class PostcardService
          if(($request->input('state')=='all')||(!$request->input('state'))){
              $queryString = $queryStringInMailing.$queryStringUnionDistinct.$queryStringSaved.$queryStringUnionDistinct.$queryStringMyPostcards;
 
-             if($request->input('status')=='new'){
-                 $queryString.= $queryStringNew;
-             }
-
-
-
          }elseif($request->input('state')=='in_mailing'){
              $queryString = $queryStringInMailing;
 
-             if($request->input('status')=='new'){
-                 $queryString.= $queryStringNew;
-             }
          }elseif($request->input('state')=='saved'){
              $queryString = $queryStringSaved;
-
-             if($request->input('status')=='new') {
-                 $queryString .= $queryStringNew;
-             }
 
          }
 
 
-        echo $queryString;
-         die(350);
+
 
         $postcardsQuery = DB::query()
 
@@ -125,6 +108,12 @@ class PostcardService
             ->leftJoin('favorites', 'res.id', '=', 'favorites.postcard_id')
             ->where('favorites.user_id','=', $user->id);
         };
+
+        if($request->input('status')=='new'){
+            $postcardsQuery
+                ->where('res.view', 0);
+        }
+
 
         if($request->input('author')=='my'){
             $postcardsQuery->where('res.user_id', $user->id);
