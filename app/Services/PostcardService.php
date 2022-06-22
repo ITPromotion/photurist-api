@@ -114,7 +114,6 @@ class PostcardService
                 ->where('res.view', 0);
         }
 
-
         if($request->input('author')=='my'){
             $postcardsQuery->where('res.user_id', $user->id);
         }
@@ -365,6 +364,7 @@ class PostcardService
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'sender_id'  => Auth::id(),
+            'status'     => PostcardStatus::ACTIVE,
         ]);
         try {
             $this->copyMediaContent($clonePostcard);
