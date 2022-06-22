@@ -115,6 +115,7 @@ class PostcardService
                             $query->where('res.user_id','=', $user->id)
                                   ->whereNull('start');
                         })
+                        ->where('res.sender_id','!=', $user->id)
                         ->whereNull('additional_postcard_id');
             });
 
