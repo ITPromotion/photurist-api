@@ -643,5 +643,46 @@ class PostcardService
         return $postcardArrayIds;
     }
 
+    public function notViewQuantity()
+    {
+        $notViewQuantity = 0;
+
+        $postcardIds = $this->getGalleryPostcardsIds();
+
+
+
+        foreach ($postcardIds as $postcardId){
+            $notViewMain = DB::table('postcards_mailings')
+                ->where('view', 0)
+                ->where('user_id',Auth::id())
+                ->where('status', PostcardStatus::ACTIVE)
+                ->where('postcard_id', $postcardId)
+                ->first();
+            if($notViewMain){
+                $notViewQuantity++;
+                continue;
+            }
+
+            $postcard = Postcard::find($postcardId);
+
+            $postcard->load('additionally');
+
+            $newAdditionallyCount = $postcard->additionally()->count();
+
+            foreach ($postcard->additionally as $additionalPostcard){
+
+                if(AdditionallyView::where('postcard_id', $additionalPostcard->id)
+                    ->where('user_id', Auth::id())->first()){
+                    $newAdditionallyCount --;
+                }
+            }
+
+            $notViewQuantity += $newAdditionallyCount;
+
+        }
+
+        return $notViewQuantity;
+    }
+
 
 }

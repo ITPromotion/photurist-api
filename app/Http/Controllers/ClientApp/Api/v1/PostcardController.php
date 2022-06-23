@@ -487,6 +487,12 @@ class PostcardController extends Controller
 
     public function notViewQuantity()
     {
+        $postcardService = new PostcardService();
+
+        return [
+            'not_view' => $postcardService->notViewQuantity()
+        ];
+
         return [
             'not_view' => DB::table('postcards_mailings')
             ->where('view', 0)
