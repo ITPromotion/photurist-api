@@ -98,10 +98,15 @@ class PostcardService
                         ->orWhere(function ($query) use ($user){
                             $query->where('res.user_id','=', $user->id)
                                   ->whereNull('start');
-                        })
-                        ->where('res.sender_id','!=', $user->id)
-                        ->whereNull('additional_postcard_id');
-            });
+                        });
+
+            })
+            ->where(function ($query) use ($user){
+                $query
+                    ->where('res.sender_id','!=', $user->id)
+                    ->orWhereNull('res.sender_id');
+            })
+            ->whereNull('additional_postcard_id');
 
         if($request->input('status')=='marked') {
             $postcardsQuery
@@ -125,7 +130,6 @@ class PostcardService
         $postcardsQuery
             ->orderBy('sort', $sort)
             ->offset($request->input('offset'))->limit($request->input('limit'));
-
 
         $postcards = array();
 
