@@ -92,7 +92,7 @@ class PostcardService
         $postcardsQuery = DB::query()
 
             ->selectRaw('
-           DISTINCT  id, user_id, start, sender_id, additional_postcard_id, status, view, start_mailing, author, sort
+           DISTINCT  id, user_id, start, stop, sender_id, additional_postcard_id, status, view, start_mailing, author, sort
            from ('.$queryString.' ORDER BY `sort` '.$sort.') as res')
             ->where(function ($query) use ($user){
                 $query->where('res.user_id','!=', $user->id)
