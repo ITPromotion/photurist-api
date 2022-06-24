@@ -92,7 +92,7 @@ class PostcardService
         $postcardsQuery = DB::query()
 
             ->selectRaw('
-           DISTINCT  id, user_id, start, stop, sender_id, additional_postcard_id, status, view, start_mailing, author, sort
+           DISTINCT  id, user_id, start, stop, sender_id, additional_postcard_id, status, start_mailing, author, sort
            from ('.$queryString.' ORDER BY `sort` '.$sort.') as res')
             ->where(function ($query) use ($user){
                 $query->where('res.user_id','!=', $user->id)
@@ -136,7 +136,7 @@ class PostcardService
 
         $postcardCollections = $postcardsQuery->get();
 
-        Log::info($postcardCollections);
+
 
         foreach ($postcardCollections as $postcardCollection){
 
@@ -149,7 +149,7 @@ class PostcardService
                 $postcard->stop = $postcardCollection->stop;
             }
             $postcard->view = 'asdasdasdasdd';
-            $postcard->postcard_view = $postcardCollection->view;
+            $postcard->postcard_view = 0;
             $postcard->author = $postcardCollection->author;
             $postcard->sort = $postcardCollection->sort;
 
