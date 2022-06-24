@@ -49,7 +49,8 @@ class PostcardService
 
         $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
-                IF(postcards.user_id='.$user->id.', 1, 0) as author
+                IF(postcards.user_id='.$user->id.', 1, 0) as author,
+                postcards_mailings.view
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
              where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards_mailings`.`user_id` = '.$user->id.') )
              or (`postcards`.`user_id` ='.$user->id.' and `postcards`.`start_mailing` < "'.Carbon::now().'" and date_add(`postcards`.`start_mailing`,interval `postcards`.`interval_send` minute) > "'.Carbon::now().'")
@@ -58,7 +59,8 @@ class PostcardService
 
          $queryStringSaved = 'select pc1.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, pc1.updated_at) as sort,
-                IF(pc1.user_id='.$user->id.', 1, 0) as author
+                IF(pc1.user_id='.$user->id.', 1, 0) as author,
+                postcards_mailings.view
                  from `postcards` as pc1
                              LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
                              left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
@@ -68,7 +70,8 @@ class PostcardService
 
          $queryStringMyPostcards = 'select pc1.*, null, null,
                 IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
-                IF(pc1.user_id='.$user->id.', 1, 0) as author
+                IF(pc1.user_id='.$user->id.', 1, 0) as author,
+                 1
              from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') and
 						`pc1`.`deleted_at` is null';
 
@@ -84,13 +87,13 @@ class PostcardService
          }
 
 
-        Log::info('
-           DISTINCT  *  from ('.$queryString.' ORDER BY `sort` '.$sort.') as res');
+
 
         $postcardsQuery = DB::query()
 
             ->selectRaw('
-           DISTINCT  *  from ('.$queryString.' ORDER BY `sort` '.$sort.') as res')
+           DISTINCT  id, user_id, start, sender_id, additional_postcard_id, status, view, start_mailing, author, sort
+           from ('.$queryString.' ORDER BY `sort` '.$sort.') as res')
             ->where(function ($query) use ($user){
                 $query->where('res.user_id','!=', $user->id)
                         ->orWhere(function ($query) use ($user){
@@ -145,7 +148,7 @@ class PostcardService
                 $postcard->stop = $postcardCollection->stop;
             }
             $postcard->view = 'asdasdasdasdd';
-            $postcard->postcard_view = 0;
+            $postcard->postcard_view = $postcardCollection->view;
             $postcard->author = $postcardCollection->author;
             $postcard->sort = $postcardCollection->sort;
 
