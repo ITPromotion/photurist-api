@@ -126,6 +126,7 @@ class PostcardService
         }
 
         $postcardsQuery
+            ->gropeBy('res.id')
             ->orderBy('sort', $sort)
             ->offset($request->input('offset'))->limit($request->input('limit'));
 
