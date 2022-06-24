@@ -388,6 +388,26 @@ class PostcardService
             'start' => Carbon::now(),
             'stop' => Carbon::now()->addMinutes($this->postcard->interval_wait),
         ]);
+
+        $user = User::findOrFail($receiverId);
+
+        try {
+            if ($this->postcard->user_id != $user->id) {
+                $notification = [
+                    'tokens' => $user->device->pluck('token')->toArray(),
+                    'title' => $this->postcard->user->login,
+                    'body' => __('notifications.gallery_text'),
+                    'img' => NotificationService::img($this->postcard),
+                    'action_loc_key' => ActionLocKey::GALLERY,
+                    'user_id' => $this->postcard->user_id,
+                    'postcard_id' => $this->postcard->id,
+                ];
+                dispatch(new NotificationJob($notification));
+
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     public function setViewAdditionallyFromIds(SetViewAdditionallyFromIdsRequest $request)
