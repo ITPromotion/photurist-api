@@ -144,7 +144,7 @@ class PostcardService
                 $postcard->stop = $postcardCollection->stop;
             }
             $postcard->view = 'asdasdasdasdd';
-            $postcard->postcard_view = $postcardCollection->view;
+            $postcard->postcard_view = 0;
             $postcard->author = $postcardCollection->author;
             $postcard->sort = $postcardCollection->sort;
 
