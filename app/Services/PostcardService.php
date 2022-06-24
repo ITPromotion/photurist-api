@@ -84,7 +84,8 @@ class PostcardService
          }
 
 
-
+        Log::info('
+           DISTINCT  *  from ('.$queryString.' ORDER BY `sort` '.$sort.') as res');
 
         $postcardsQuery = DB::query()
 
