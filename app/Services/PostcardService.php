@@ -49,8 +49,7 @@ class PostcardService
 
         $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
-                IF(postcards.user_id='.$user->id.', 1, 0) as author,
-                postcards_mailings.view
+                IF(postcards.user_id='.$user->id.', 1, 0) as author
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
              where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards_mailings`.`user_id` = '.$user->id.') )
              or (`postcards`.`user_id` ='.$user->id.' and `postcards`.`start_mailing` < "'.Carbon::now().'" and date_add(`postcards`.`start_mailing`,interval `postcards`.`interval_send` minute) > "'.Carbon::now().'")
@@ -59,8 +58,7 @@ class PostcardService
 
          $queryStringSaved = 'select pc1.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, pc1.updated_at) as sort,
-                IF(pc1.user_id='.$user->id.', 1, 0) as author,
-                postcards_mailings.view
+                IF(pc1.user_id='.$user->id.', 1, 0) as author
                  from `postcards` as pc1
                              LEFT join `postcards_users` on `pc1`.`id` = `postcards_users`.`postcard_id`
                              left join `postcards_mailings` on `pc1`.`id` = `postcards_mailings`.`postcard_id`
@@ -70,8 +68,7 @@ class PostcardService
 
          $queryStringMyPostcards = 'select pc1.*, null, null,
                 IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
-                IF(pc1.user_id='.$user->id.', 1, 0) as author,
-                 1
+                IF(pc1.user_id='.$user->id.', 1, 0) as author
              from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') and
 						`pc1`.`deleted_at` is null';
 
