@@ -136,6 +136,7 @@ class PostcardService
 
         $postcardCollections = $postcardsQuery->get();
 
+        Log::info($postcardCollections);
 
         foreach ($postcardCollections as $postcardCollection){
 
