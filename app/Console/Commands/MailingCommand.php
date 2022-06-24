@@ -88,7 +88,7 @@ class MailingCommand extends Command
             if(($firstMailing)&&(Carbon::parse($firstMailing)<Carbon::now()->subMinutes($postcard->interval_send))){
                 $postcard->status = PostcardStatus::ARCHIVE;
                 $postcard->save();
-                \Illuminate\Support\Facades\Log::info('time_is_up_text');
+                \Illuminate\Support\Facades\Log::info($postcard->user->device->pluck('token')->toArray());
 
                     try {
                         if(!$postcard->additional_postcard_id){
