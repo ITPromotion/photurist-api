@@ -147,7 +147,22 @@ class PostcardService
                 $postcard->stop = $postcardCollection->stop;
             }
             $postcard->view = 'asdasdasdasdd';
-            $postcard->postcard_view = 0;
+
+            if($postcard->user_id==$user->id){
+                $postcard->postcard_view = 1;
+            }else{
+               $result =  DB::table('postcards_mailings')
+                    ->where('user_id', $user->id)
+                    ->where('postcard_id',$postcard->id)
+                    ->first();
+
+               if (!$result){
+                   $postcard->postcard_view = 0;
+               }else{
+                   $postcard->postcard_view = $result->view;
+               }
+
+            }
             $postcard->author = $postcardCollection->author;
             $postcard->sort = $postcardCollection->sort;
 
