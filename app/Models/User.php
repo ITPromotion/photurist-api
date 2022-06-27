@@ -101,22 +101,22 @@ class User extends Authenticatable
 
     public function contacts():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->where('contacts_users.contact',true)->withPivot('status','ignored', 'blocked', 'phone_book', 'new');
+        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->where('contacts_users.contact',true)->withPivot('status','ignored', 'blocked', 'phone_book', 'new', 'contact');
     }
 
     public function blockContacts():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->wherePivot('blocked', true)->withPivot('status','ignored', 'blocked', 'phone_book', 'new');
+        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->wherePivot('blocked', true)->withPivot('status','ignored', 'blocked', 'phone_book', 'new', 'contact');
     }
 
     public function ignoreContacts():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->wherePivot('ignored', true)->withPivot('status','ignored', 'blocked', 'phone_book', 'new');
+        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->wherePivot('ignored', true)->withPivot('status','ignored', 'blocked', 'phone_book', 'new', 'contact');
     }
 
     public function contactsUsers():BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->withPivot('status','ignored', 'blocked', 'phone_book', 'new');
+        return $this->belongsToMany(User::class, 'contacts_users', 'user_id', 'contact_id')->withPivot('status','ignored', 'blocked', 'phone_book', 'new', 'contact');
     }
 
 }
