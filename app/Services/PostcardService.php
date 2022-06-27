@@ -711,7 +711,9 @@ class PostcardService
                     $newAdditionallyCount --;
                 }
             }
-
+            if($newAdditionallyCount>0){
+                $newAdditionallyCount = 1;
+            }
             $notViewQuantity += $newAdditionallyCount;
 
         }
