@@ -106,7 +106,7 @@ class AdditionalStatusPostcard extends Command
 
                     DB::table('postcards_mailings')
                         ->where('postcard_id', $mainPostcard->id)
-                        ->where('status', PostcardStatus::ACTIVE)
+                       // ->where('status', PostcardStatus::ACTIVE)
                         ->update(['start' => Carbon::now()]);
 
                     $mainPostcard->updated_at = Carbon::now();
