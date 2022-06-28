@@ -199,7 +199,13 @@ class PostcardService
                 $newAdditionallyCount = 0;
             }
 
-            foreach ($postcard->additionally as $additionalPostcard){
+            foreach ($postcard->additionally as $key => $additionalPostcard){
+
+                if($user->blockContacts->contains('id', $additionalPostcard->user_id)){
+                    $postcard->additionally->forget($key);
+                    $newAdditionallyCount--;
+                    continue;
+                }
 
                 if(AdditionallyView::where('postcard_id', $additionalPostcard->id)
                     ->where('user_id', Auth::id())->first()){
