@@ -110,7 +110,10 @@ class UserService
             'sort_field'=> 'in:login,id,created_at|nullable',
         ]);
 
-        $contactsQuery = $this->user->contacts()->where('users.id','!=',Auth::id())->withPivot('contact', 'blocked', 'ignored', 'phone_book', 'new', 'status', 'created_at');
+        $contactsQuery = $this->user->contacts()
+            ->where('users.id','!=',Auth::id())
+            ->withPivot('contact', 'blocked', 'ignored', 'phone_book', 'new', 'status', 'created_at')
+            ->wherePivot('blocked', false);
 
         if(is_numeric($request->input('offset')))
             $contactsQuery->offset($request->input('offset'));
