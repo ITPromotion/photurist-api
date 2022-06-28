@@ -74,6 +74,7 @@ class AdditionalStatusPostcard extends Command
 
                     if($postcard->additional_postcard_id){
                         $mainPostcard = Postcard::find($postcard->additional_postcard_id);
+                        Log::info($mainPostcard);
                         $mailingUserIds = DB::table('postcards_mailings')
                             ->where('postcard_id', $mainPostcard->id)
                             ->where('status', PostcardStatus::ACTIVE)->pluck('user_id');
