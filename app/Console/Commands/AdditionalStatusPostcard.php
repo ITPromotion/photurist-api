@@ -71,11 +71,11 @@ class AdditionalStatusPostcard extends Command
                 $additionallyTokens = [];
 
               //  try {
-                    Log::info(['test'=>$postcard->additional_postcard_id]);
+
                     if($postcard->additional_postcard_id){
 
-                        Log::info(['test2'=>$postcard->additional_postcard_id]);
                         $mainPostcard = Postcard::find($postcard->additional_postcard_id);
+
                         Log::info($mainPostcard);
                         $mailingUserIds = DB::table('postcards_mailings')
                             ->where('postcard_id', $mainPostcard->id)
@@ -108,6 +108,8 @@ class AdditionalStatusPostcard extends Command
                         ->where('postcard_id', $mainPostcard->id)
                         ->where('status', PostcardStatus::ACTIVE)
                         ->update(['start' => Carbon::now()]);
+
+                    $mainPostcard->updated_at = Carbon::now();
 
                     $mainPostcard->save();
 
