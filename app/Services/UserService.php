@@ -331,9 +331,8 @@ class UserService
     {
         $user = Auth::user();
 
-
-
         $UsersQuery = User::where('users.status', UserStatus::ACTIVE)
+            ->where('users.id','!=', $user->id)
             ->leftJoin('contacts_users', 'users.id', '=', 'contacts_users.user_id')
             ->where(function ($query) use ($request){
                 $query->where('contacts_users.contact',false)

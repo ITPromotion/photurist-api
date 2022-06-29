@@ -134,8 +134,6 @@ class PostcardService
 
         $postcardCollections = $postcardsQuery->get();
 
-        Log::info($postcardCollections);
-
         foreach ($postcardCollections as $postcardCollection){
 
             $postcard = Postcard::find($postcardCollection->id);
@@ -647,7 +645,7 @@ class PostcardService
 
 
         $queryStringMyPostcards = 'select pc1.*, null, null,
-                IFNULL(pc1.start_mailing, pc1.updated_at) as sort,
+                pc1.updated_at as sort,
                 IF(pc1.user_id='.$user->id.', 1, 0) as author,
                  1
              from `postcards` as pc1 where (`pc1`.`user_id` = '.$user->id.') and
@@ -663,15 +661,22 @@ class PostcardService
         $postcardsQuery = DB::query()
 
             ->selectRaw('
-           DISTINCT  *  from ('.$queryString.' ) as res')
+           DISTINCT  id, user_id, start, stop, sender_id, additional_postcard_id, status, start_mailing, author, sort
+           from ('.$queryString.' ORDER BY `sort` asc ) as res')
             ->where(function ($query) use ($user){
                 $query->where('res.user_id','!=', $user->id)
                     ->orWhere(function ($query) use ($user){
                         $query->where('res.user_id','=', $user->id)
                             ->whereNull('start');
-                    })
-                    ->whereNull('additional_postcard_id');
-            });
+                    });
+
+            })
+            ->where(function ($query) use ($user){
+                $query
+                    ->where('res.sender_id','!=', $user->id)
+                    ->orWhereNull('res.sender_id');
+            })
+            ->whereNull('additional_postcard_id');
 
         $postcardCollectionsIds = $postcardsQuery->pluck('id');
 
@@ -720,6 +725,7 @@ class PostcardService
             if($newAdditionallyCount>0){
                 $newAdditionallyCount = 1;
             }
+
             $notViewQuantity += $newAdditionallyCount;
 
         }
