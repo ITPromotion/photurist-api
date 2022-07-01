@@ -75,12 +75,12 @@ class UserService
         $users = User::whereIn('id',$request->input('ids'))->get();
 
         foreach ($users as $user){
-            $ids =[];
-            $ids[$this->user->id] =  [
+            $idsUser =[];
+            $idsUser[$this->user->id] =  [
                 'status' => ContactStatuses::ACTIVE,
                 'contact' => true,
             ];
-            $user->contacts()->syncWithoutDetaching($ids );
+            $user->contacts()->syncWithoutDetaching($idsUser);
         }
 
         foreach ($ids as  $key => $value) {
