@@ -338,22 +338,24 @@ class UserService
                 $query->where('contacts_users.contact',false)
                     ->orWhereNull('contacts_users.contact');
 
+        });
+
+
         if(is_numeric($request->input('offset')))
-            $query->offset($request->input('offset'));
+            $UsersQuery->offset($request->input('offset'));
 
         if(is_numeric($request->input('limit')))
-            $query->limit($request->input('limit'));
+            $UsersQuery->limit($request->input('limit'));
 
         if($request->input('search')){
 
             $search = $request->input('search');
 
-            $query
+            $UsersQuery
                 ->where('phone', 'LIKE', "%{$search}%")
                 ->orWhere('login', 'LIKE', "%{$search}%");
         }
 
-        });
         $UsersQuery->select('users.id','users.phone', 'users.login', 'users.avatar', 'contacts_users.user_id')
                     ->selectRaw('IF(contacts_users.user_id=?, 1, 0) as sort',[$user->id]);
                   // ->groupBy('users.id');
