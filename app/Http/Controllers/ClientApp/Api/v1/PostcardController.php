@@ -336,6 +336,7 @@ class PostcardController extends Controller
     public function addPostcardToGallery(AddPostcardToGalleryRequest $request)
     {
         Auth::user()->postcardFavorites()->sync($request->input('postcard_id'),false);
+        $this->setView($request->input('postcard_id'));
     }
 
     public function removePostcardFromList($id)
