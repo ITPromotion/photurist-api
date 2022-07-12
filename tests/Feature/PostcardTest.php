@@ -182,7 +182,6 @@ class PostcardTest extends TestCase
 
                 $url = self::PREFIX.'postcard-update/'.$responseData['data']['id'];
 
-                $this->singIn();
 
                 Passport::actingAs(
                     $this->user,
