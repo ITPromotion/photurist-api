@@ -88,7 +88,9 @@ class AdditionalStatusPostcard extends Command
 
                             foreach ($mailingUserIds as $mailingUserId) {
                                 $mailingUser = User::find($mailingUserId);
-                                if($mailingUser->device->pluck('token'))
+                                if(!$mailingUser->blockContacts->contains('id', $user->id)&&
+                                        $mailingUser->device->pluck('token')&&
+                                    ($user->id!=$mailingUserId))
                                     $userTokens = array_merge($userTokens, $mailingUser->device->pluck('token')->toArray());
                             }
                         }
