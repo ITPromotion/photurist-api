@@ -88,6 +88,12 @@ class AdditionalStatusPostcard extends Command
 
                             foreach ($mailingUserIds as $mailingUserId) {
                                 $mailingUser = User::find($mailingUserId);
+                                Log::info(['blockLog' =>
+                                    [
+                                        'mailingUserIdPuch'=> $mailingUserId,
+                                        'block' => $mailingUser->blockContacts->contains('id', $user->id),
+                                        'user_id' => $user->id,
+                                ]]);
                                 if(!$mailingUser->blockContacts->contains('id', $user->id)&&
                                         $mailingUser->device->pluck('token')&&
                                     ($user->id!=$mailingUserId))
