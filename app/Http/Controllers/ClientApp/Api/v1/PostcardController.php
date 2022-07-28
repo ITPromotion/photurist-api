@@ -335,7 +335,14 @@ class PostcardController extends Controller
 
     public function addPostcardToGallery(AddPostcardToGalleryRequest $request)
     {
-        Auth::user()->postcardFavorites()->sync($request->input('postcard_id'),false);
+        $postcardId = $request->input('postcard_id');
+        Auth::user()->postcardFavorites()->sync($postcardId,false);
+        DB::table('postcards_mailings')
+            ->where('postcard_id',$postcardId)
+            ->update([
+                'stop'=> Carbon::now(),
+                'status'=> MailingType::CLOSED,
+            ]);
         $this->setView($request->input('postcard_id'));
     }
 
