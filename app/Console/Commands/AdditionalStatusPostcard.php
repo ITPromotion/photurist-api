@@ -126,7 +126,7 @@ class AdditionalStatusPostcard extends Command
                     $notification = [
                         'tokens' => $userTokens,
                         'title' => $postcard->user->login,
-                        'body' => __('notifications.postcard_status_active'),
+                        'body' => __('notifications.postcard_additionally_status_active'),
                         'img' => NotificationService::img($postcard),
                         'action_loc_key' =>  $actionLocKey,
                         'user_id' => $user->id,
