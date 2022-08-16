@@ -339,6 +339,7 @@ class PostcardController extends Controller
         Auth::user()->postcardFavorites()->sync($postcardId,false);
         DB::table('postcards_mailings')
             ->where('postcard_id',$postcardId)
+            ->where('user_id', Auth::id())
             ->update([
                 'stop'=> Carbon::now(),
                 'status'=> MailingType::CLOSED,
