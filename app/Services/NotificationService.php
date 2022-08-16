@@ -57,6 +57,8 @@ class NotificationService {
         ];
         $encodedData = json_encode($data);
 
+        Log::channel('push')->info(['encodedData' => $encodedData]);
+
         $headers = [
             'Authorization:key=' . $serverKey,
             'Content-Type: application/json',
