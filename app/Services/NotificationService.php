@@ -75,7 +75,7 @@ class NotificationService {
         // Execute post
         $result = curl_exec($ch);
 
-        Log::info(['frb' => $result]);
+        Log::channel('push')->info(['frb' => $result]);
 
         if ($result === FALSE) {
             die('Curl failed: ' . curl_error($ch));

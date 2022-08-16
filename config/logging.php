@@ -110,6 +110,11 @@ return [
             'path' => storage_path('logs/error.log'),
             'level' => 'debug',
         ],
+
+        'push' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/push.log'),
+        ],
     ],
 
 ];
