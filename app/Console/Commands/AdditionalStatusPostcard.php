@@ -95,8 +95,7 @@ class AdditionalStatusPostcard extends Command
                                         'user_id' => $user->id,
                                 ]]);
                                 if(!$mailingUser->blockContacts->contains('id', $user->id)&&
-                                        $mailingUser->device->pluck('token')&&
-                                    ($user->id!=$mailingUserId))
+                                        $mailingUser->device->pluck('token'))
                                     $userTokens = array_merge($userTokens, $mailingUser->device->pluck('token')->toArray());
                             }
                         }
