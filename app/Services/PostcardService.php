@@ -51,7 +51,7 @@ class PostcardService
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
                 IF(postcards.user_id='.$user->id.', 1, 0) as author
              from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
-             where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards`.`id` = '.$user->id.') )
+             where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards`.`user_id` = '.$user->id.') )
              or (`postcards`.`user_id` ='.$user->id.' and `postcards`.`start_mailing` < "'.Carbon::now().'" and date_add(`postcards`.`start_mailing`,interval `postcards`.`interval_send` minute) > "'.Carbon::now().'")
              and `postcards`.`deleted_at` is null) ';
 
@@ -83,9 +83,6 @@ class PostcardService
 
          }
 
-
-
-
         $postcardsQuery = DB::query()
 
             ->selectRaw('
@@ -94,8 +91,8 @@ class PostcardService
             ->where(function ($query) use ($user){
                 $query->where('res.user_id','!=', $user->id)
                         ->orWhere(function ($query) use ($user){
-                            $query->where('res.user_id','=', $user->id)
-                                  ->whereNull('start');
+                            $query->where('res.user_id','=', $user->id);
+                                //  ->whereNull('start');
                         });
 
             })
