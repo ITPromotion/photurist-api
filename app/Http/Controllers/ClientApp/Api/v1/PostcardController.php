@@ -392,6 +392,9 @@ class PostcardController extends Controller
 
         $postcard->finally_status = $postcard->status;
 
+        if($postcard->status == MailingType::ACTIVE)
+            $postcard->start_mailing = Carbon::now();
+
         $postcard->save();
 
          $postcard->load('user:id,login',
