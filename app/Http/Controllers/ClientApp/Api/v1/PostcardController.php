@@ -390,6 +390,8 @@ class PostcardController extends Controller
 
         $postcard->status = $request->input('status');
 
+        $postcard->finally_status = $postcard->status;
+
         $postcard->save();
 
          $postcard->load('user:id,login',
