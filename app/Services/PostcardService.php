@@ -50,7 +50,7 @@ class PostcardService
         $queryStringInMailing = '(select postcards.*, postcards_mailings.start, postcards_mailings.stop,
                 IFNULL(postcards_mailings.start, postcards.created_at) as sort,
                 IF(postcards.user_id='.$user->id.', 1, 0) as author
-             from `postcards` left join `postcards_mailings` on `postcards`.`id` = `postcards_mailings`.`postcard_id`
+             from `postcards` left join `postcards_mailings` on `postcards_mailings`.`user_id` = '.$user->id.'
              where ((`postcards_mailings`.`start` < "'.Carbon::now().'" and `postcards_mailings`.`stop` > "'.Carbon::now().'" and `postcards`.`user_id` = '.$user->id.') )
              or (`postcards`.`user_id` ='.$user->id.' and `postcards`.`start_mailing` < "'.Carbon::now().'" and date_add(`postcards`.`start_mailing`,interval `postcards`.`interval_send` minute) > "'.Carbon::now().'")
              and `postcards`.`deleted_at` is null) ';
